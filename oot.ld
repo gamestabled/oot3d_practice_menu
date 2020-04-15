@@ -1,0 +1,40 @@
+OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
+OUTPUT_ARCH(arm)
+ENTRY(main_patch)
+SECTIONS
+{
+	. = 0x100000;
+	.patch_loader : {
+		*(.patch_loader*)
+	}
+
+    . = 0x2E3790;
+	. = ALIGN(4);
+    .patch_load : {
+        *(.patch_load*)
+    }
+
+	. = 0x310254;
+	. = ALIGN(4);
+	.patch_main : {
+		*(.patch_main*)
+	}
+
+	. = 0x4C99A8;
+	. = ALIGN(4);
+	.loader : {
+		*(.loader*)
+	}
+
+	. = 0x005C7000;
+    .text : {
+        __text_start = . ;
+        *(.text)
+        *(.text.*)
+        *(.rodata)
+        *(.data)
+        *(.bss)
+        *(COMMON)
+        __text_end  = . ;
+    }
+}

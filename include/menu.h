@@ -31,6 +31,9 @@
 #include "MyThread.h"
 #include "utils.h"
 
+#define MIN(x,y) (x < y ? x : y)
+#define MAX(x,y) (x > y ? x : y)
+
 #define HID_PAD           (REG32(0x10146000) ^ 0xFFF)
 
 #define BUTTON_A          (1 << 0)
@@ -72,10 +75,43 @@ typedef struct Menu {
     MenuItem items[0x40];
 } Menu;
 
+typedef struct ToggleMenuItem {
+    u8 on;
+    const char *title;
+    void (*method)(s32);
+} ToggleMenuItem;
+
+typedef struct ToggleMenu {
+    const char *title;
+
+    u32 nbItems;
+    ToggleMenuItem items[0x40];
+} ToggleMenu;
+
+typedef struct AmountMenuItem {
+    u16 amount; //current amount
+    u16 hex;    //max amount
+    const char *title;
+    void (*method)(s32);
+} AmountMenuItem;
+
+typedef struct AmountMenu {
+    const char *title;
+
+    u32 nbItems;
+    AmountMenuItem items[0x40];
+} AmountMenu;
+
+#define TOGGLE_MENU_MAX_SHOW 18
+#define AMOUNT_MENU_MAX_SHOW 18
+
 u32 waitInputWithTimeout(u32 msec);
 u32 waitInput(void);
 
 MyThread *menuCreateThread(void);
 void menuEnter(void);
 void menuThreadMain(void);
+
 void menuShow(Menu *root);
+void ToggleMenuShow(ToggleMenu *menu);
+void AmountMenuShow(AmountMenu *menu);

@@ -30,61 +30,29 @@
 #include "menu.h"
 #include "draw.h"
 #include "z3d.h"
-// #include "menus/process_list.h"
-// #include "menus/process_patches.h"
-// #include "menus/n3ds.h"
-// #include "menus/debugger.h"
-// #include "menus/miscellaneous.h"
-// #include "menus/sysconfig.h"
-// #include "menus/screen_filters.h"
-// #include "ifile.h"
+
+#include "menus/warps.h"
+#include "menus/scene.h"
+#include "menus/cheats.h"
+#include "menus/inventory.h"
+#include "menus/equips.h"
+#include "menus/file.h"
 
 Menu gz3DMenu = {
     "Gamestabled's menu, fuck you",
-    .nbItems = 2,
+    .nbItems = 7,
     {
-        //TODO: make a menu
-        // { "Test menu placeholder", MENU, .menu = 0x00000000 },
-        { "Test mehotd placeholder", METHOD, .method = &gz3DMenu_Blank },
-        { "Test method placeholder", METHOD, .method = &gz3DMenu_Blank }
+        { "Test method placeholder, sets rupees to 50", METHOD, .method = &gz3DMenu_Test },
+        { "Warps", MENU, .menu = &WarpsMenu },
+        { "Scene", MENU, .menu = &SceneMenu },
+        { "Cheats", MENU, .menu = &CheatsMenu },
+        { "Inventory", MENU, .menu = &InventoryMenu },
+        { "Equips", MENU, .menu = &EquipsMenu },
+        { "File", MENU, .menu = &FileMenu },
     }
 };
 
-void gz3DMenu_Blank(void){
-    z3d_file.rupee_count = 50;
+void gz3DMenu_Test(void){
+    gSaveContext.rupee_count = 50;
     return;
 }
-
-// void RosalinaMenu_ShowCredits(void)
-// {
-//     Draw_Lock();
-//     Draw_ClearFramebuffer();
-//     Draw_FlushFramebuffer();
-//     Draw_Unlock();
-
-//     do
-//     {
-//         Draw_Lock();
-//         Draw_DrawString(10, 10, COLOR_TITLE, "Rosalina -- Luma3DS credits");
-
-//         u32 posY = Draw_DrawString(10, 30, COLOR_WHITE, "Luma3DS (c) 2016-2019 AuroraWright, TuxSH") + SPACING_Y;
-
-//         posY = Draw_DrawString(10, posY + SPACING_Y, COLOR_WHITE, "3DSX loading code by fincs");
-//         posY = Draw_DrawString(10, posY + SPACING_Y, COLOR_WHITE, "Networking code & basic GDB functionality by Stary");
-//         posY = Draw_DrawString(10, posY + SPACING_Y, COLOR_WHITE, "InputRedirection by Stary (PoC by ShinyQuagsire)");
-
-//         posY += 2 * SPACING_Y;
-
-//         Draw_DrawString(10, posY, COLOR_WHITE,
-//             (
-//                 "Special thanks to:\n"
-//                 "  Bond697, WinterMute, piepie62, yifanlu\n"
-//                 "  Luma3DS contributors, ctrulib contributors,\n"
-//                 "  other people"
-//             ));
-
-//         Draw_FlushFramebuffer();
-//         Draw_Unlock();
-//     }
-//     while(!(waitInput() & BUTTON_B) && !terminationRequest);
-// }

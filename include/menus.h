@@ -32,7 +32,7 @@
 
 extern Menu gz3DMenu;
 
-void gz3DMenu_Blank(void);
+void gz3DMenu_Test(void);
 // void RosalinaMenu_TakeScreenshot(void);
 // void RosalinaMenu_ShowCredits(void);
 // void RosalinaMenu_ProcessList(void);

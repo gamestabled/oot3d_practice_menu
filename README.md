@@ -21,3 +21,68 @@ Also, be sure to use this version of Luma3DS, which has critical game patching f
 * I can't just use libctru, because it conflicts with the base game. So, I copied whatever code I needed, and used muslarm instead.
 * My previous OoT3D patches needed to fit all of their code in the leftover padding of the existing code section from unmodified OoT3D. Now, that padding is used for a a custom "loader" which repermissions data pages that the rest of the code is sitting on to be executable.
 * I'm a noob and everything is hard.
+
+# User manual
+
+
+## 0 Table of contents
+-   [0 Table of contents](#0-table-of-contents)
+-   [1 Introduction](#1-introduction)
+-   [2 Menus](#2-menus)
+    -   [2.1 Warps](#21-warps)
+    -   [2.2 Scene](#22-scene)
+    -   [2.3 Cheats](#23-cheats)
+    -   [2.4 Inventory](#24-inventory)
+    -   [2.5 Equips](#25-equips)
+    -   [2.6 File](#26-file)
+    -   [2.7 Macro](#27-macro)
+    -   [2.8 Watches](#28-watches)
+    -   [2.9 Debug](#29-debug)
+    -   [2.10 Settings](#210-settings)
+
+## 1 Introduction
+TODO
+
+## 2 Menus
+
+### 2.1 Warps
+TODO
+
+### 2.2 Scene
+TODO
+
+### 2.3 Cheats
+This menu provides a number of built in quick cheats, some of which are still TODO. These cheats include:
+-   Refill Health, Magic, Items, Keys, Rupees
+-   Infinite Nayru's Love
+-   Freeze time of day
+-   No music
+-   Enable usable items
+-   Activate ISG
+
+### 2.4 Inventory
+The **Items** menu allows you to modify your X,Y,I,II, and Ocarina button items. Toggling an item on will place it into it's proper item slot. Toggling an item off will remove the item from it's proper item slot, as well as removing that slot from the Child and Adult Items grids. For bottle and trade items slots, a sub menu will appear which allows you to toggle specific items.
+
+The **Right Side Gear** menu allows you to modify the right side of the Gear screen. This includes swords, shields, tunics, capacity upgrades, strength upgrades, and dive meter upgrades.
+
+The **Left Side Gear** menu allows you to modify the left side of the Gear screen. This includes medallions, spiritual stones, pieces of heart, the Shard of Agony, the Gerudo Token, and Golden Skull Tokens.
+
+The **Amounts** menu allows you to modify directly the amount of various items. This includes the Items menu items, Double Defense, Heart Containers, Current Health, Magic meter size, Magic amount, the number of hits left on Giant's Knife, and rupee amount.
+
+### 2.5 Equips
+TODO
+
+### 2.6 File
+TODO
+
+### 2.7 Macro
+TODO
+
+### 2.8 Watches
+TODO
+
+### 2.9 Debug
+TODO
+
+### 2.10 Settings
+TODO

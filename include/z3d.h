@@ -3,6 +3,8 @@
  * In the future, this will be heavily revamped
  */
 
+#pragma once
+
 #ifndef Z3D_H
 #define Z3D_H
 
@@ -10,28 +12,17 @@
 
 typedef void* (*memcpy_proc) (void* dst, void* src, uint32_t size);
 
-#if Z3D == MM3D
-
-// #define real_hid_addr   0x10002000
-// #define hid_ctx_addr    0x007b2d30
-// #define z3d_rupee_addr  0x00775318
-// #define memcpy_addr     0x001f28e8
-
-#elif Z3D == OOT3D
-
 #define real_hid_addr   0x10002000
 #define hid_ctx_addr    0x005AEC58
 #define z3d_rupee_addr  0x005879A0
 // #define memcpy_addr     0x00371738
 #define z3d_file_addr   0x00587958
-#define collision_addr  0x08080e82
+#define collision_addr  0x08080E82
 //positive linear velocity: 0x098f5070
-//signed linear velocity: 0x098f722c
+//signed linear velocity: 0x098f722C
 //static context: 0x08080010
 //game mode: 0x00588E3C . 1 for attract. 2 for file select. 0 for regular.
-//level geometry: 0x08080fe0. 1 for disable.
-
-#endif
+//level geometry: 0x08080fE0. 1 for disable.
 
 #define real_hid        (*(hid_mem_t *) real_hid_addr)
 #define hid_ctx         (*(hid_ctx_t *) hid_ctx_addr)
@@ -97,7 +88,7 @@ typedef struct
     uint8_t isg; //0x2227
 } actor_t;
 
-struct z3d_save_ctx
+typedef struct
 {
     uint32_t entrance_index; //0x0
     uint32_t link_age; //0x4
@@ -163,8 +154,7 @@ struct z3d_save_ctx
         uint8_t tunic_and_boots;
     }        equipment_data_current; //0x80
     uint8_t  item_slot_item[0x1a]; //0x8c
-    uint8_t  item_slot_amount[0xf]; //0xa6
-    uint8_t  magic_beans_available; //0xb5
+    uint8_t  item_slot_amount[0x10]; //0xa6
     union {
         uint8_t  equipment_data[0x6];
         struct {
@@ -293,15 +283,114 @@ struct z3d_save_ctx
     uint32_t uknf18; //0x14d8
     //more can be filled in here from
     //https://cloudmodding.com/zelda/oot3dsave
+} SaveContext; //size 0x14DC
+
+enum {
+    ITEM_DEKU_STICK = 0,
+    ITEM_DEKU_NUT,
+    ITEM_BOMB,
+    ITEM_FAIRY_BOW,
+    ITEM_FIRE_ARROW,
+    ITEM_DINS_FIRE,
+    ITEM_FAIRY_SLINGSHOT,
+    ITEM_FAIRY_OCARINA,
+    ITEM_OCARINA_OF_TIME,
+    ITEM_BOMBCHU,
+    ITEM_HOOKSHOT,
+    ITEM_LONGSHOT,
+    ITEM_ICE_ARROW,
+    ITEM_FARORES_WIND,
+    ITEM_BOOMERANG,
+    ITEM_LENS_OF_TRUTH,
+    ITEM_MAGIC_BEANS,
+    ITEM_MEGATON_HAMMER,
+    ITEM_LIGHT_ARROW,
+    ITEM_NAYRUS_LOVE,
+    ITEM_EMPTY_BOTTLE,
+    ITEM_RED_POTION,
+    ITEM_GREEN_POTION,
+    ITEM_BLUE_POTION,
+    ITEM_BOTTLE_FAIRY,
+    ITEM_FISH,
+    ITEM_LON_LON_MILK,
+    ITEM_LETTER,
+    ITEM_BLUE_FIRE,
+    ITEM_BUG,
+    ITEM_BIG_POE,
+    ITEM_LON_LON_MILK_HALF,
+    ITEM_POE, //to be continued...
+    ITEM_WEIRD_EGG,
+    ITEM_CUCCO,
+    ITEM_ZELDAS_LETTER,
+    ITEM_KEATON_MASK,
+    ITEM_SKULL_MASK,
+    ITEM_SPOOKY_MASK,
+    ITEM_BUNNY_HOOD,
+    ITEM_GORON_MASK,
+    ITEM_ZORA_MASK,
+    ITEM_GERUDO_MASK,
+    ITEM_MASK_OF_TRUTH,
+    ITEM_NO_MASK,
+    ITEM_POCKET_EGG,
+    ITEM_POCKET_CUCCO,
+    ITEM_COJIRO,
+    ITEM_ODD_MUSHROOM,
+    ITEM_ODD_POULTICE,
+    ITEM_POACHERS_SAW,
+    ITEM_GORONS_SWORD_BROKEN,
+    ITEM_PRESCRIPTION,
+    ITEM_EYE_BALL_FROG,
+    ITEM_EYE_DROPS,
+    ITEM_CLAIM_CHECK,
+    ITEM_FAIRY_BOW_PLUS_FIRE_ARROW,
+    ITEM_FAIRY_BOW_PLUS_ICE_ARROW,
+    ITEM_FAIRY_BOW_PLUS_LIGHT_ARROW,
+    ITEM_KOKIRI_SWORD,
+    ITEM_MASTER_SWORD,
+    ITEM_GIANTS_KNIFE,
+    ITEM_DEKU_SHIELD,
+    ITEM_HYLIAN_SHIELD,
+    ITEM_MIRROR_SHIELD,
+    ITEM_KOKIRI_TUNIC,
+    ITEM_GORON_TUNIC,
+    ITEM_ZORA_TUNIC,
+    ITEM_KOKIRI_BOOTS,
+    ITEM_IRON_BOOTS,
+    ITEM_HOVER_BOOTS,
+    ITEM_EMPTY = 0xFF,
 };
+
+enum {
+    DUNGEON_DEKU_TREE = 0,
+    DUNGEON_DODONGOS_CAVERN,
+    DUNGEON_JABUJABUS_BELLY,
+    DUNGEON_FOREST_TEMPLE,
+    DUNGEON_FIRE_TEMPLE,
+    DUNGEON_WATER_TEMPLE,
+    DUNGEON_SPIRIT_TEMPLE,
+    DUNGEON_SHADOW_TEMPLE,
+    DUNGEON_BOTTOM_OF_THE_WELL,
+    DUNGEON_ICE_CAVERN,
+    DUNGEON_GANONS_CASTLE_SECOND_PART,
+    DUNGEON_GERUDO_TRAINING_GROUNDS,
+    DUNGEON_GERUDO_FORTRESS,
+    DUNGEON_GANONS_CASTLE_FIRST_PART,
+    DUNGEON_GANONS_CASTLE_FLOOR_BENEATH_BOSS_CHAMBER,
+    DUNGEON_GANONS_CASTLE_CRUMBLING,
+    DUNGEON_TREASURE_CHEST_SHOP,
+    DUNGEON_DEKU_TREE_BOSS_ROOM,
+    DUNGEON_DODONGOS_CAVERN_BOSS_ROOM,
+    DUNGEON_JABUJABUS_BELLY_BOSS_ROOM,
+};
+
+extern const uint32_t ItemSlots[];
 
 #define actor_heap_begin_addr_maybe 0x005a2E3C
 #define link_addr ((*((void**)actor_heap_begin_addr_maybe)) + sizeof(heap_node_t)) //should always be 0x908f5010 but that is more slightly more proper
 //#define link_addr 0x098f5010
-//#define z3d_file_addr 0x00587958
 //#define inventory_grid_addr 0x00588ce2
 
-#define link (*((actor_t *)link_addr))
-#define z3d_file (*(struct z3d_save_ctx*) z3d_file_addr)
+#define PLAYER ((actor_t *)link_addr)
+#define gSaveContext (*(SaveContext*) z3d_file_addr)
 
 #endif //Z3D_H

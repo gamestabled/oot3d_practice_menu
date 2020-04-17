@@ -4,7 +4,6 @@
 
 #include "menu.h"
 #include "MyThread.h"
-// #include "task_runner.h"
 #include "advance.h"
 
 advance_input_t inputs = {};
@@ -21,12 +20,8 @@ void advance_main() {
     scan_inputs();
 
     if(inputs.cur.l && inputs.cur.r && inputs.cur.sel) {
-        /* menu stuff goes here i guess */
-        // probably looks like making the menu threads and joining them
         MyThread* menuThread = menuCreateThread();
-        // MyThread* taskThread = taskRunnerCreateThread();
         MyThread_Join(menuThread, -1LL);
-        // MyThread_Join(taskThread, -1LL);
     }
 
 }

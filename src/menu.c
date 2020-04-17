@@ -30,8 +30,7 @@
 #include "draw.h"
 #include "menus.h"
 #include "utils.h"
-// #include "menus/n3ds.h"
-// #include "menus/cheats.h"
+#include <stdio.h>
 
 u32 waitInputWithTimeout(u32 msec)
 {
@@ -195,4 +194,187 @@ void menuShow(Menu *root)
         Draw_Unlock();
     }
     while(true);
+}
+
+void ToggleMenuShow(ToggleMenu *menu) //displays a toggle menu, analogous to rosalina cheats page
+{
+    s32 selected = 0, page = 0, pagePrev = 0;
+
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_Unlock();
+
+    do
+    {
+        Draw_Lock();
+        if (page != pagePrev)
+        {
+            Draw_ClearFramebuffer();
+        }
+        Draw_DrawFormattedString(10, 10, COLOR_TITLE, menu->title);
+
+        for (s32 i = 0; i < TOGGLE_MENU_MAX_SHOW && page * TOGGLE_MENU_MAX_SHOW + i < menu->nbItems; ++i)
+        {
+            char buf[65] = { 0 };
+            s32 j = page * TOGGLE_MENU_MAX_SHOW + i;
+            const char* checkbox = (menu->items[j].on ? "(x) " : "( ) ");
+            sprintf(buf, "%s%s", checkbox, menu->items[j].title);
+
+            Draw_DrawString(30, 30 + i * SPACING_Y, COLOR_WHITE, buf);
+            Draw_DrawCharacter(10, 30 + i * SPACING_Y, COLOR_TITLE, j == selected ? '>' : ' ');
+        }
+
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
+
+        u32 pressed = waitInputWithTimeout(1000);
+        if(pressed & BUTTON_B)
+            break;
+        if(pressed & BUTTON_A)
+        {
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
+
+            if(menu->items[selected].method != NULL) {
+                menu->items[selected].method(selected); //the method will handle swapping on/off
+            }
+
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
+        }
+        else if(pressed & BUTTON_DOWN)
+        {
+            selected++;
+        }
+        else if(pressed & BUTTON_UP)
+        {
+            selected--;
+        }
+        else if(pressed & BUTTON_LEFT){
+            selected -= TOGGLE_MENU_MAX_SHOW;
+        }
+        else if(pressed & BUTTON_RIGHT){
+            if(selected + TOGGLE_MENU_MAX_SHOW < menu->nbItems)
+                selected += TOGGLE_MENU_MAX_SHOW;
+            else if((menu->nbItems - 1) / TOGGLE_MENU_MAX_SHOW == page)
+                selected %= TOGGLE_MENU_MAX_SHOW;
+            else selected = menu->nbItems - 1;
+        }
+
+        if(selected < 0)
+            selected = menu->nbItems - 1;
+        else if(selected >= menu->nbItems) selected = 0;
+
+        pagePrev = page;
+        page = selected / TOGGLE_MENU_MAX_SHOW;
+    } while(true);
+}
+
+void AmountMenuShow(AmountMenu* menu){ //displays an amount menu
+    s32 selected = 0, page = 0, pagePrev = 0;
+    u32 curColor = COLOR_GREEN;
+    u32 chosen = 0;
+
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_Unlock();
+
+    do
+    {
+        Draw_Lock();
+        if (page != pagePrev)
+        {
+            Draw_ClearFramebuffer();
+        }
+        Draw_DrawFormattedString(10, 10, COLOR_TITLE, menu->title);
+
+        for (s32 i = 0; i < AMOUNT_MENU_MAX_SHOW && page * AMOUNT_MENU_MAX_SHOW + i < menu->nbItems; ++i)
+        {
+            char buf[65] = { 0 };
+            s32 j = page * AMOUNT_MENU_MAX_SHOW + i;
+            if (menu->items[j].hex)
+            {
+                sprintf(buf, "0x%03x", menu->items[j].amount);
+            }
+            else 
+            {
+                sprintf(buf, "  %03d", menu->items[j].amount);
+            }
+            Draw_DrawString(70, 30 + i * SPACING_Y, COLOR_WHITE, menu->items[j].title);
+            Draw_DrawString(10, 30 + i * SPACING_Y, j == selected ? curColor : COLOR_TITLE, buf);
+        }
+
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
+
+        u32 pressed = waitInputWithTimeout(1000);
+        if(pressed & BUTTON_B && !chosen)
+            break;
+        else if(pressed & BUTTON_B && chosen)
+        {
+            curColor = COLOR_GREEN;
+            chosen = 0;
+        }
+        else if(pressed & BUTTON_A && !chosen)
+        {
+            curColor = COLOR_RED;
+            chosen = 1;
+        }
+        else if(pressed & BUTTON_A && chosen)
+        {
+            if(menu->items[selected].method != NULL) {
+                menu->items[selected].method(selected); //the method will handle changing amount
+            }
+            curColor = COLOR_GREEN;
+            chosen = 0;
+        }
+        else if(pressed & BUTTON_DOWN && !chosen)
+        {
+            selected++;
+        }
+        else if(pressed & BUTTON_DOWN && chosen)
+        {
+            menu->items[selected].amount--;
+        }
+        else if(pressed & BUTTON_UP && !chosen)
+        {
+            selected--;
+        }
+        else if(pressed & BUTTON_UP && chosen)
+        {
+            menu->items[selected].amount++;
+        }
+        else if(pressed & BUTTON_LEFT && !chosen)
+        {
+            selected -= AMOUNT_MENU_MAX_SHOW;
+        }
+        else if(pressed & BUTTON_LEFT && chosen)
+        {
+            menu->items[selected].amount -= (menu->items[selected].hex ? 16 : 10);
+        }
+        else if(pressed & BUTTON_RIGHT && !chosen)
+        {
+            if(selected + AMOUNT_MENU_MAX_SHOW < menu->nbItems)
+                selected += AMOUNT_MENU_MAX_SHOW;
+            else if((menu->nbItems - 1) / AMOUNT_MENU_MAX_SHOW == page)
+                selected %= AMOUNT_MENU_MAX_SHOW;
+            else selected = menu->nbItems - 1;
+        }
+        else if(pressed & BUTTON_RIGHT && chosen)
+        {
+            menu->items[selected].amount += (menu->items[selected].hex ? 16 : 10);
+        }
+        if(selected < 0)
+            selected = menu->nbItems - 1;
+        else if(selected >= menu->nbItems) selected = 0;
+
+        pagePrev = page;
+        page = selected / AMOUNT_MENU_MAX_SHOW;
+    } while(true);
 }

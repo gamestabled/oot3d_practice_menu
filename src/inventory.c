@@ -1,8 +1,7 @@
 #include "menu.h"
 #include "menus/inventory.h"
 #include "draw.h"
-#include "z3d.h"
-#include "z3Dequipment.h"
+#include "z3D/z3D.h"
 #include <stdio.h>
 
 Menu InventoryMenu = {
@@ -187,34 +186,34 @@ AmountMenu InventoryAmountsMenu = {
 };
 
 void Inventory_ItemsMenuInit(void){
-    InventoryItemsMenu.items[ITEM_DEKU_STICK].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_DEKU_STICK]] == ITEM_DEKU_STICK);
-    InventoryItemsMenu.items[ITEM_DEKU_NUT].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_DEKU_NUT]] == ITEM_DEKU_NUT);
-    InventoryItemsMenu.items[ITEM_BOMB].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_BOMB]] == ITEM_BOMB);
-    InventoryItemsMenu.items[ITEM_FAIRY_BOW].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_FAIRY_BOW]] == ITEM_FAIRY_BOW);
-    InventoryItemsMenu.items[ITEM_FIRE_ARROW].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_FIRE_ARROW]] == ITEM_FIRE_ARROW); //TODO
-    InventoryItemsMenu.items[ITEM_DINS_FIRE].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_DINS_FIRE]] == ITEM_DINS_FIRE);
-    InventoryItemsMenu.items[ITEM_FAIRY_SLINGSHOT].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_FAIRY_SLINGSHOT]] == ITEM_FAIRY_SLINGSHOT);
-    InventoryItemsMenu.items[ITEM_FAIRY_OCARINA].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_FAIRY_OCARINA]] == ITEM_FAIRY_OCARINA);
-    InventoryItemsMenu.items[ITEM_OCARINA_OF_TIME].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_OCARINA_OF_TIME]] == ITEM_OCARINA_OF_TIME);
-    InventoryItemsMenu.items[ITEM_BOMBCHU].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_BOMBCHU]] == ITEM_BOMBCHU);
-    InventoryItemsMenu.items[ITEM_HOOKSHOT].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_HOOKSHOT]] == ITEM_HOOKSHOT);
-    InventoryItemsMenu.items[ITEM_LONGSHOT].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_LONGSHOT]] == ITEM_LONGSHOT);
-    InventoryItemsMenu.items[ITEM_ICE_ARROW].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_ICE_ARROW]] == ITEM_ICE_ARROW); //TODO
-    InventoryItemsMenu.items[ITEM_FARORES_WIND].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_FARORES_WIND]] == ITEM_FARORES_WIND);
-    InventoryItemsMenu.items[ITEM_BOOMERANG].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_BOOMERANG]] == ITEM_BOOMERANG);
-    InventoryItemsMenu.items[ITEM_LENS_OF_TRUTH].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_LENS_OF_TRUTH]] == ITEM_LENS_OF_TRUTH);
-    InventoryItemsMenu.items[ITEM_MAGIC_BEANS].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_MAGIC_BEANS]] == ITEM_MAGIC_BEANS);
-    InventoryItemsMenu.items[ITEM_MEGATON_HAMMER].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_MEGATON_HAMMER]] == ITEM_MEGATON_HAMMER);
-    InventoryItemsMenu.items[ITEM_LIGHT_ARROW].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_LIGHT_ARROW]] == ITEM_LIGHT_ARROW); //TODO
-    InventoryItemsMenu.items[ITEM_NAYRUS_LOVE].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_NAYRUS_LOVE]] == ITEM_NAYRUS_LOVE);
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE]] != ITEM_EMPTY);
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 1].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE] + 1] != ITEM_EMPTY);
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 2].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE] + 2] != ITEM_EMPTY);
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 3].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE] + 3] != ITEM_EMPTY);
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 4].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE] + 4] != ITEM_EMPTY); //TODO
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 5].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE] + 5] != ITEM_EMPTY); //TODO
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 6].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE] + 6] == ITEM_IRON_BOOTS); //TODO
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 7].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE] + 7] != ITEM_HOVER_BOOTS); //TODO
+    InventoryItemsMenu.items[ITEM_DEKU_STICK].on = (gSaveContext.items[ItemSlots[ITEM_DEKU_STICK]] == ITEM_DEKU_STICK);
+    InventoryItemsMenu.items[ITEM_DEKU_NUT].on = (gSaveContext.items[ItemSlots[ITEM_DEKU_NUT]] == ITEM_DEKU_NUT);
+    InventoryItemsMenu.items[ITEM_BOMB].on = (gSaveContext.items[ItemSlots[ITEM_BOMB]] == ITEM_BOMB);
+    InventoryItemsMenu.items[ITEM_FAIRY_BOW].on = (gSaveContext.items[ItemSlots[ITEM_FAIRY_BOW]] == ITEM_FAIRY_BOW);
+    InventoryItemsMenu.items[ITEM_FIRE_ARROW].on = (gSaveContext.items[ItemSlots[ITEM_FIRE_ARROW]] == ITEM_FIRE_ARROW);
+    InventoryItemsMenu.items[ITEM_DINS_FIRE].on = (gSaveContext.items[ItemSlots[ITEM_DINS_FIRE]] == ITEM_DINS_FIRE);
+    InventoryItemsMenu.items[ITEM_FAIRY_SLINGSHOT].on = (gSaveContext.items[ItemSlots[ITEM_FAIRY_SLINGSHOT]] == ITEM_FAIRY_SLINGSHOT);
+    InventoryItemsMenu.items[ITEM_FAIRY_OCARINA].on = (gSaveContext.items[ItemSlots[ITEM_FAIRY_OCARINA]] == ITEM_FAIRY_OCARINA);
+    InventoryItemsMenu.items[ITEM_OCARINA_OF_TIME].on = (gSaveContext.items[ItemSlots[ITEM_OCARINA_OF_TIME]] == ITEM_OCARINA_OF_TIME);
+    InventoryItemsMenu.items[ITEM_BOMBCHU].on = (gSaveContext.items[ItemSlots[ITEM_BOMBCHU]] == ITEM_BOMBCHU);
+    InventoryItemsMenu.items[ITEM_HOOKSHOT].on = (gSaveContext.items[ItemSlots[ITEM_HOOKSHOT]] == ITEM_HOOKSHOT);
+    InventoryItemsMenu.items[ITEM_LONGSHOT].on = (gSaveContext.items[ItemSlots[ITEM_LONGSHOT]] == ITEM_LONGSHOT);
+    InventoryItemsMenu.items[ITEM_ICE_ARROW].on = (gSaveContext.items[ItemSlots[ITEM_ICE_ARROW]] == ITEM_ICE_ARROW);
+    InventoryItemsMenu.items[ITEM_FARORES_WIND].on = (gSaveContext.items[ItemSlots[ITEM_FARORES_WIND]] == ITEM_FARORES_WIND);
+    InventoryItemsMenu.items[ITEM_BOOMERANG].on = (gSaveContext.items[ItemSlots[ITEM_BOOMERANG]] == ITEM_BOOMERANG);
+    InventoryItemsMenu.items[ITEM_LENS_OF_TRUTH].on = (gSaveContext.items[ItemSlots[ITEM_LENS_OF_TRUTH]] == ITEM_LENS_OF_TRUTH);
+    InventoryItemsMenu.items[ITEM_MAGIC_BEANS].on = (gSaveContext.items[ItemSlots[ITEM_MAGIC_BEANS]] == ITEM_MAGIC_BEANS);
+    InventoryItemsMenu.items[ITEM_MEGATON_HAMMER].on = (gSaveContext.items[ItemSlots[ITEM_MEGATON_HAMMER]] == ITEM_MEGATON_HAMMER);
+    InventoryItemsMenu.items[ITEM_LIGHT_ARROW].on = (gSaveContext.items[ItemSlots[ITEM_LIGHT_ARROW]] == ITEM_LIGHT_ARROW);
+    InventoryItemsMenu.items[ITEM_NAYRUS_LOVE].on = (gSaveContext.items[ItemSlots[ITEM_NAYRUS_LOVE]] == ITEM_NAYRUS_LOVE);
+    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE]] != ITEM_EMPTY);
+    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 1].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + 1] != ITEM_EMPTY);
+    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 2].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + 2] != ITEM_EMPTY);
+    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 3].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + 3] != ITEM_EMPTY);
+    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 4].on = (gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] != ITEM_EMPTY); //TODO: index on left
+    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 5].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] != ITEM_EMPTY); //TODO: index on left
+    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 6].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG] + 1] == ITEM_IRON_BOOTS); //TODO
+    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 7].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG] + 2] != ITEM_HOVER_BOOTS); //TODO
 }
 
 void Inventory_ItemsMenuFunc(void){
@@ -224,43 +223,41 @@ void Inventory_ItemsMenuFunc(void){
 
 void Inventory_ItemsToggle(s32 selected){
     switch(selected) {
-        case(ITEM_FAIRY_BOW): //TODO
-        case(ITEM_FIRE_ARROW): //TODO
         case(ITEM_FAIRY_OCARINA):
-            if (gSaveContext.item_slot_item[ItemSlots[ITEM_FAIRY_OCARINA]] != ITEM_FAIRY_OCARINA){
-                gSaveContext.item_slot_item[ItemSlots[ITEM_FAIRY_OCARINA]] = ITEM_FAIRY_OCARINA;
+            if (gSaveContext.items[ItemSlots[ITEM_FAIRY_OCARINA]] != ITEM_FAIRY_OCARINA){
+                gSaveContext.items[ItemSlots[ITEM_FAIRY_OCARINA]] = ITEM_FAIRY_OCARINA;
                 InventoryItemsMenu.items[ITEM_FAIRY_OCARINA].on = 1;
                 InventoryItemsMenu.items[ITEM_OCARINA_OF_TIME].on = 0; //turn off Ocarina of Time in menu
             }
             else {
-                gSaveContext.item_slot_item[ItemSlots[ITEM_FAIRY_OCARINA]] = ITEM_EMPTY;
+                gSaveContext.items[ItemSlots[ITEM_FAIRY_OCARINA]] = ITEM_EMPTY;
                 InventoryItemsMenu.items[ITEM_FAIRY_OCARINA].on = 0;
                 InventoryItemsMenu.items[ITEM_OCARINA_OF_TIME].on = 0;
             }
             break;
         case(ITEM_OCARINA_OF_TIME):
-            if (gSaveContext.item_slot_item[ItemSlots[ITEM_OCARINA_OF_TIME]] != ITEM_OCARINA_OF_TIME){
-                gSaveContext.item_slot_item[ItemSlots[ITEM_OCARINA_OF_TIME]] = ITEM_OCARINA_OF_TIME;
+            if (gSaveContext.items[ItemSlots[ITEM_OCARINA_OF_TIME]] != ITEM_OCARINA_OF_TIME){
+                gSaveContext.items[ItemSlots[ITEM_OCARINA_OF_TIME]] = ITEM_OCARINA_OF_TIME;
                 InventoryItemsMenu.items[ITEM_FAIRY_OCARINA].on = 0; //turn off Fairy Ocarina in menu
                 InventoryItemsMenu.items[ITEM_OCARINA_OF_TIME].on = 1; 
             }
             else {
-                gSaveContext.item_slot_item[ItemSlots[ITEM_OCARINA_OF_TIME]] = ITEM_EMPTY;
+                gSaveContext.items[ItemSlots[ITEM_OCARINA_OF_TIME]] = ITEM_EMPTY;
                 InventoryItemsMenu.items[ITEM_FAIRY_OCARINA].on = 0;
                 InventoryItemsMenu.items[ITEM_OCARINA_OF_TIME].on = 0;
             }
             break;
         case(ITEM_HOOKSHOT):
-            if (gSaveContext.item_slot_item[ItemSlots[ITEM_HOOKSHOT]] != ITEM_HOOKSHOT){
-                gSaveContext.item_slot_item[ItemSlots[ITEM_HOOKSHOT]] = ITEM_HOOKSHOT;
+            if (gSaveContext.items[ItemSlots[ITEM_HOOKSHOT]] != ITEM_HOOKSHOT){
+                gSaveContext.items[ItemSlots[ITEM_HOOKSHOT]] = ITEM_HOOKSHOT;
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 1;
                 InventoryItemsMenu.items[ITEM_LONGSHOT].on = 0; //turn off Longshot in menu 
             }
             else {
-                gSaveContext.item_slot_item[ItemSlots[ITEM_HOOKSHOT]] = ITEM_EMPTY;
+                gSaveContext.items[ItemSlots[ITEM_HOOKSHOT]] = ITEM_EMPTY;
                 for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
-                    if (gSaveContext.inventory_grid_data_child[i] == ItemSlots[ITEM_HOOKSHOT]){
-                        gSaveContext.inventory_grid_data_child[i] = 0xFF;
+                    if (gSaveContext.itemMenuChild[i] == ItemSlots[ITEM_HOOKSHOT]){
+                        gSaveContext.itemMenuChild[i] = 0xFF;
                     }
                 }
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 0;
@@ -268,34 +265,32 @@ void Inventory_ItemsToggle(s32 selected){
             }
             break;
         case(ITEM_LONGSHOT):
-            if (gSaveContext.item_slot_item[ItemSlots[ITEM_LONGSHOT]] != ITEM_LONGSHOT){
-                gSaveContext.item_slot_item[ItemSlots[ITEM_LONGSHOT]] = ITEM_LONGSHOT;
+            if (gSaveContext.items[ItemSlots[ITEM_LONGSHOT]] != ITEM_LONGSHOT){
+                gSaveContext.items[ItemSlots[ITEM_LONGSHOT]] = ITEM_LONGSHOT;
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 0; //turn off Hookshot in menu
                 InventoryItemsMenu.items[ITEM_LONGSHOT].on = 1;  
             }
             else {
-                gSaveContext.item_slot_item[ItemSlots[ITEM_LONGSHOT]] = ITEM_EMPTY;
+                gSaveContext.items[ItemSlots[ITEM_LONGSHOT]] = ITEM_EMPTY;
                 for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
-                    if (gSaveContext.inventory_grid_data_child[i] == ItemSlots[ITEM_LONGSHOT]){
-                        gSaveContext.inventory_grid_data_child[i] = 0xFF;
+                    if (gSaveContext.itemMenuChild[i] == ItemSlots[ITEM_LONGSHOT]){
+                        gSaveContext.itemMenuChild[i] = 0xFF;
                     }
                 }
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 0;
                 InventoryItemsMenu.items[ITEM_LONGSHOT].on = 0;
             }
             break;
-        case(ITEM_ICE_ARROW): //TODO
-        case(ITEM_LIGHT_ARROW): //TODO
         default:
-            if (gSaveContext.item_slot_item[ItemSlots[selected]] != selected){
-                gSaveContext.item_slot_item[ItemSlots[selected]] = selected;
+            if (gSaveContext.items[ItemSlots[selected]] != selected){
+                gSaveContext.items[ItemSlots[selected]] = selected;
                 InventoryItemsMenu.items[selected].on = 1;
             }
             else {
-                gSaveContext.item_slot_item[ItemSlots[selected]] = ITEM_EMPTY;
+                gSaveContext.items[ItemSlots[selected]] = ITEM_EMPTY;
                 for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
-                    if (gSaveContext.inventory_grid_data_child[i] == ItemSlots[selected]){
-                        gSaveContext.inventory_grid_data_child[i] = 0xFF;
+                    if (gSaveContext.itemMenuChild[i] == ItemSlots[selected]){
+                        gSaveContext.itemMenuChild[i] = 0xFF;
                     }
                 }
                 InventoryItemsMenu.items[selected].on = 0;
@@ -306,9 +301,9 @@ void Inventory_ItemsToggle(s32 selected){
 
 void Inventory_BottlesMenuInit(void){
     for (u32 i = 0; i < ITEM_WEIRD_EGG - ITEM_EMPTY_BOTTLE; ++i){
-        InventoryBottlesMenu.items[i].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] == ITEM_EMPTY_BOTTLE + i);
+        InventoryBottlesMenu.items[i].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] == ITEM_EMPTY_BOTTLE + i);
     }
-    InventoryBottlesMenu.items[ITEM_WEIRD_EGG - ITEM_EMPTY_BOTTLE].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] == ITEM_EMPTY);
+    InventoryBottlesMenu.items[ITEM_WEIRD_EGG - ITEM_EMPTY_BOTTLE].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] == ITEM_EMPTY);
 }
 
 void Inventory_BottlesMenuFunc(s32 selected){
@@ -319,17 +314,17 @@ void Inventory_BottlesMenuFunc(s32 selected){
 
 void Inventory_BottleSelect(s32 selected){
     if (selected < ITEM_WEIRD_EGG - ITEM_EMPTY_BOTTLE){ //selected a bottled content
-        gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] = ITEM_EMPTY_BOTTLE + selected;
+        gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] = ITEM_EMPTY_BOTTLE + selected;
         for(u32 i = 0; i < InventoryBottlesMenu.nbItems; ++i){ //set menu toggles on/off
             InventoryBottlesMenu.items[i].on = (i == selected ? 1 : 0);
         }
         InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + SelectedBottle].on = 1;
     }
     else { //erase the bottle
-        gSaveContext.item_slot_item[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] = ITEM_EMPTY;
+        gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] = ITEM_EMPTY;
         for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
-            if (gSaveContext.inventory_grid_data_child[i] == ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle){
-                gSaveContext.inventory_grid_data_child[i] = 0xFF;
+            if (gSaveContext.itemMenuChild[i] == ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle){
+                gSaveContext.itemMenuChild[i] = 0xFF;
             }
         }
         for(u32 i = 0; i < InventoryBottlesMenu.nbItems; ++i){ //set menu toggles off
@@ -341,9 +336,9 @@ void Inventory_BottleSelect(s32 selected){
 
 void Inventory_ChildTradeMenuInit(void){
     for (u32 i = 0; i < ITEM_POCKET_EGG - ITEM_WEIRD_EGG; ++i){
-        InventoryChildTradeMenu.items[i].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_WEIRD_EGG]] == ITEM_WEIRD_EGG + i);
+        InventoryChildTradeMenu.items[i].on = (gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] == ITEM_WEIRD_EGG + i);
     }
-    InventoryChildTradeMenu.items[ITEM_POCKET_EGG - ITEM_WEIRD_EGG].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_WEIRD_EGG]] == ITEM_EMPTY);
+    InventoryChildTradeMenu.items[ITEM_POCKET_EGG - ITEM_WEIRD_EGG].on = (gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] == ITEM_EMPTY);
 }
 
 void Inventory_ChildTradeMenuFunc(s32 selected){
@@ -353,21 +348,21 @@ void Inventory_ChildTradeMenuFunc(s32 selected){
 
 void Inventory_ChildTradeSelect(s32 selected){ //TODO: remove hardcoded indexes
     if (selected < ITEM_POCKET_EGG - ITEM_WEIRD_EGG){ //selected a child trade item
-        gSaveContext.item_slot_item[ItemSlots[ITEM_WEIRD_EGG]] = ITEM_WEIRD_EGG + selected;
-        for(u32 i = 0; i < InventoryBottlesMenu.nbItems; ++i){ //set menu toggles on/off
-            InventoryBottlesMenu.items[i].on = (i == selected ? 1 : 0);
+        gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] = ITEM_WEIRD_EGG + selected;
+        for(u32 i = 0; i < InventoryChildTradeMenu.nbItems; ++i){ //set menu toggles on/off
+            InventoryChildTradeMenu.items[i].on = (i == selected ? 1 : 0);
         }
         InventoryItemsMenu.items[24].on = 1;
     }
     else { //erase the child trade item
-        gSaveContext.item_slot_item[ItemSlots[ITEM_WEIRD_EGG]] = ITEM_EMPTY;
+        gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] = ITEM_EMPTY;
         for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
-            if (gSaveContext.inventory_grid_data_child[i] == ItemSlots[ITEM_WEIRD_EGG]){
-                gSaveContext.inventory_grid_data_child[i] = 0xFF;
+            if (gSaveContext.itemMenuChild[i] == ItemSlots[ITEM_WEIRD_EGG]){
+                gSaveContext.itemMenuChild[i] = 0xFF;
             }
         }
-        for(u32 i = 0; i < InventoryBottlesMenu.nbItems; ++i){ //set menu toggles off
-            InventoryBottlesMenu.items[i].on = 0;
+        for(u32 i = 0; i < InventoryChildTradeMenu.nbItems; ++i){ //set menu toggles off
+            InventoryChildTradeMenu.items[i].on = 0;
         }
         InventoryItemsMenu.items[24].on = 0;
     }
@@ -375,9 +370,9 @@ void Inventory_ChildTradeSelect(s32 selected){ //TODO: remove hardcoded indexes
 
 void Inventory_AdultTradeMenuInit(void){
     for (u32 i = 0; i < ITEM_FAIRY_BOW_PLUS_FIRE_ARROW - ITEM_POCKET_EGG; ++i){
-        InventoryAdultTradeMenu.items[i].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_POCKET_EGG]] == ITEM_POCKET_EGG + i);
+        InventoryAdultTradeMenu.items[i].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] == ITEM_POCKET_EGG + i);
     }
-    InventoryAdultTradeMenu.items[ITEM_FAIRY_BOW_PLUS_FIRE_ARROW - ITEM_POCKET_EGG].on = (gSaveContext.item_slot_item[ItemSlots[ITEM_POCKET_EGG]] == ITEM_EMPTY);    
+    InventoryAdultTradeMenu.items[ITEM_FAIRY_BOW_PLUS_FIRE_ARROW - ITEM_POCKET_EGG].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] == ITEM_EMPTY);    
 }
 
 void Inventory_AdultTradeMenuFunc(s32 selected){
@@ -387,21 +382,21 @@ void Inventory_AdultTradeMenuFunc(s32 selected){
 
 void Inventory_AdultTradeSelect(s32 selected){ //TODO: remove hardcoded indexes
     if (selected < ITEM_FAIRY_BOW_PLUS_FIRE_ARROW - ITEM_POCKET_EGG){ //selected an adult trade item
-        gSaveContext.item_slot_item[ItemSlots[ITEM_POCKET_EGG]] = ITEM_POCKET_EGG + selected;
-        for(u32 i = 0; i < InventoryBottlesMenu.nbItems; ++i){ //set menu toggles on/off
-            InventoryBottlesMenu.items[i].on = (i == selected ? 1 : 0);
+        gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] = ITEM_POCKET_EGG + selected;
+        for(u32 i = 0; i < InventoryAdultTradeMenu.nbItems; ++i){ //set menu toggles on/off
+            InventoryAdultTradeMenu.items[i].on = (i == selected ? 1 : 0);
         }
         InventoryItemsMenu.items[25].on = 1;
     }
     else { //erase the adult trade item
-        gSaveContext.item_slot_item[ItemSlots[ITEM_POCKET_EGG]] = ITEM_EMPTY;
+        gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] = ITEM_EMPTY;
         for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
-            if (gSaveContext.inventory_grid_data_child[i] == ItemSlots[ITEM_POCKET_EGG]){
-                gSaveContext.inventory_grid_data_child[i] = 0xFF;
+            if (gSaveContext.itemMenuChild[i] == ItemSlots[ITEM_POCKET_EGG]){
+                gSaveContext.itemMenuChild[i] = 0xFF;
             }
         }
-        for(u32 i = 0; i < InventoryBottlesMenu.nbItems; ++i){ //set menu toggles off
-            InventoryBottlesMenu.items[i].on = 0;
+        for(u32 i = 0; i < InventoryAdultTradeMenu.nbItems; ++i){ //set menu toggles off
+            InventoryAdultTradeMenu.items[i].on = 0;
         }
         InventoryItemsMenu.items[25].on = 0;
     }
@@ -411,34 +406,34 @@ void Inventory_BootsToggle(s32 selected){ //TODO: remove hardcoded values
     //put boots in their slots
     //set boots bits in gear
     if (selected == 26){ //Iron boots
-        if (gSaveContext.item_slot_item[24] != ITEM_IRON_BOOTS){
-            gSaveContext.item_slot_item[24] = ITEM_IRON_BOOTS;
-            gSaveContext.iron_boots = 1;
+        if (gSaveContext.items[24] != ITEM_IRON_BOOTS){
+            gSaveContext.items[24] = ITEM_IRON_BOOTS;
+            gSaveContext.equipment |= (1 << 13);
             InventoryItemsMenu.items[selected].on = 1;
         }
         else {
-            gSaveContext.item_slot_item[24] = ITEM_EMPTY;
-            gSaveContext.iron_boots = 0;
+            gSaveContext.items[24] = ITEM_EMPTY;
+            gSaveContext.equipment &= ~(1 << 13);
             for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
-                if (gSaveContext.inventory_grid_data_child[i] == 24){
-                    gSaveContext.inventory_grid_data_child[i] = 0xFF;
+                if (gSaveContext.itemMenuChild[i] == 24){
+                    gSaveContext.itemMenuChild[i] = 0xFF;
                 }
             }
             InventoryItemsMenu.items[selected].on = 0;
         }
     }
     else { //Hover boots
-        if (gSaveContext.item_slot_item[25] != ITEM_HOVER_BOOTS){
-            gSaveContext.item_slot_item[25] = ITEM_HOVER_BOOTS;
-            gSaveContext.hover_boots = 1;
+        if (gSaveContext.items[25] != ITEM_HOVER_BOOTS){
+            gSaveContext.items[25] = ITEM_HOVER_BOOTS;
+            gSaveContext.equipment |= (1 << 14);
             InventoryItemsMenu.items[selected].on = 1;
         }
         else {
-            gSaveContext.item_slot_item[25] = ITEM_EMPTY;
-            gSaveContext.hover_boots = 0;
+            gSaveContext.items[25] = ITEM_EMPTY;
+            gSaveContext.equipment &= ~(1 << 14);
             for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
-                if (gSaveContext.inventory_grid_data_child[i] == 25){
-                    gSaveContext.inventory_grid_data_child[i] = 0xFF;
+                if (gSaveContext.itemMenuChild[i] == 25){
+                    gSaveContext.itemMenuChild[i] = 0xFF;
                 }
             }
             InventoryItemsMenu.items[selected].on = 0;
@@ -447,34 +442,34 @@ void Inventory_BootsToggle(s32 selected){ //TODO: remove hardcoded values
 }
 
 void Inventory_RightGearMenu_Init(void){
-    InventoryRightGearMenu.items[Gear_Menu_Kokiri_Sword].on = gSaveContext.kokiri_sword;
-    InventoryRightGearMenu.items[Gear_Menu_Master_Sword].on = gSaveContext.master_sword;
-    InventoryRightGearMenu.items[Gear_Menu_Giants_Knife].on = gSaveContext.giants_knife; //TODO
-    InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = gSaveContext.giants_knife; //TODO
-    InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = gSaveContext.giants_knife; //TODO
-    InventoryRightGearMenu.items[Gear_Menu_Deku_Shield].on = gSaveContext.deku_shield;
-    InventoryRightGearMenu.items[Gear_Menu_Hylian_Shield].on = gSaveContext.hylian_shield;
-    InventoryRightGearMenu.items[Gear_Menu_Mirror_Shield].on = gSaveContext.mirror_shield;
-    InventoryRightGearMenu.items[Gear_Menu_Kokiri_Tunic].on = gSaveContext.kokiri_tunic;
-    InventoryRightGearMenu.items[Gear_Menu_Goron_Tunic].on = gSaveContext.goron_tunic;
-    InventoryRightGearMenu.items[Gear_Menu_Zora_Tunic].on = gSaveContext.zora_tunic;
-    InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_30].on = (gSaveContext.bullet_bag == BULLET_BAG_30);
-    InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_40].on = (gSaveContext.bullet_bag == BULLET_BAG_40);
-    InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_50].on = (gSaveContext.bullet_bag == BULLET_BAG_50);
-    InventoryRightGearMenu.items[Gear_Menu_Quiver_30].on = (gSaveContext.quiver == QUIVER_30);
-    InventoryRightGearMenu.items[Gear_Menu_Quiver_40].on = (gSaveContext.quiver == QUIVER_40);
-    InventoryRightGearMenu.items[Gear_Menu_Quiver_50].on = (gSaveContext.quiver == QUIVER_50);
-    InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_20].on = (gSaveContext.bomb_bag == BOMB_BAG_20);
-    InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_30].on = (gSaveContext.bomb_bag == BOMB_BAG_30);
-    InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_40].on = (gSaveContext.bomb_bag == BOMB_BAG_40);
-    InventoryRightGearMenu.items[Gear_Menu_Gorons_Bracelet].on = (gSaveContext.strength_upgrade == GORON_BRACELET);
-    InventoryRightGearMenu.items[Gear_Menu_Silver_Gauntlets].on = (gSaveContext.strength_upgrade == SILVER_GAUNTLETS);
-    InventoryRightGearMenu.items[Gear_Menu_Golden_Gauntlets].on = (gSaveContext.strength_upgrade == GOLDEN_GAUNTLETS);
-    InventoryRightGearMenu.items[Gear_Menu_Silver_Scale].on = (gSaveContext.dive_meter == SILVER_SCALE);
-    InventoryRightGearMenu.items[Gear_Menu_Golden_Scale].on = (gSaveContext.dive_meter == GOLDEN_SCALE);
-    InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = (gSaveContext.wallet_upgrade == ADULTS_WALLET);
-    InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = (gSaveContext.wallet_upgrade == GIANTS_WALLET);
-    InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = (gSaveContext.wallet_upgrade == NO_RUPEES_SHOWN);
+    InventoryRightGearMenu.items[Gear_Menu_Kokiri_Sword].on = ((gSaveContext.equipment & 1) != 0);
+    InventoryRightGearMenu.items[Gear_Menu_Master_Sword].on = ((gSaveContext.equipment & (1 << 1)) != 0);
+    InventoryRightGearMenu.items[Gear_Menu_Giants_Knife].on = (((gSaveContext.equipment & (1 << 2)) != 0) && ((gSaveContext.equipment & (1 << 3)) == 0) && !gSaveContext.bgsFlag);
+    InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = (((gSaveContext.equipment & (1 << 2)) != 0) && ((gSaveContext.equipment & (1 << 3)) != 0));
+    InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = (((gSaveContext.equipment & (1 << 2)) != 0) && gSaveContext.bgsFlag);
+    InventoryRightGearMenu.items[Gear_Menu_Deku_Shield].on = ((gSaveContext.equipment & (1 << 4)) != 0);
+    InventoryRightGearMenu.items[Gear_Menu_Hylian_Shield].on = ((gSaveContext.equipment & (1 << 5)) != 0);
+    InventoryRightGearMenu.items[Gear_Menu_Mirror_Shield].on = ((gSaveContext.equipment & (1 << 6)) != 0);
+    InventoryRightGearMenu.items[Gear_Menu_Kokiri_Tunic].on = ((gSaveContext.equipment & (1 << 8)) != 0);
+    InventoryRightGearMenu.items[Gear_Menu_Goron_Tunic].on = ((gSaveContext.equipment & (1 << 9)) != 0);
+    InventoryRightGearMenu.items[Gear_Menu_Zora_Tunic].on = ((gSaveContext.equipment & (1 << 10)) != 0);
+    InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_30].on = (((gSaveContext.upgrades >> 14) & 7) == BULLET_BAG_30);
+    InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_40].on = (((gSaveContext.upgrades >> 14) & 7) == BULLET_BAG_40);
+    InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_50].on = (((gSaveContext.upgrades >> 14) & 7) == BULLET_BAG_50);
+    InventoryRightGearMenu.items[Gear_Menu_Quiver_30].on = ((gSaveContext.upgrades & 7) == QUIVER_30);
+    InventoryRightGearMenu.items[Gear_Menu_Quiver_40].on = ((gSaveContext.upgrades & 7) == QUIVER_40);
+    InventoryRightGearMenu.items[Gear_Menu_Quiver_50].on = ((gSaveContext.upgrades & 7) == QUIVER_50);
+    InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_20].on = (((gSaveContext.upgrades >> 3) & 7) == BOMB_BAG_20);
+    InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_30].on = (((gSaveContext.upgrades >> 3) & 7) == BOMB_BAG_30);
+    InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_40].on = (((gSaveContext.upgrades >> 3) & 7) == BOMB_BAG_40);
+    InventoryRightGearMenu.items[Gear_Menu_Gorons_Bracelet].on = (((gSaveContext.upgrades >> 6) & 7) == GORON_BRACELET);
+    InventoryRightGearMenu.items[Gear_Menu_Silver_Gauntlets].on = (((gSaveContext.upgrades >> 6) & 7) == SILVER_GAUNTLETS);
+    InventoryRightGearMenu.items[Gear_Menu_Golden_Gauntlets].on = (((gSaveContext.upgrades >> 6) & 7) == GOLDEN_GAUNTLETS);
+    InventoryRightGearMenu.items[Gear_Menu_Silver_Scale].on = (((gSaveContext.upgrades >> 9) & 7) == SILVER_SCALE);
+    InventoryRightGearMenu.items[Gear_Menu_Golden_Scale].on = (((gSaveContext.upgrades >> 9) & 7) == GOLDEN_SCALE);
+    InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = (((gSaveContext.upgrades >> 12) & 3) == ADULTS_WALLET);
+    InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = (((gSaveContext.upgrades >> 12) & 3) == GIANTS_WALLET);
+    InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = (((gSaveContext.upgrades >> 12) & 3) == NO_RUPEES_SHOWN);
 }
 
 void Inventory_RightGearMenuFunc(void){
@@ -482,272 +477,342 @@ void Inventory_RightGearMenuFunc(void){
     ToggleMenuShow(&InventoryRightGearMenu);
 }
 
-void Inventory_RightGearToggle(s32 selected){ //TODO
+void Inventory_RightGearToggle(s32 selected){
     switch(selected){
         case(Gear_Menu_Kokiri_Sword):
-            gSaveContext.kokiri_sword = ~gSaveContext.kokiri_sword;
-            InventoryRightGearMenu.items[Gear_Menu_Kokiri_Sword].on = gSaveContext.kokiri_sword;
+            gSaveContext.equipment ^= 1;
+            InventoryRightGearMenu.items[Gear_Menu_Kokiri_Sword].on = ((gSaveContext.equipment & 1) != 0);
             break;
         case(Gear_Menu_Master_Sword):
-            gSaveContext.master_sword = ~gSaveContext.master_sword;
-            InventoryRightGearMenu.items[Gear_Menu_Master_Sword].on = gSaveContext.master_sword;
+            gSaveContext.equipment ^= (1 << 1);
+            InventoryRightGearMenu.items[Gear_Menu_Master_Sword].on = ((gSaveContext.equipment & (1 << 1)) != 0);
             break;
-        case(Gear_Menu_Giants_Knife): //TODO
-        case(Gear_Menu_Broken_Giants_Knife): //TODO
-        case(Gear_Menu_Biggoron_Sword): //TODO
+        case(Gear_Menu_Giants_Knife): 
+            if ((gSaveContext.equipment & (1 << 2)) && !(gSaveContext.equipment & (1 << 3)) && !gSaveContext.bgsFlag){
+                gSaveContext.equipment &= ~(0x3 << 2);
+                InventoryRightGearMenu.items[Gear_Menu_Giants_Knife].on = 0;
+            }
+            else {
+                gSaveContext.equipment &= ~(0x3 << 2);
+                gSaveContext.equipment |= (1 << 2);
+                gSaveContext.bgsFlag = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Giants_Knife].on = 1;
+                InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = 0;
+            }
+        case(Gear_Menu_Broken_Giants_Knife):
+            if ((gSaveContext.equipment & (1 << 2)) && (gSaveContext.equipment & (1 << 3))){
+                gSaveContext.equipment &= !(0x3 << 2);
+                InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 0;
+            }
+            else {
+                gSaveContext.equipment |= (0x3 << 2);
+                gSaveContext.bgsFlag = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Giants_Knife].on = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 1;
+                InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = 0;
+            }
+        case(Gear_Menu_Biggoron_Sword):
+            if ((gSaveContext.equipment & (1 << 2)) && gSaveContext.bgsFlag){
+                gSaveContext.equipment &= !(0x3 << 2);
+                gSaveContext.bgsFlag = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = 0;
+            }
+            else {
+                gSaveContext.equipment &= ~(0x3 << 2);
+                gSaveContext.equipment |= (1 << 2);
+                gSaveContext.bgsFlag = 1;
+                InventoryRightGearMenu.items[Gear_Menu_Giants_Knife].on = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = 1;
+            }
         case(Gear_Menu_Deku_Shield):
-            gSaveContext.deku_shield = ~gSaveContext.deku_shield;
-            InventoryRightGearMenu.items[Gear_Menu_Deku_Shield].on = gSaveContext.deku_shield;
+            gSaveContext.equipment ^= (1 << 4);
+            InventoryRightGearMenu.items[Gear_Menu_Deku_Shield].on = ((gSaveContext.equipment & (1 << 4)) != 0);
             break;
         case(Gear_Menu_Hylian_Shield):
-            gSaveContext.hylian_shield = ~gSaveContext.hylian_shield;
-            InventoryRightGearMenu.items[Gear_Menu_Hylian_Shield].on = gSaveContext.hylian_shield;
+            gSaveContext.equipment ^= (1 << 5);
+            InventoryRightGearMenu.items[Gear_Menu_Hylian_Shield].on = ((gSaveContext.equipment & (1 << 5)) != 0);
             break;
         case(Gear_Menu_Mirror_Shield):
-            gSaveContext.mirror_shield = ~gSaveContext.mirror_shield;
-            InventoryRightGearMenu.items[Gear_Menu_Mirror_Shield].on = gSaveContext.mirror_shield;
+            gSaveContext.equipment ^= (1 << 6);
+            InventoryRightGearMenu.items[Gear_Menu_Mirror_Shield].on = ((gSaveContext.equipment & (1 << 6)) != 0);
             break;
         case(Gear_Menu_Kokiri_Tunic):
-            gSaveContext.kokiri_tunic = ~gSaveContext.kokiri_tunic;
-            InventoryRightGearMenu.items[Gear_Menu_Kokiri_Tunic].on = gSaveContext.kokiri_tunic;
+            gSaveContext.equipment ^= (1 << 8);
+            InventoryRightGearMenu.items[Gear_Menu_Kokiri_Tunic].on = ((gSaveContext.equipment & (1 << 8)) != 0);
             break;
         case(Gear_Menu_Goron_Tunic):
-            gSaveContext.goron_tunic = ~gSaveContext.goron_tunic;
-            InventoryRightGearMenu.items[Gear_Menu_Goron_Tunic].on = gSaveContext.goron_tunic;
+            gSaveContext.equipment ^= (1 << 9);
+            InventoryRightGearMenu.items[Gear_Menu_Goron_Tunic].on = ((gSaveContext.equipment & (1 << 9)) != 0);
             break;
         case(Gear_Menu_Zora_Tunic):
-            gSaveContext.zora_tunic = ~gSaveContext.zora_tunic;
-            InventoryRightGearMenu.items[Gear_Menu_Zora_Tunic].on = gSaveContext.zora_tunic;
+            gSaveContext.equipment ^= (1 << 10);
+            InventoryRightGearMenu.items[Gear_Menu_Zora_Tunic].on = ((gSaveContext.equipment & (1 << 10)) != 0);
             break;
         case(Gear_Menu_Bullet_Bag_30):
-            if (gSaveContext.bullet_bag != BULLET_BAG_30){
-                gSaveContext.bullet_bag = BULLET_BAG_30;
+            if (((gSaveContext.upgrades >> 14) & 0x7) != BULLET_BAG_30){
+                gSaveContext.upgrades &= ~(0x7 << 14);
+                gSaveContext.upgrades |= (BULLET_BAG_30 << 14);
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_30].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_40].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_50].on = 0;
             }
             else {
-                gSaveContext.bullet_bag = NO_BULLET_BAG;
+                gSaveContext.upgrades &= ~(0x7 << 14);
+                gSaveContext.upgrades |= (NO_BULLET_BAG << 14);
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_40].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_50].on = 0;
             }
             break;
         case(Gear_Menu_Bullet_Bag_40):
-            if (gSaveContext.bullet_bag != BULLET_BAG_40){
-                gSaveContext.bullet_bag = BULLET_BAG_40;
+            if (((gSaveContext.upgrades >> 14) & 0x7) != BULLET_BAG_40){
+                gSaveContext.upgrades &= ~(0x7 << 14);
+                gSaveContext.upgrades |= (BULLET_BAG_40 << 14);
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_40].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_50].on = 0;
             }
             else {
-                gSaveContext.bullet_bag = NO_BULLET_BAG;
+                gSaveContext.upgrades &= ~(0x7 << 14);
+                gSaveContext.upgrades |= (NO_BULLET_BAG << 14);
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_40].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_50].on = 0;
             }
             break;
         case(Gear_Menu_Bullet_Bag_50):
-            if (gSaveContext.bullet_bag != BULLET_BAG_50){
-                gSaveContext.bullet_bag = BULLET_BAG_50;
+            if (((gSaveContext.upgrades >> 14) & 0x7) != BULLET_BAG_50){
+                gSaveContext.upgrades &= ~(0x7 << 14);
+                gSaveContext.upgrades |= (BULLET_BAG_50 << 14);
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_40].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_50].on = 1;
             }
             else {
-                gSaveContext.bullet_bag = NO_BULLET_BAG;
+                gSaveContext.upgrades &= ~(0x7 << 14);
+                gSaveContext.upgrades |= (NO_BULLET_BAG << 14);
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_40].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bullet_Bag_50].on = 0;
             }
             break;
         case(Gear_Menu_Quiver_30):
-            if (gSaveContext.quiver != QUIVER_30){
-                gSaveContext.quiver = QUIVER_30;
+            if ((gSaveContext.upgrades & 0x7) != QUIVER_30){
+                gSaveContext.upgrades &= ~0x7;
+                gSaveContext.upgrades |= QUIVER_30;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_30].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_40].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_50].on = 0;
             }
             else {
-                gSaveContext.quiver = NO_QUIVER;
+                gSaveContext.upgrades &= ~0x7;
+                gSaveContext.upgrades |= NO_QUIVER;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_40].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_50].on = 0;
             }
             break;
         case(Gear_Menu_Quiver_40):
-            if (gSaveContext.quiver != QUIVER_40){
-                gSaveContext.quiver = QUIVER_40;
+            if ((gSaveContext.upgrades & 0x7) != QUIVER_40){
+                gSaveContext.upgrades &= ~0x7;
+                gSaveContext.upgrades |= QUIVER_40;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_40].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_50].on = 0;
             }
             else {
-                gSaveContext.quiver = NO_QUIVER;
+                gSaveContext.upgrades &= ~0x7;
+                gSaveContext.upgrades |= NO_QUIVER;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_40].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_50].on = 0;
             }
             break;
         case(Gear_Menu_Quiver_50):
-            if (gSaveContext.quiver != QUIVER_50){
-                gSaveContext.quiver = QUIVER_50;
+            if ((gSaveContext.upgrades & 0x7) != QUIVER_50){
+                gSaveContext.upgrades &= ~0x7;
+                gSaveContext.upgrades |= QUIVER_50;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_40].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_50].on = 1;
             }
             else {
-                gSaveContext.quiver = NO_QUIVER;
+                gSaveContext.upgrades &= ~0x7;
+                gSaveContext.upgrades |= NO_QUIVER;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_40].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Quiver_50].on = 0;
             }
             break;
         case(Gear_Menu_Bomb_Bag_20):
-            if (gSaveContext.bomb_bag != BOMB_BAG_20){
-                gSaveContext.bomb_bag = BOMB_BAG_20;
+            if (((gSaveContext.upgrades >> 3) & 0x7) != BOMB_BAG_20){
+                gSaveContext.upgrades &= ~(0x7 << 3);
+                gSaveContext.upgrades |= (BOMB_BAG_20 << 3);
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_20].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_40].on = 0;
             }
             else {
-                gSaveContext.bomb_bag = NO_BOMB_BAG;
+                gSaveContext.upgrades &= ~(0x7 << 3);
+                gSaveContext.upgrades |= (NO_BOMB_BAG << 3);
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_20].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_40].on = 0;
             }
             break;
         case(Gear_Menu_Bomb_Bag_30):    
-            if (gSaveContext.bomb_bag != BOMB_BAG_30){
-                gSaveContext.bomb_bag = BOMB_BAG_30;
+            if (((gSaveContext.upgrades >> 3) & 0x7) != BOMB_BAG_30){
+                gSaveContext.upgrades &= ~(0x7 << 3);
+                gSaveContext.upgrades |= (BOMB_BAG_30 << 3);
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_20].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_30].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_40].on = 0;
             }
             else {
-                gSaveContext.bomb_bag = NO_BOMB_BAG;
+                gSaveContext.upgrades &= ~(0x7 << 3);
+                gSaveContext.upgrades |= (NO_BOMB_BAG << 3);
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_20].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_40].on = 0;
             }
             break;
         case(Gear_Menu_Bomb_Bag_40):
-            if (gSaveContext.bomb_bag != BOMB_BAG_40){
-                gSaveContext.bomb_bag = BOMB_BAG_40;
+            if (((gSaveContext.upgrades >> 3) & 0x7) != BOMB_BAG_40){
+                gSaveContext.upgrades &= ~(0x7 << 3);
+                gSaveContext.upgrades |= (BOMB_BAG_40 << 3);
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_20].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_40].on = 1;
             }
             else {
-                gSaveContext.bomb_bag = NO_BOMB_BAG;
+                gSaveContext.upgrades &= ~(0x7 << 3);
+                gSaveContext.upgrades |= (NO_BOMB_BAG << 3);
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_20].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_30].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_40].on = 0;
             }
             break;
         case(Gear_Menu_Gorons_Bracelet):
-            if (gSaveContext.strength_upgrade != GORON_BRACELET){
-                gSaveContext.strength_upgrade = GORON_BRACELET;
+            if (((gSaveContext.upgrades >> 6) & 0x7) != GORON_BRACELET){
+                gSaveContext.upgrades &= ~(0x7 << 6);
+                gSaveContext.upgrades |= (GORON_BRACELET << 6);
                 InventoryRightGearMenu.items[Gear_Menu_Gorons_Bracelet].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Silver_Gauntlets].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Golden_Gauntlets].on = 0;
             }
             else {
-                gSaveContext.strength_upgrade = NO_STRENGTH;
+                gSaveContext.upgrades &= ~(0x7 << 6);
+                gSaveContext.upgrades |= (NO_STRENGTH << 6);
                 InventoryRightGearMenu.items[Gear_Menu_Gorons_Bracelet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Silver_Gauntlets].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Golden_Gauntlets].on = 0;
             }
             break;
         case(Gear_Menu_Silver_Gauntlets):
-            if (gSaveContext.strength_upgrade != SILVER_GAUNTLETS){
-                gSaveContext.strength_upgrade = SILVER_GAUNTLETS;
+            if (((gSaveContext.upgrades >> 6) & 0x7) != SILVER_GAUNTLETS){
+                gSaveContext.upgrades &= ~(0x7 << 6);
+                gSaveContext.upgrades |= (SILVER_GAUNTLETS << 6);
                 InventoryRightGearMenu.items[Gear_Menu_Gorons_Bracelet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Silver_Gauntlets].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Golden_Gauntlets].on = 0;
             }
             else {
-                gSaveContext.strength_upgrade = NO_STRENGTH;
+                gSaveContext.upgrades &= ~(0x7 << 6);
+                gSaveContext.upgrades |= (NO_STRENGTH << 6);
                 InventoryRightGearMenu.items[Gear_Menu_Gorons_Bracelet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Silver_Gauntlets].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Golden_Gauntlets].on = 0;
             }
             break;
         case(Gear_Menu_Golden_Gauntlets):
-            if (gSaveContext.strength_upgrade != GOLDEN_GAUNTLETS){
-                gSaveContext.strength_upgrade = GOLDEN_GAUNTLETS;
+            if (((gSaveContext.upgrades >> 6) & 0x7) != GOLDEN_GAUNTLETS){
+                gSaveContext.upgrades &= ~(0x7 << 6);
+                gSaveContext.upgrades |= (GOLDEN_GAUNTLETS << 6);
                 InventoryRightGearMenu.items[Gear_Menu_Gorons_Bracelet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Silver_Gauntlets].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Golden_Gauntlets].on = 1;
             }
             else {
-                gSaveContext.strength_upgrade = NO_STRENGTH;
+                gSaveContext.upgrades &= ~(0x7 << 6);
+                gSaveContext.upgrades |= (NO_STRENGTH << 6);
                 InventoryRightGearMenu.items[Gear_Menu_Gorons_Bracelet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Silver_Gauntlets].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Golden_Gauntlets].on = 0;
             }
             break;
         case(Gear_Menu_Silver_Scale):
-            if (gSaveContext.dive_meter != SILVER_SCALE){
-                gSaveContext.dive_meter = SILVER_SCALE;
+            if (((gSaveContext.upgrades >> 9) & 0x7) != SILVER_SCALE){
+                gSaveContext.upgrades &= ~(0x7 << 9);
+                gSaveContext.upgrades |= (SILVER_SCALE << 9);
                 InventoryRightGearMenu.items[Gear_Menu_Silver_Scale].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Golden_Scale].on = 0;
             }
             else {
-                gSaveContext.dive_meter = NO_DIVE_UPGRADE;
+                gSaveContext.upgrades &= ~(0x7 << 9);
+                gSaveContext.upgrades |= (NO_DIVE_UPGRADE << 9);
                 InventoryRightGearMenu.items[Gear_Menu_Silver_Scale].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Golden_Scale].on = 0;
             }
             break;
         case(Gear_Menu_Golden_Scale):
-            if (gSaveContext.dive_meter != GOLDEN_SCALE){
-                gSaveContext.dive_meter = GOLDEN_SCALE;
+            if (((gSaveContext.upgrades >> 9) & 0x7) != GOLDEN_SCALE){
+                gSaveContext.upgrades &= ~(0x7 << 9);
+                gSaveContext.upgrades |= (GOLDEN_SCALE << 9);
                 InventoryRightGearMenu.items[Gear_Menu_Silver_Scale].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Golden_Scale].on = 1;
             }
             else {
-                gSaveContext.dive_meter = GOLDEN_SCALE;
+                gSaveContext.upgrades &= ~(0x7 << 9);
+                gSaveContext.upgrades |= (NO_DIVE_UPGRADE << 9);
                 InventoryRightGearMenu.items[Gear_Menu_Silver_Scale].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Golden_Scale].on = 0;
             }
             break;
         case(Gear_Menu_Adults_Wallet):
-            if (gSaveContext.wallet_upgrade != ADULTS_WALLET){
-                gSaveContext.wallet_upgrade = ADULTS_WALLET;
+            if (((gSaveContext.upgrades >> 12) & 0x3) != ADULTS_WALLET){
+                gSaveContext.upgrades &= ~(0x7 << 12);
+                gSaveContext.upgrades |= (ADULTS_WALLET << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 0;
             }
             else {
-                gSaveContext.wallet_upgrade = DEFAULT_WALLET;
+                gSaveContext.upgrades &= ~(0x7 << 12);
+                gSaveContext.upgrades |= (DEFAULT_WALLET << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 0;
             }
             break;
         case(Gear_Menu_Giants_Wallet):
-            if (gSaveContext.wallet_upgrade != GIANTS_WALLET){
-                gSaveContext.wallet_upgrade = GIANTS_WALLET;
+            if (((gSaveContext.upgrades >> 12) & 0x3) != GIANTS_WALLET){
+                gSaveContext.upgrades &= ~(0x7 << 12);
+                gSaveContext.upgrades |= (GIANTS_WALLET << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 0;
             }
             else {
-                gSaveContext.wallet_upgrade = DEFAULT_WALLET;
+                gSaveContext.upgrades &= ~(0x7 << 12);
+                gSaveContext.upgrades |= (DEFAULT_WALLET << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 0;
             }
             break;
         case(Gear_Menu_No_Wallet):
-            if (gSaveContext.wallet_upgrade != NO_RUPEES_SHOWN){
-                gSaveContext.wallet_upgrade = NO_RUPEES_SHOWN;
+            if (((gSaveContext.upgrades >> 12) & 0x3) != NO_RUPEES_SHOWN){
+                gSaveContext.upgrades &= ~(0x7 << 12);
+                gSaveContext.upgrades |= (NO_RUPEES_SHOWN << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 1;
             }
             else {
-                gSaveContext.wallet_upgrade = DEFAULT_WALLET;
+                gSaveContext.upgrades &= ~(0x7 << 12);
+                gSaveContext.upgrades |= (DEFAULT_WALLET << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 0;
@@ -757,19 +822,19 @@ void Inventory_RightGearToggle(s32 selected){ //TODO
 }
 
 void Inventory_LeftGearMenuInit(void){
-    InventoryLeftGearMenu.items[Gear_Menu_Forest_Medallion].on = gSaveContext.forest_medallion;
-    InventoryLeftGearMenu.items[Gear_Menu_Fire_Medallion].on = gSaveContext.fire_medallion;
-    InventoryLeftGearMenu.items[Gear_Menu_Water_Medallion].on = gSaveContext.water_medallion;
-    InventoryLeftGearMenu.items[Gear_Menu_Spirit_Medallion].on = gSaveContext.spirit_medallion;
-    InventoryLeftGearMenu.items[Gear_Menu_Shadow_Medallion].on = gSaveContext.shadow_medallion;
-    InventoryLeftGearMenu.items[Gear_Menu_Light_Medallion].on = gSaveContext.light_medallion;
-    InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = gSaveContext.kokiris_emerald;
-    InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = gSaveContext.gorons_ruby;
-    InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = gSaveContext.zoras_sapphire;
-    InventoryLeftGearMenu.items[Gear_Menu_Pieces_of_Heart].on = (gSaveContext.heart_pieces >> 4 != 0);
-    InventoryLeftGearMenu.items[Gear_Menu_Shard_of_Agony].on = gSaveContext.shard_of_agony;
-    InventoryLeftGearMenu.items[Gear_Menu_Gerudo_Token].on = gSaveContext.gerudos_card;
-    InventoryLeftGearMenu.items[Gear_Menu_Gold_Skulltulas].on = gSaveContext.gold_skulltula;
+    InventoryLeftGearMenu.items[Gear_Menu_Forest_Medallion].on = gSaveContext.questItems & 1;
+    InventoryLeftGearMenu.items[Gear_Menu_Fire_Medallion].on = gSaveContext.questItems & (1 << 1);
+    InventoryLeftGearMenu.items[Gear_Menu_Water_Medallion].on = gSaveContext.questItems & (1 << 2);
+    InventoryLeftGearMenu.items[Gear_Menu_Spirit_Medallion].on = gSaveContext.questItems & (1 << 3);
+    InventoryLeftGearMenu.items[Gear_Menu_Shadow_Medallion].on = gSaveContext.questItems & (1 << 4);
+    InventoryLeftGearMenu.items[Gear_Menu_Light_Medallion].on = gSaveContext.questItems & (1 << 5);
+    InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = gSaveContext.questItems & (1 << 18);
+    InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = gSaveContext.questItems & (1 << 19);
+    InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = gSaveContext.questItems & (1 << 20);
+    InventoryLeftGearMenu.items[Gear_Menu_Pieces_of_Heart].on = ((gSaveContext.questItems >> 24) >> 4 != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Shard_of_Agony].on = gSaveContext.questItems & (1 << 21);
+    InventoryLeftGearMenu.items[Gear_Menu_Gerudo_Token].on = gSaveContext.questItems & (1 << 22);
+    InventoryLeftGearMenu.items[Gear_Menu_Gold_Skulltulas].on = gSaveContext.questItems & (1 << 23);
 }
 
 void Inventory_LeftGearMenuFunc(void){
@@ -780,50 +845,50 @@ void Inventory_LeftGearMenuFunc(void){
 void Inventory_LeftGearToggle(s32 selected){
     switch(selected){
         case(Gear_Menu_Forest_Medallion):
-            gSaveContext.forest_medallion = ~gSaveContext.forest_medallion;
-            InventoryLeftGearMenu.items[Gear_Menu_Forest_Medallion].on = gSaveContext.forest_medallion;
+            gSaveContext.questItems ^= 1;
+            InventoryLeftGearMenu.items[Gear_Menu_Forest_Medallion].on = gSaveContext.questItems & 1;
             break;
         case(Gear_Menu_Fire_Medallion):
-            gSaveContext.fire_medallion = ~gSaveContext.fire_medallion;
-            InventoryLeftGearMenu.items[Gear_Menu_Fire_Medallion].on = gSaveContext.fire_medallion;
+            gSaveContext.questItems ^= (1 << 1);
+            InventoryLeftGearMenu.items[Gear_Menu_Fire_Medallion].on = (gSaveContext.questItems & (1 << 1));
             break;
         case(Gear_Menu_Water_Medallion):
-            gSaveContext.water_medallion = ~gSaveContext.water_medallion;
-            InventoryLeftGearMenu.items[Gear_Menu_Water_Medallion].on = gSaveContext.water_medallion;
+            gSaveContext.questItems ^= (1 << 2);
+            InventoryLeftGearMenu.items[Gear_Menu_Water_Medallion].on = (gSaveContext.questItems & (1 << 2));
             break;
         case(Gear_Menu_Spirit_Medallion):
-            gSaveContext.spirit_medallion = ~gSaveContext.spirit_medallion;
-            InventoryLeftGearMenu.items[Gear_Menu_Spirit_Medallion].on = gSaveContext.spirit_medallion;
+            gSaveContext.questItems ^= (1 << 3);
+            InventoryLeftGearMenu.items[Gear_Menu_Spirit_Medallion].on = (gSaveContext.questItems & (1 << 3));
             break;
         case(Gear_Menu_Shadow_Medallion):
-            gSaveContext.shadow_medallion = ~gSaveContext.shadow_medallion;
-            InventoryLeftGearMenu.items[Gear_Menu_Shadow_Medallion].on = gSaveContext.shadow_medallion;
+            gSaveContext.questItems ^= (1 << 4);
+            InventoryLeftGearMenu.items[Gear_Menu_Shadow_Medallion].on = (gSaveContext.questItems & (1 << 4));
             break;
         case(Gear_Menu_Light_Medallion):
-            gSaveContext.light_medallion = ~gSaveContext.light_medallion;
-            InventoryLeftGearMenu.items[Gear_Menu_Light_Medallion].on = gSaveContext.light_medallion;
+            gSaveContext.questItems ^= (1 << 5);
+            InventoryLeftGearMenu.items[Gear_Menu_Light_Medallion].on = (gSaveContext.questItems & (1 << 5));
             break;
         case(Gear_Menu_Kokiri_Emerald):
-            gSaveContext.kokiris_emerald = ~gSaveContext.kokiris_emerald;
-            InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = gSaveContext.kokiris_emerald;
+            gSaveContext.questItems ^= (1 << 18);
+            InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = (gSaveContext.questItems & (1 << 18));
             break;
         case(Gear_Menu_Gorons_Ruby):
-            gSaveContext.gorons_ruby = ~gSaveContext.gorons_ruby;
-            InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = gSaveContext.gorons_ruby;
+            gSaveContext.questItems ^= (1 << 19);
+            InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = (gSaveContext.questItems & (1 << 19));
             break;
         case(Gear_Menu_Zoras_Sapphire):
-            gSaveContext.zoras_sapphire = ~gSaveContext.zoras_sapphire;
-            InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = gSaveContext.zoras_sapphire;
+            gSaveContext.questItems ^= (1 << 20);
+            InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = (gSaveContext.questItems & (1 << 20));
             break;
         case(Gear_Menu_Pieces_of_Heart):
             break; //handled in another function
         case(Gear_Menu_Shard_of_Agony):
-            gSaveContext.shard_of_agony = ~gSaveContext.shard_of_agony;
-            InventoryLeftGearMenu.items[Gear_Menu_Shard_of_Agony].on = gSaveContext.shard_of_agony;
+            gSaveContext.questItems ^= (1 << 21);
+            InventoryLeftGearMenu.items[Gear_Menu_Shard_of_Agony].on = (gSaveContext.questItems & (1 << 21));
             break;
         case(Gear_Menu_Gerudo_Token):
-            gSaveContext.gerudos_card = ~gSaveContext.gerudos_card;
-            InventoryLeftGearMenu.items[Gear_Menu_Gerudo_Token].on = gSaveContext.gerudos_card;
+            gSaveContext.questItems ^= (1 << 22);
+            InventoryLeftGearMenu.items[Gear_Menu_Gerudo_Token].on = (gSaveContext.questItems & (1 << 22));
             break;
         case(Gear_Menu_Gold_Skulltulas):
             break; //handled in another function
@@ -831,7 +896,7 @@ void Inventory_LeftGearToggle(s32 selected){
 }
 
 void Inventory_HeartPiecesAmount(s32 selected){
-    u8 curPieces = gSaveContext.heart_pieces >> 4;
+    u8 curPieces = gSaveContext.healthCapacity >> 4;
     u32 curColor = COLOR_GREEN;
 
     Draw_Lock();
@@ -860,7 +925,7 @@ void Inventory_HeartPiecesAmount(s32 selected){
             break;
         }
         if (pressed & BUTTON_A){
-            gSaveContext.heart_pieces = curPieces << 4;
+            gSaveContext.healthCapacity = curPieces << 4;
             curColor = COLOR_GREEN;
         }
         else if (pressed & BUTTON_LEFT){
@@ -883,7 +948,7 @@ void Inventory_HeartPiecesAmount(s32 selected){
 }
 
 void Inventory_GoldSkulltulaAmount(s32 selected){
-    u8 curSkulls = gSaveContext.golden_skulls_amount;
+    u8 curSkulls = gSaveContext.gsTokens;
     u32 curColor = COLOR_GREEN;
 
     Draw_Lock();
@@ -912,8 +977,9 @@ void Inventory_GoldSkulltulaAmount(s32 selected){
             break;
         }
         if (pressed & BUTTON_A){
-            gSaveContext.golden_skulls_amount = curSkulls;
-            gSaveContext.gold_skulltula = (gSaveContext.golden_skulls_amount != 0);
+            gSaveContext.gsTokens = curSkulls;
+            gSaveContext.questItems &= ~(1 << 22);
+            gSaveContext.questItems |= ((gSaveContext.gsTokens != 0) << 22);
             curColor = COLOR_GREEN;
         }
         else if (pressed & BUTTON_LEFT){
@@ -937,21 +1003,21 @@ void Inventory_GoldSkulltulaAmount(s32 selected){
 
 }
 
-void Inventory_AmountsMenuInit(void){ //TODO
-    InventoryAmountsMenu.items[Amounts_Menu_Deku_Sticks].amount = gSaveContext.item_slot_amount[ItemSlots[ITEM_DEKU_STICK]];
-    InventoryAmountsMenu.items[Amounts_Menu_Deku_Nuts].amount = gSaveContext.item_slot_amount[ItemSlots[ITEM_DEKU_NUT]];
-    InventoryAmountsMenu.items[Amounts_Menu_Bombs].amount = gSaveContext.item_slot_amount[ItemSlots[ITEM_BOMB]];
-    InventoryAmountsMenu.items[Amounts_Menu_Arrows].amount = gSaveContext.item_slot_amount[ItemSlots[ITEM_FAIRY_BOW]];
-    InventoryAmountsMenu.items[Amounts_Menu_Deku_Seeds].amount = gSaveContext.item_slot_amount[ItemSlots[ITEM_FAIRY_SLINGSHOT]];
-    InventoryAmountsMenu.items[Amounts_Menu_Bombchus].amount = gSaveContext.item_slot_amount[ItemSlots[ITEM_BOMBCHU]];
-    InventoryAmountsMenu.items[Amounts_Menu_Magic_Beans].amount = gSaveContext.item_slot_amount[ItemSlots[ITEM_MAGIC_BEANS]];
-    InventoryAmountsMenu.items[Amounts_Menu_Rupees].amount = gSaveContext.rupee_count;
-    InventoryAmountsMenu.items[Amounts_Menu_Double_Defense].amount = 0; //TODO
-    InventoryAmountsMenu.items[Amounts_Menu_Heart_Containers].amount = gSaveContext.max_health;
-    InventoryAmountsMenu.items[Amounts_Menu_Current_Health].amount = gSaveContext.cur_health;
-    InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount = gSaveContext.magic_meter_size;
-    InventoryAmountsMenu.items[Amounts_Menu_Current_Magic].amount = gSaveContext.magic_amt;
-    InventoryAmountsMenu.items[Amounts_Menu_Giants_Knife_hits].amount = 0; //TODO
+void Inventory_AmountsMenuInit(void){
+    InventoryAmountsMenu.items[Amounts_Menu_Deku_Sticks].amount = gSaveContext.ammo[ItemSlots[ITEM_DEKU_STICK]];
+    InventoryAmountsMenu.items[Amounts_Menu_Deku_Nuts].amount = gSaveContext.ammo[ItemSlots[ITEM_DEKU_NUT]];
+    InventoryAmountsMenu.items[Amounts_Menu_Bombs].amount = gSaveContext.ammo[ItemSlots[ITEM_BOMB]];
+    InventoryAmountsMenu.items[Amounts_Menu_Arrows].amount = gSaveContext.ammo[ItemSlots[ITEM_FAIRY_BOW]];
+    InventoryAmountsMenu.items[Amounts_Menu_Deku_Seeds].amount = gSaveContext.ammo[ItemSlots[ITEM_FAIRY_SLINGSHOT]];
+    InventoryAmountsMenu.items[Amounts_Menu_Bombchus].amount = gSaveContext.ammo[ItemSlots[ITEM_BOMBCHU]];
+    InventoryAmountsMenu.items[Amounts_Menu_Magic_Beans].amount = gSaveContext.ammo[ItemSlots[ITEM_MAGIC_BEANS]];
+    InventoryAmountsMenu.items[Amounts_Menu_Rupees].amount = gSaveContext.rupees;
+    InventoryAmountsMenu.items[Amounts_Menu_Double_Defense].amount = gSaveContext.doubleDefense;
+    InventoryAmountsMenu.items[Amounts_Menu_Heart_Containers].amount = gSaveContext.healthCapacity;
+    InventoryAmountsMenu.items[Amounts_Menu_Current_Health].amount = gSaveContext.health;
+    InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount = gSaveContext.magicLevel;
+    InventoryAmountsMenu.items[Amounts_Menu_Current_Magic].amount = gSaveContext.magic;
+    InventoryAmountsMenu.items[Amounts_Menu_Giants_Knife_hits].amount = gSaveContext.bgsHitsLeft;
 }
 
 void Inventory_AmountsMenuFunc(void){
@@ -959,47 +1025,49 @@ void Inventory_AmountsMenuFunc(void){
     AmountMenuShow(&InventoryAmountsMenu);
 }
 
-void Inventory_AmountsSelect(s32 selected){ //TODO
+void Inventory_AmountsSelect(s32 selected){
     switch(selected){
         case(Amounts_Menu_Deku_Sticks):
-            gSaveContext.item_slot_amount[ItemSlots[ITEM_DEKU_STICK]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Sticks].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_DEKU_STICK]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Sticks].amount;
             break;
         case(Amounts_Menu_Deku_Nuts):
-            gSaveContext.item_slot_amount[ItemSlots[ITEM_DEKU_NUT]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Nuts].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_DEKU_NUT]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Nuts].amount;
             break;
         case(Amounts_Menu_Bombs):
-            gSaveContext.item_slot_amount[ItemSlots[ITEM_BOMB]] = InventoryAmountsMenu.items[Amounts_Menu_Bombs].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_BOMB]] = InventoryAmountsMenu.items[Amounts_Menu_Bombs].amount;
             break;
         case(Amounts_Menu_Arrows):
-            gSaveContext.item_slot_amount[ItemSlots[ITEM_FAIRY_BOW]] = InventoryAmountsMenu.items[Amounts_Menu_Arrows].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_FAIRY_BOW]] = InventoryAmountsMenu.items[Amounts_Menu_Arrows].amount;
             break;
         case(Amounts_Menu_Deku_Seeds):
-            gSaveContext.item_slot_amount[ItemSlots[ITEM_FAIRY_SLINGSHOT]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Seeds].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_FAIRY_SLINGSHOT]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Seeds].amount;
             break;
         case(Amounts_Menu_Bombchus):
-            gSaveContext.item_slot_amount[ItemSlots[ITEM_BOMBCHU]] = InventoryAmountsMenu.items[Amounts_Menu_Bombchus].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_BOMBCHU]] = InventoryAmountsMenu.items[Amounts_Menu_Bombchus].amount;
             break;
         case(Amounts_Menu_Magic_Beans):
-            gSaveContext.item_slot_amount[ItemSlots[ITEM_MAGIC_BEANS]] = InventoryAmountsMenu.items[Amounts_Menu_Magic_Beans].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_MAGIC_BEANS]] = InventoryAmountsMenu.items[Amounts_Menu_Magic_Beans].amount;
             break;
         case(Amounts_Menu_Rupees):
-            gSaveContext.rupee_count = InventoryAmountsMenu.items[Amounts_Menu_Rupees].amount;
+            gSaveContext.rupees = InventoryAmountsMenu.items[Amounts_Menu_Rupees].amount;
             break;
-        case(Amounts_Menu_Double_Defense): //TODO
+        case(Amounts_Menu_Double_Defense):
+            gSaveContext.doubleDefense = InventoryAmountsMenu.items[Amounts_Menu_Double_Defense].amount;
             break;
         case(Amounts_Menu_Heart_Containers):
-            gSaveContext.max_health = InventoryAmountsMenu.items[Amounts_Menu_Heart_Containers].amount;
+            gSaveContext.healthCapacity = InventoryAmountsMenu.items[Amounts_Menu_Heart_Containers].amount;
             break;
         case(Amounts_Menu_Current_Health):
-            gSaveContext.cur_health = InventoryAmountsMenu.items[Amounts_Menu_Current_Health].amount;
+            gSaveContext.health = InventoryAmountsMenu.items[Amounts_Menu_Current_Health].amount;
             break;
         case(Amounts_Menu_Magic_meter_size):
-            gSaveContext.magic_meter_size = InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount;
+            gSaveContext.magicLevel = InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount;
             break;
         case(Amounts_Menu_Current_Magic):
-            gSaveContext.magic_amt = InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount;
+            gSaveContext.magic = InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount;
             break;
-        case(Amounts_Menu_Giants_Knife_hits): //TODO
+        case(Amounts_Menu_Giants_Knife_hits):
+            gSaveContext.bgsHitsLeft = InventoryAmountsMenu.items[Amounts_Menu_Giants_Knife_hits].amount;
             break;
     }
 }

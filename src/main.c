@@ -6,7 +6,11 @@
 #include "MyThread.h"
 #include "advance.h"
 
+#include "z3D/z3D.h"
+
 advance_input_t inputs = {};
+
+GlobalContext* gGlobalContext;
 
 void scan_inputs() {
     inputs.cur.val = real_hid.pad.pads[real_hid.pad.index].curr.val;
@@ -24,6 +28,10 @@ void advance_main() {
         MyThread_Join(menuThread, -1LL);
     }
 
+}
+
+void setGlobalContext(GlobalContext* globalContext){
+    gGlobalContext = globalContext;
 }
 
 void area_load_main(){}

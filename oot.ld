@@ -20,6 +20,12 @@ SECTIONS
 		*(.patch_main*)
 	}
 
+	. = 0x452434;
+	. = ALIGN(4);
+	.patch_get_global_context : {
+		*(.patch_get_global_context*)
+	}
+
 	. = 0x4C99A8;
 	. = ALIGN(4);
 	.loader : {

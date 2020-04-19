@@ -1,6 +1,6 @@
 #include "menu.h"
 #include "menus/cheats.h"
-#include "z3d.h"
+#include "z3D/z3D.h"
 
 Menu CheatsMenu = {
     "Cheats",
@@ -61,51 +61,52 @@ Menu CheatsKeysMenu = {
 };
 
 void Cheats_Health(void){
-    gSaveContext.cur_health = gSaveContext.max_health;
+    gSaveContext.health = gSaveContext.healthCapacity;
 }
 
 void Cheats_Magic(void){
-    gSaveContext.magic_amt = 0x30 * gSaveContext.magic_meter_size;
+    gSaveContext.magic = 0x30 * gSaveContext.magicLevel;
 }
 
 void Cheats_Sticks(void){
-    gSaveContext.item_slot_amount[ITEM_DEKU_STICK] = 10 * gSaveContext.deku_stick_capacity;
+    gSaveContext.ammo[ITEM_DEKU_STICK] = 10 * ((gSaveContext.upgrades >> 17) & 0x7);
 }
 
 void Cheats_Nuts(void){
-    gSaveContext.item_slot_amount[ITEM_DEKU_NUT] = 10 + 10 * gSaveContext.deku_nut_capacity;
+    gSaveContext.ammo[ITEM_DEKU_NUT] = 10 + 10 * ((gSaveContext.upgrades >> 20) & 0x7);
 }
 
 void Cheats_Bombs(void){
-    gSaveContext.item_slot_amount[ITEM_BOMB] = 10 + 10 * gSaveContext.bomb_bag;
+    gSaveContext.ammo[ITEM_BOMB] = 10 + 10 * ((gSaveContext.upgrades >> 3) & 0x7);
 }
 
 void Cheats_Arrows(void){
-    gSaveContext.item_slot_amount[ITEM_FAIRY_BOW] = 20 + 10 * gSaveContext.quiver;
+    gSaveContext.ammo[ITEM_FAIRY_BOW] = 20 + 10 * (gSaveContext.upgrades & 0x7);
 }
 
 void Cheats_Slingshot(void){
-    gSaveContext.item_slot_amount[ITEM_FAIRY_SLINGSHOT] = 20 + 10 * gSaveContext.bullet_bag;
+    gSaveContext.ammo[ITEM_FAIRY_SLINGSHOT] = 20 + 10 * ((gSaveContext.upgrades >> 14) & 0x7);
 }
 
 void Cheats_Bombchus(void){
-    gSaveContext.item_slot_amount[ITEM_BOMBCHU] = 50;
+    gSaveContext.ammo[ITEM_BOMBCHU] = 50;
 }
 
 void Cheats_Beans(void){
-    gSaveContext.item_slot_amount[ITEM_MAGIC_BEANS] = 10;
+    gSaveContext.ammo[ITEM_MAGIC_BEANS] = 10;
 }
 
 void Cheats_Rupees(void){
-    switch(gSaveContext.wallet_upgrade){
+    u8 walletUpgrade = (gSaveContext.upgrades >> 12) & 0x3;
+    switch(walletUpgrade){
         case 0:
-            gSaveContext.rupee_count = 99;
+            gSaveContext.rupees = 99;
             break;
         case 1:
-            gSaveContext.rupee_count = 200;
+            gSaveContext.rupees = 200;
             break;
         case 2:
-            gSaveContext.rupee_count = 500;
+            gSaveContext.rupees = 500;
             break;
         default:
             break;
@@ -133,81 +134,81 @@ void Cheats_ISG(void){
 }
 
 void Give_Deku_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_DEKU_TREE]++;
+    gSaveContext.dungeonKeys[DUNGEON_DEKU_TREE]++;
 }
 
 void Give_Dodongo_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_DODONGOS_CAVERN]++;
+    gSaveContext.dungeonKeys[DUNGEON_DODONGOS_CAVERN]++;
 }
 
 void Give_Jabu_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_JABUJABUS_BELLY]++;
+    gSaveContext.dungeonKeys[DUNGEON_JABUJABUS_BELLY]++;
 }
 
 void Give_Forest_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_FOREST_TEMPLE]++;
+    gSaveContext.dungeonKeys[DUNGEON_FOREST_TEMPLE]++;
 }
 
 void Give_Fire_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_FIRE_TEMPLE]++;
+    gSaveContext.dungeonKeys[DUNGEON_FIRE_TEMPLE]++;
 }
 
 void Give_Water_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_WATER_TEMPLE]++;
+    gSaveContext.dungeonKeys[DUNGEON_WATER_TEMPLE]++;
 }
 
 void Give_Spirit_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_SPIRIT_TEMPLE]++;
+    gSaveContext.dungeonKeys[DUNGEON_SPIRIT_TEMPLE]++;
 }
 
 void Give_Shadow_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_SHADOW_TEMPLE]++;
+    gSaveContext.dungeonKeys[DUNGEON_SHADOW_TEMPLE]++;
 }
 
 void Give_Well_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_BOTTOM_OF_THE_WELL]++;
+    gSaveContext.dungeonKeys[DUNGEON_BOTTOM_OF_THE_WELL]++;
 }
 
 void Give_Ice_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_ICE_CAVERN]++;
+    gSaveContext.dungeonKeys[DUNGEON_ICE_CAVERN]++;
 }
 
 void Give_GanonSecond_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_GANONS_CASTLE_SECOND_PART]++;
+    gSaveContext.dungeonKeys[DUNGEON_GANONS_CASTLE_SECOND_PART]++;
 }
 
 void Give_Grounds_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_GERUDO_TRAINING_GROUNDS]++;
+    gSaveContext.dungeonKeys[DUNGEON_GERUDO_TRAINING_GROUNDS]++;
 }
 
 void Give_Gerudo_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_GERUDO_FORTRESS]++;
+    gSaveContext.dungeonKeys[DUNGEON_GERUDO_FORTRESS]++;
 }
 
 void Give_GanonFirst_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_GANONS_CASTLE_FIRST_PART]++;
+    gSaveContext.dungeonKeys[DUNGEON_GANONS_CASTLE_FIRST_PART]++;
 }
 
 void Give_GanonBoss_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_GANONS_CASTLE_FLOOR_BENEATH_BOSS_CHAMBER]++;
+    gSaveContext.dungeonKeys[DUNGEON_GANONS_CASTLE_FLOOR_BENEATH_BOSS_CHAMBER]++;
 }
 
 void Give_GanonCrumbling_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_GANONS_CASTLE_CRUMBLING]++;
+    gSaveContext.dungeonKeys[DUNGEON_GANONS_CASTLE_CRUMBLING]++;
 }
 
 void Give_Treasure_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_TREASURE_CHEST_SHOP]++;
+    gSaveContext.dungeonKeys[DUNGEON_TREASURE_CHEST_SHOP]++;
 }
 
 void Give_DekuBoss_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_DEKU_TREE_BOSS_ROOM]++;
+    gSaveContext.dungeonKeys[DUNGEON_DEKU_TREE_BOSS_ROOM]++;
 }
 
 void Give_DodongoBoss_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_DODONGOS_CAVERN_BOSS_ROOM]++;
+    gSaveContext.dungeonKeys[DUNGEON_DODONGOS_CAVERN_BOSS_ROOM]++;
 }
 
 void Give_JabuBoss_Key(void){
-    gSaveContext.small_key_amount[DUNGEON_JABUJABUS_BELLY_BOSS_ROOM]++;
+    gSaveContext.dungeonKeys[DUNGEON_JABUJABUS_BELLY_BOSS_ROOM]++;
 }

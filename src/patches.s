@@ -17,3 +17,9 @@ load_patch:
 
 loader_patch:
     b hook_into_loader
+
+.section .patch_get_global_context
+.global get_global_context_patch
+
+get_global_context_patch:
+    b hook_into_global_context_update

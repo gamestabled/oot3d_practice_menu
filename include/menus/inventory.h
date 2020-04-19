@@ -1,7 +1,7 @@
 #pragma once
 
 #include "menu.h"
-#include "z3d.h"
+#include "z3D/z3D.h"
 
 Menu InventoryMenu;
 ToggleMenu InventoryItemsMenu;

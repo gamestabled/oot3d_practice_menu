@@ -90,7 +90,7 @@ typedef struct ToggleMenu {
 
 typedef struct AmountMenuItem {
     u16 amount; //current amount
-    u16 hex;    //max amount
+    u16 hex;    //display in hex or decimal
     const char *title;
     void (*method)(s32);
 } AmountMenuItem;

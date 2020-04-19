@@ -16,6 +16,15 @@ hook_into_area_load:
     pop {r0-r12, lr}
     b 0x2E37D4
 
+.global gGlobalContext
+.global hook_into_global_context_update
+hook_into_global_context_update:
+    push {r0-r12, lr}
+    bl setGlobalContext
+    pop {r0-r12, lr}
+    b 0x2E25F0
+
+
 .section .loader
 .global hook_into_loader
 hook_into_loader:

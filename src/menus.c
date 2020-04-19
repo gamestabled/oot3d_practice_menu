@@ -29,7 +29,7 @@
 #include "menus.h"
 #include "menu.h"
 #include "draw.h"
-#include "z3d.h"
+#include "z3D/z3D.h"
 
 #include "menus/warps.h"
 #include "menus/scene.h"
@@ -53,6 +53,6 @@ Menu gz3DMenu = {
 };
 
 void gz3DMenu_Test(void){
-    gSaveContext.rupee_count = 50;
+    gSaveContext.rupees = 50;
     return;
 }

@@ -13,14 +13,17 @@ Also, be sure to use this version of Luma3DS, which has critical game patching f
 * Shoutouts to n3rdswithgame, who created the projects that this one descended from, teaching me how literally anything works, help with reverse engineering, and more.
 * Shoutouts to Lioncache, who also just helps me a ton.
 * Shoutouts to RicBent and his program Magikoopa, which gave rise to the memory repermissioning strategy used here. Some code is modified straight from his.
-* Shoutouts to leoetlino, who has helped me out, and fixed bugs in Luma3DS which allow this project to work.
+* Shoutouts to leoetlino, who has helped me out, and fixed bugs in Luma3DS which allow this project to work. His Project Restoration proved the unlimited scale at which 3DS game patching can operate.
 * Shoutouts to the developers of libctru and Luma3DS, because I stole/modified a lot of their code.
+* Shoutouts to glank and all of the developers of gz, for clearly inspiring this project. The gz repo gives me tons of documentation to work from, patterns to follow, and I'm also stealing your table of contents format.
+* Shoutouts to the OoT decomp team, because that project has been incredibly useful for me for documentation and learning about how the game works. The z3D folder has headers largely copied from that project.
 * Shoutouts to the OoT3D community, because you're the ones I want to make this for in the first place.
 
 # Challenges
 * I can't just use libctru, because it conflicts with the base game. So, I copied whatever code I needed, and used muslarm instead.
-* My previous OoT3D patches needed to fit all of their code in the leftover padding of the existing code section from unmodified OoT3D. Now, that padding is used for a a custom "loader" which repermissions data pages that the rest of the code is sitting on to be executable.
+* My previous OoT3D patches needed to fit all of their code in the leftover padding of the existing code section from unmodified OoT3D. Now, the bulk of the code is located on extra pages appended at the end of the program image. The custom "loader" is placed into the code section padding, which repermissions the new data pages to be executable. This means custom code and data can have an effectively unlimited size.
 * I'm a noob and everything is hard.
+* I can't get the damn graphics to work, but I am determined to get it eventually.
 
 # User manual
 

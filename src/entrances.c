@@ -269,28 +269,296 @@ EntrancesByScene Entrances_LakesideLaboratory;
 EntrancesByScene Entrances_LinksHouse;
 EntrancesByScene Entrances_LonLonRanch;
 EntrancesByScene Entrances_LostWoods;
-EntrancesByScene Entrances_Market;
-EntrancesByScene Entrances_MarketEntrance;
-EntrancesByScene Entrances_RanchHouse;
-EntrancesByScene Entrances_RoyalFamilysTomb;
-EntrancesByScene Entrances_SacredForestMeadow;
-EntrancesByScene Entrances_ShadowTemple;
-EntrancesByScene Entrances_SpiritTemple;
-EntrancesByScene Entrances_TempleOfTime;
-EntrancesByScene Entrances_TempleOfTimeExterior;
-EntrancesByScene Entrances_ThievesHideout;
-EntrancesByScene Entrances_WaterTemple;
+
+EntrancesByScene Entrances_Market = {
+    "Market",
+    .nbItems = 11,
+    {
+        {0x00B1, "From Market Entrance"},
+        {0x01CD, "From Market Shooting Gallery"},
+        {0x01D1, "From Happy Mask Shop"},
+        {0x01D5, "From Treasure Box Shop"},
+        {0x025A, "From Hyrule Castle"},
+        {0x025E, "From Temple of Time"},
+        {0x0262, "From Back Alley: Right Side"},
+        {0x029E, "From Back Alley: Left Side"},
+        {0x02A2, "From Market Potion Shop"},
+        {0x03B8, "From Market Bazaar"},
+        {0x03BC, "From Bombchu Bowling Alley"},
+    }
+};
+
+EntrancesByScene Entrances_MarketBazaar = {
+    "Market Bazaar",
+    .nbitems = 1,
+    {
+        {0x052C, "From Market"},
+    }
+};
+
+EntrancesByScene Entrances_MarketEntrance = {
+    "Market Entrance",
+    .nbItems = 3,
+    {
+        {0x0033, "From Market"},
+        {0x026E, "From Guard House"},
+        {0x0276, "From Hyrule Field"},
+    }
+};
+
+EntrancesByScene Entrances_MarketPotionShop = {
+    "Market Potion Shop",
+    .nbitems = 1,
+    {
+        {0x0388, "From Market"},
+    }
+};
+
+EntrancesByScene Entrances_MarketShootingGallery = {
+    "Market Shooting Gallery",
+    .nbitems = 1,
+    {
+        {0x016D, "From Market"},
+    }
+};
+
+EntrancesByScene Entrances_MidosHouse = {
+    "Mido's House",
+    .nbItems = 1,
+    {
+        {0x0433, "From Kokiri Forest"},
+    }
+};
+
+EntrancesByScene Entrances_MorphasLair = {
+    "Morpha's Lair",
+    .nbItems = 1,
+    {
+        {0x0417, "From Water Temple"},
+    }
+};
+
+EntrancesByScene Entrances_NaboorusMiniBossRoom = {
+    "Nabooru's Mini-Boss Room",
+    .nbItems = 1,
+    {
+        {0x008D, "From Spirit Temple"},
+    }
+};
+
+EntrancesByScene Entrances_PhantomGanonsLair = {
+    "Phantom Ganon's Lair",
+    .nbItems = 1,
+    {
+        {0x000C, "From Forest Temple"},
+    }
+};
+
+EntrancesByScene Entrances_RanchHouse = {
+    "Ranch House",
+    .nbItems = 2,
+    {
+        {0x004F, "From Lon Lon Ranch"},
+        {0x05E4, "[?]"},
+    }
+};
+
+EntrancesByScene Entrances_RoyalFamilysTomb = {
+    "Royal Family's Tomb",
+    .nbItems = 2,
+    {
+        {0x002D, "From Graveyard"},
+        {0x0574, "Cutscene: Sun's Song"},
+    }
+};
+
+EntrancesByScene Entrances_SacredForestMeadow = {
+    "Sacred Forest Meadow",
+    .nbItems = 5,
+    {
+        {0x00FC, "From Lost Woods"},
+        {0x0215, "From Forest Temple"},
+        {0x02EE, "[?]"},
+        {0x0608, "From Phantom Ganon's Lair: Blue Warp"},
+        {0x0600, "Warp Song: Minuet of Forest"},
+    }
+};
+
+EntrancesByScene Entrances_SariasHouse = {
+    "Saria's House",
+    .nbItems = 1,
+    {
+        {0x0437, "From Kokiri Forest"},
+    }
+};
+
+EntrancesByScene Entrances_ShadowTemple = {
+    "Shadow Temple",
+    .nbItems = 4,
+    {
+        {0x0037, "From Graveyard"},
+        {0x02B2, "From Bongo Bongo's Lair"},
+        {0x02B6, "From Graveyard (Wrong Room)"},
+        {0x04EA, "[?]"},
+    }
+};
+
+EntrancesByScene Entrances_Silo = {
+    "Silo",
+    .nbItems = 1,
+    {
+        {0x05D0, "From Lon Lon Ranch"},
+    }
+};
+
+EntrancesByScene Entrances_SpiritTemple = {
+    "Spirit Temple",
+    .nbItems = 5,
+    {
+        {0x02F5, "From Nabooru's Mini-Boss Room"},
+        {0x03F8, "[?]"},
+        {0x03F4, "From Desert Colossus: Statue's Left Hand"},
+        {0x03F0, "From Desert Colossus: Statue's Right Hand"},
+        {0x0082, "From Desert Colossus: Entrance"},
+    }
+};
+
+EntranceByScene Entrances_Stable = {
+    "Stable",
+    .nbItems = 1,
+    {
+        {0x02F9, "From Lon Lon Ranch"},
+    }
+};
+
+EntrancesByScene Entrances_TempleOfTime = {
+    "Temple of Time",
+    .nbItems = 7,
+    {
+        {0x0053, "From Temple of Time Exterior"},
+        {0x02CA, "From Event: Pull & Place Master Sword"},
+        {0x0320, "[?]"},
+        {0x0324, "Cutscene: Meeting Sheik"},
+        {0x058C, "Cutscene: Light Arrows"},
+        {0x0590, "[?]"},
+        {0x05F4, "Warp Song: Prelude of Light"},
+    }
+};
+
+EntrancesByScene Entrances_TempleOfTimeExterior = {
+    "Temple of Time Exterior",
+    .nbItems = 2,
+    {
+        {0x0171, "From Market"},
+        {0x0472, "From Temple of Time"},
+    }
+};
+
+EntrancesByScene Entrances_ThievesHideout = {
+    "Thieves' Hideout",
+    .nbItems = 13,
+    {
+        {0x049E, "Blue Cell Block (Bottom)"},
+        {0x04A2, "Blue Cell Block (Top)"},
+        {0x0570, "Dark Green Cell Block"},
+        {0x04AE, "Dining Hall (Bottom)"},
+        {0x04B2, "Dining Hall (Top)"},
+        {0x048E, "Kitchen Hall (Bottom Left)"},
+        {0x0492, "Kitchen Hall (Bottom Right)"},
+        {0x04A6, "Kitchen Hall (Middle Left)"},
+        {0x04AA, "Kitchen Hall (Top Left)"},
+        {0x0496, "Light Green Cell Block (Left)"},
+        {0x049A, "Light Green Cell Block (Right)"},
+        {0x0486, "Red Cell Block (Left)"},
+        {0x048A, "Red Cell Block (Right)"},
+    }
+};
+
+EntranceByScene Entrances_TreasureBoxShop = {
+    "Treasure Box Shop",
+    .nbItems = 1,
+    {
+        {0x0063, "From Market"},
+    }
+};
+
+EntranceByScene Entrances_TwinrovasLair = {
+    "Twinrova's Lair",
+    .nbItems = 1,
+    {
+        {0x05EC, "[Unused]"},
+    }
+};
+
+EntranceByScene Entrances_VolvagiasLair = {
+    "Volvagia's Lair",
+    .nbItems = 1,
+    {
+        {0x0305, "From Fire Temple"},
+    }
+};
+
+EntrancesByScene Entrances_WaterTemple = {
+    "Water Temple",
+    .nbItems = 2,
+    {
+        {0x0010, "From Lake Hylia"},
+        {0x0423, "From Morpha's Lair"},
+    }
+};
 
 EntrancesByScene Entrances_Windmill = {
     "Windmill/ Dampe's Grave",
     .nbItems = 3,
     {
         {0x044F, "From Graveyard"},
-        {0x0453, "Kakariko Village"},
+        {0x0453, "From Kakariko Village"},
         {0x0503, "From Well Draining Cutscene"},
     }
 };
 
-EntrancesByScene Entrances_ZorasDomain;
-EntrancesByScene Entrances_ZorasFountain;
-EntrancesByScene Entrances_ZorasRiver;
+EntrancesByScene Entrances_ZoraShop = {
+    "Zora Shop",
+    .nbItems = 1,
+    {
+        {0x0380, "From Zora's Domain"}
+    }
+
+};
+
+EntrancesByScene Entrances_ZorasDomain = {
+    "Zora's Domain",
+    .nbItems = 5,
+    {
+        {0x0108, "From Zora's River"},
+        {0x01A1, "From Zora's Fountain"},
+        {0x0328, "From Lake Hylia"},
+        {0x03C4, "From Zora Shop"},
+        {0x0153, "[?] (Throne Room)"},
+    }
+};
+
+EntrancesByScene Entrances_ZorasFountain = {
+    "Zora's Fountain",
+    .nbItems = 6,
+    {
+        {0x010E, "Cutscene: Zora's Saphhire"},
+        {0x0221, "From Inside Jabu Jabu's Belly"},
+        {0x0225, "From Zora's Domain"},
+        {0x0394, "From Great Fairy's Fountain (Spells): Farore's Wind"},
+        {0x03D4, "From Ice Cavern"},
+        {0x03D8, "From Bottom Left Corner [Unused]"},
+    }
+};
+
+EntrancesByScene Entrances_ZorasRiver = {
+    "Zora's River",
+    .nbItems = 5,
+    {
+        {0x0199, "From Zora's Fountain"},
+        {0x019D, "From Zora's Domain"},
+        {0x01DD, "From Lost Woods: Zora's River Square"},
+        {0x00EA, "From Hyrule Field (Land Transition)"},
+        {0X01D9, "From Hyrule Field (Water Transition)"},
+    }
+};

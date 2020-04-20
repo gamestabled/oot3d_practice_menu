@@ -271,7 +271,7 @@ EntrancesByScene Entrances_LonLonRanch;
 EntrancesByScene Entrances_LostWoods;
 
 EntrancesByScene Entrances_Market = {
-    "Market",
+    "Market", 
     .nbItems = 11,
     {
         {0x00B1, "From Market Entrance"},

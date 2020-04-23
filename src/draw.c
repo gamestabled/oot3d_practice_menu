@@ -32,8 +32,10 @@
 #include "3ds/svc.h"
 #include "3ds/synchronization.h"
 #include <string.h>
+#include <z3D/z3D.h>
 
-u8 FRAMEBUFFER[FB_BOTTOM_SIZE] __attribute__ ((aligned (0x80)));
+// u8 FRAMEBUFFER[FB_BOTTOM_SIZE] __attribute__ ((aligned (0x80)));
+u8* FRAMEBUFFER[2];
 static RecursiveLock lock;
 
 void Draw_Lock(void)
@@ -55,7 +57,8 @@ void Draw_Unlock(void)
 
 void Draw_DrawCharacter(u32 posX, u32 posY, u32 color, char character)
 {
-    volatile u16 *const fb = (volatile u16 *const)FRAMEBUFFER;
+    volatile u8 *const fb0 = (volatile u8 *const)FRAMEBUFFER[0];
+    volatile u8 *const fb1 = (volatile u8 *const)FRAMEBUFFER[1];
 
 
     s32 y;
@@ -66,9 +69,14 @@ void Draw_DrawCharacter(u32 posX, u32 posY, u32 color, char character)
         s32 x;
         for(x = 6; x >= 1; x--)
         {
-            u32 screenPos = (posX * SCREEN_BOT_HEIGHT * 2 + (SCREEN_BOT_HEIGHT - y - posY - 1) * 2) + (5 - x) * 2 * SCREEN_BOT_HEIGHT;
+            u32 screenPos = (posX * SCREEN_BOT_HEIGHT + (SCREEN_BOT_HEIGHT - y - posY - 1)) + (5 - x) * SCREEN_BOT_HEIGHT;
             u32 pixelColor = ((charPos >> x) & 1) ? color : COLOR_BLACK;
-            fb[screenPos / 2] = pixelColor;
+            fb0[screenPos * 3] = (pixelColor) & 0xFF;
+            fb0[screenPos * 3 + 1] = (pixelColor >> 8) & 0xFF;
+            fb0[screenPos * 3 + 2] = (pixelColor >> 16) & 0xFF;
+            fb1[screenPos * 3] = (pixelColor) & 0xFF;
+            fb1[screenPos * 3 + 1] = (pixelColor >> 8) & 0xFF;
+            fb1[screenPos * 3 + 2] = (pixelColor >> 16) & 0xFF;
         }
     }
 }
@@ -119,32 +127,36 @@ u32 Draw_DrawFormattedString(u32 posX, u32 posY, u32 color, const char *fmt, ...
 
 void Draw_FillFramebuffer(u32 value)
 {
-    memset(FRAMEBUFFER, value, FB_BOTTOM_SIZE);
+    memset(FRAMEBUFFER[0], value, FB_BOTTOM_SIZE);
+    memset(FRAMEBUFFER[1], value, FB_BOTTOM_SIZE);
 }
 
 void Draw_ClearFramebuffer(void)
 {
-    Draw_FillFramebuffer(0xFF);
+    Draw_FillFramebuffer(0);
 }
 
 void Draw_SetupFramebuffer(void)
 {
-    u16 format = GSP_RGB565_OES; // https://www.3dbrew.org/wiki/GPU/External_Registers#Framebuffer_format 
+    // u16 format = GSP_RGB565_OES; // https://www.3dbrew.org/wiki/GPU/External_Registers#Framebuffer_format 
 
-    gspInit(); //todo, figure out what to do with this
+    // gspInit(); //todo, figure out what to do with this
     
-    memset(FRAMEBUFFER, 0, FB_BOTTOM_SIZE); //probably not necessary
+    // memset(FRAMEBUFFER, 0, FB_BOTTOM_SIZE); //probably not necessary
 
-    GSPGPU_FramebufferInfo gsp_info = {
-        0, FRAMEBUFFER, NULL, SCREEN_BOT_HEIGHT * 2, format, 0, 0
-    };
+    // GSPGPU_FramebufferInfo gsp_info = {
+    //     0, FRAMEBUFFER, NULL, SCREEN_BOT_HEIGHT * 2, format, 0, 0
+    // };
 
-    if (R_FAILED(GSPGPU_SetBufferSwap(1, &gsp_info)))
-        svcBreak(USERBREAK_PANIC);
+    // if (R_FAILED(GSPGPU_SetBufferSwap(1, &gsp_info)))
+    //     svcBreak(USERBREAK_PANIC);
     // GSPGPU_SetBufferSwap(1, &gsp_info);
+    FRAMEBUFFER[0] = Z3D_BOTTOM_SCREEN_1;
+    FRAMEBUFFER[1] = Z3D_BOTTOM_SCREEN_2;
 }
 
 void Draw_FlushFramebuffer(void)
 {
-    svcFlushProcessDataCache(CUR_PROCESS_HANDLE, FRAMEBUFFER, FB_BOTTOM_SIZE);
+    svcFlushProcessDataCache(CUR_PROCESS_HANDLE, FRAMEBUFFER[0], FB_BOTTOM_SIZE);
+    svcFlushProcessDataCache(CUR_PROCESS_HANDLE, FRAMEBUFFER[1], FB_BOTTOM_SIZE);
 }

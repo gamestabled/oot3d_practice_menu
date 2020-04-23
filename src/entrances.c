@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #define ENTRANCE_MENU_MAX_SHOW 16
+#define SCENE_MENU_MAX_SHOW 18
 
 void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex){
     gGlobalContext->nextEntranceIndex = EntranceIndex;
@@ -59,7 +60,6 @@ void EntranceSelectMenuShow(EntrancesByScene* entrances){
 
         for (s32 i = 0; i < ENTRANCE_MENU_MAX_SHOW && page * ENTRANCE_MENU_MAX_SHOW + i < entrances->nbItems; ++i)
         {
-            char buf[65] = { 0 };
             s32 j = page * ENTRANCE_MENU_MAX_SHOW + i;
             Draw_DrawString(70, 30 + (2 + i) * SPACING_Y, COLOR_WHITE, entrances->items[j].title);
             Draw_DrawCharacter(10, 30 + (2 + i) * SPACING_Y, COLOR_WHITE, selected == (2 + i) ? '>' : ' ');
@@ -87,6 +87,7 @@ void EntranceSelectMenuShow(EntrancesByScene* entrances){
             }
             else {
                 EntranceWarp(entrances->items[selected - 2].entranceIndex, chosenAge, cutsceneIndex);
+                svcExitThread();
                 break;
             }
         }
@@ -117,6 +118,78 @@ void EntranceSelectMenuShow(EntrancesByScene* entrances){
 
         pagePrev = page;
         page = selected / ENTRANCE_MENU_MAX_SHOW;
+    } while(true);
+}
+
+void WarpsSceneMenuShow(WarpsSceneMenu* menu){
+    s32 selected = 0, page = 0, pagePrev = 0;
+
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_Unlock();
+
+    do
+    {
+        Draw_Lock();
+        if (page != pagePrev)
+        {
+            Draw_ClearFramebuffer();
+        }
+        Draw_DrawFormattedString(10, 10, COLOR_TITLE, menu->title);
+
+        for (s32 i = 0; i < SCENE_MENU_MAX_SHOW && page * SCENE_MENU_MAX_SHOW + i < menu->nbItems; ++i)
+        {
+            s32 j = page * SCENE_MENU_MAX_SHOW + i;
+            Draw_DrawString(30, 30 + i * SPACING_Y, COLOR_WHITE, menu->scenes[j].title);
+            Draw_DrawCharacter(10, 30 + i * SPACING_Y, COLOR_TITLE, j == selected ? '>' : ' ');
+        }
+
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
+
+        u32 pressed = waitInputWithTimeout(1000);
+        if(pressed & BUTTON_B)
+            break;
+        if(pressed & BUTTON_A)
+        {
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
+
+            EntranceSelectMenuShow(menu->scenes[selected].entrances);
+
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
+        }
+        else if(pressed & BUTTON_DOWN)
+        {
+            selected++;
+        }
+        else if(pressed & BUTTON_UP)
+        {
+            selected--;
+        }
+        else if(pressed & BUTTON_LEFT){
+            selected -= SCENE_MENU_MAX_SHOW;
+        }
+        else if(pressed & BUTTON_RIGHT){
+            if(selected + SCENE_MENU_MAX_SHOW < menu->nbItems)
+                selected += SCENE_MENU_MAX_SHOW;
+            else if((menu->nbItems - 1) / SCENE_MENU_MAX_SHOW == page)
+                selected %= SCENE_MENU_MAX_SHOW;
+            else selected = menu->nbItems - 1;
+        }
+
+        if(selected < 0)
+            selected = menu->nbItems - 1;
+        else if(selected >= menu->nbItems) selected = 0;
+
+        pagePrev = page;
+        page = selected / SCENE_MENU_MAX_SHOW;
     } while(true);
 }
 
@@ -156,6 +229,15 @@ EntrancesByScene Entrances_BarinadesLair = {
     }
 };
 
+EntrancesByScene Entrances_Bazaar = {
+    "Bazaar",
+    .nbItems = 2,
+    {
+        {0x00B7, "From Kakariko Village"},
+        {0x052C, "From Market"},
+    }
+};
+
 EntrancesByScene Entrances_BombchuBowlingAlley = {
     "Bombchu Bowling Alley",
     .nbItems = 1,
@@ -170,6 +252,14 @@ EntrancesByScene Entrances_BombchuShop = {
     {
         {0x0390, "[Unused]"},
         {0x0528, "From Back Alley"},
+    }
+};
+
+EntrancesByScene Entrances_BongoBongosLair = {
+    "Bongo Bongo's Lair",
+    .nbItems = 1,
+    {
+        {0x0413, "From Shadow Temple"},
     }
 };
 
@@ -566,6 +656,14 @@ EntrancesByScene Entrances_HauntedWasteland = {
     }
 };
 
+EntrancesByScene Entrances_HouseOfTwins = {
+    "House of Twins",
+    .nbItems = 1,
+    {
+        {0x009C, "From Kokiri Forest"},
+    }
+};
+
 EntrancesByScene Entrances_HouseOfSkulltula = {
     "House of Skulltula",
     .nbItems = 1,
@@ -574,23 +672,249 @@ EntrancesByScene Entrances_HouseOfSkulltula = {
     }
 };
 
-EntrancesByScene Entrances_HyruleCastleGanonsCastleExterior;
-EntrancesByScene Entrances_HyruleField;
-EntrancesByScene Entrances_IceCavern;
-EntrancesByScene Entrances_ImpasHouse;
-EntrancesByScene Entrances_InsideGanonsCastle;
-EntrancesByScene Entrances_InsideGanonsCastleCollapsing;
-EntrancesByScene Entrances_InsideJabuJabusBelly;
-EntrancesByScene Entrances_InsideTheDekuTree;
-EntrancesByScene Entrances_KakarikoPotionShop;
-EntrancesByScene Entrances_KakarikoShootingGallery;
-EntrancesByScene Entrances_KakarikoVillage;
-EntrancesByScene Entrances_KokiriForest;
-EntrancesByScene Entrances_LakeHylia;
-EntrancesByScene Entrances_LakesideLaboratory;
-EntrancesByScene Entrances_LinksHouse;
-EntrancesByScene Entrances_LonLonRanch;
-EntrancesByScene Entrances_LostWoods;
+EntrancesByScene Entrances_HyruleCastleGanonsCastleExterior = {
+    "Hyrule Castle / Ganon's Castle Exterior", //TODO: force age in wrong one
+    .nbItems = 5,
+    {
+        {0x0138, "From Market"},
+        {0x0340, "From Great Fairy's Fountain"},
+        {0x047E, "From Caught By Castle Guard"},
+        {0x04FA, "From Caught By Hedge Maze Guard"},
+        {0x023D, "From Castle Hedge Maze / Ganon's Castle Interior"},
+    }
+};
+
+EntrancesByScene Entrances_HyruleField = {
+    "Hyrule Field",
+    .nbItems = 18,
+    {
+        {0x00CD, "From Zelda's Escape Cutscene"},
+        {0x017D, "From Kakariko Village"},
+        {0x0185, "From Lost Woods"},
+        {0x0189, "From Lake Hylia"},
+        {0x018D, "From Gerudo Valley"},
+        {0x01F9, "From Lon Lon Ranch (Main Entrance)"},
+        {0x01FD, "From Market Entrance"},
+        {0x027A, "From Lake Hylia"},
+        {0x027E, "From Lake Hylia Owl Ride"},
+        {0x0282, "[Unused]"},
+        {0x028A, "From Lon Lon Ranch (South Fence)"},
+        {0x028E, "From Lon Lon Ranch (West Fence)"},
+        {0x0292, "From Lon Lon Ranch (East Fence)"},
+        {0x0476, "[?]"},
+        {0x050F, "[?]"},
+        {0x0594, "From Impa's Escort"},
+        {0x0181, "From Zora's River (Land)"},
+        {0x0311, "From Zora's River (Water)"},
+    }
+};
+
+EntrancesByScene Entrances_IceCavern = {
+    "Ice Cavern",
+    .nbItems = 2,
+    {
+        {0x0088, "From Zora's Fountain"},
+        {0x05D8, "[?]"},
+    }
+};
+
+EntrancesByScene Entrances_ImpasHouse = {
+    "Impa's House",
+    .nbItems = 2,
+    {
+        {0x05C8, "Cage"},
+        {0x039C, "Main Entrance"},
+    }
+};
+
+EntrancesByScene Entrances_InsideGanonsCastle = {
+    "Inside Ganon's Castle",
+    .nbItems = 9,
+    {
+        {0x0467, "From Ganon's Castle Exterior"},
+        {0x046B, "From Ganon's Castle Exterior"},
+        {0x0534, "From Ganon's Tower"},
+        {0x0538, "Forest Trial Clear"},
+        {0x053C, "Water Trial Clear"},
+        {0x0540, "Shadow Trial Clear"},
+        {0x0544, "Fire Trial Clear"},
+        {0x0548, "Light Trial Clear"},
+        {0x054C, "Spirit Trial Clear"},
+    }
+};
+
+EntrancesByScene Entrances_InsideGanonsCastleCollapsing = {
+    "Inside Ganon's Castle (Collapsing)",
+    .nbItems = 1,
+    {
+        {0x056C, "From Ganon's Tower (Collapsing)"},
+    }
+};
+
+EntrancesByScene Entrances_InsideJabuJabusBelly = {
+    "Inside Jabu-Jabu's Belly",
+    .nbItems = 2,
+    {
+        {0x0028, "From Zora's Fountain"},
+        {0x0407, "From Barinade's Lair"},
+    }
+};
+
+EntrancesByScene Entrances_InsideTheDekuTree = {
+    "Inside the Deku Tree",
+    .nbItems = 2,
+    {
+        {0x0000, "From Kokiri Forest"},
+        {0x0252, "From Gohma's Lair"},
+    }
+};
+
+EntrancesByScene Entrances_KakarikoPotionShop = {
+    "Kakariko Potion Shop",
+    .nbItems = 2,
+    {
+        {0x03EC, "Back Door"},
+        {0x0384, "Front Door"},
+        {0x03E8, "Front Door"},
+    }
+};
+
+EntrancesByScene Entrances_KakarikoVillage = {
+    "Kakariko Village",
+    .nbItems = 16,
+    {
+        {0x00DB, "From Hyrule Field"},
+        {0x0191, "From Death Mountain Trail"},
+        {0x0195, "From Graveyard"},
+        {0x0201, "From Kakariko Bazaar"},
+        {0x02A6, "From Bottom of the Well"},
+        {0x0345, "From Impa's House (Main Entrance)"},
+        {0x0349, "From Carpenter Boss's House"},
+        {0x034D, "From Granny's Potion Shop"},
+        {0x0351, "From Windmill"},
+        {0x044B, "From Kakariko Potion Shop (Front Door)"},
+        {0x0463, "From Kakariko Shooting Gallery"},
+        {0x04EE, "From House of Skulltula"},
+        {0x04FF, "From Kakariko Potion Shop (Back Door)"},
+        {0x0513, "From Nocturne of Shadow Cutscene"},
+        {0x0554, "From Death Mountain Trial Owl Ride"},
+        {0x05DC, "From Impa's House (Cage)"},
+    }
+};
+
+EntrancesByScene Entrances_KingDodongosLair = {
+    "King Dodongo's Lair",
+    .nbItems = 1,
+    {
+        {0x040B, "From Dodongo's Cavern"},
+    }
+};
+
+EntrancesByScene Entrances_KnowItAllBrothersHouse = {
+    "Know-It-All Brothers' House",
+    .nbItems = 1,
+    {
+        {0x00C9, "From Kokiri Forest"},
+    }
+};
+
+EntrancesByScene Entrances_KokiriForest = {
+    "Kokiri Forest",
+    .nbItems = 13,
+    {
+        {0x00EE, "From Forest Medallion Cutscene"},
+        {0x0209, "From Inside the Deku Tree"},
+        {0x0211, "From Link's House"},
+        {0x0266, "From Kokiri Shop"},
+        {0x026A, "From Know-It-All Brothers' House"},
+        {0x0286, "From Lost Woods (Zone Out)"},
+        {0x033C, "From House of Twins"},
+        {0x0443, "From Mido's House"},
+        {0x0447, "From Saria's House"},
+        {0x0457, "From Deku Tree Death Cutscene"},
+        {0x05E8, "From Deku Sprout Cutscene"},
+        {0x020D, "From Lost Woods (Forest Bridge)"},
+        {0x0338, "[Unused]"},
+    }
+};
+
+EntrancesByScene Entrances_KokiriShop = {
+    "Kokiri Shop",
+    .nbItems = 1,
+    {
+        {0x00C1, "From Kokiri Forest"},
+    }
+};
+
+EntrancesByScene Entrances_LakeHylia = {
+    "Lake Hylia",
+    .nbItems = 10,
+    {
+        {0x0102, "From Hyrule Field"},
+        {0x021D, "From Water Temple"},
+        {0x0309, "From Fishing Pond"},
+        {0x03CC, "From Lakeside Laboratory"},
+        {0x0560, "From Zora's Domain"},
+        {0x060C, "From Morpha's Lair: Blue Warp"},
+        {0x03C8, "[Unused]"},
+        {0x0219, "From Gerudo Valley"},
+        {0x04E6, "From Water Rising Cutscene"},
+        {0x0604, "From Warp Song: Serenade of Water"},
+    }
+};
+
+EntrancesByScene Entrances_LakesideLaboratory = {
+    "Lakeside Laboratory",
+    .nbItems = 2,
+    {
+        {0x0043, "From Lake Hylia"},
+        {0x01C5, "[?]"},
+    }
+};
+
+EntrancesByScene Entrances_LinksHouse = {
+    "Link's House",
+    .nbItems = 2,
+    {
+        {0x00BB, "From Child Savewarp"},
+        {0x0272, "From Kokiri Forest"},
+    }
+};
+
+EntrancesByScene Entrances_LonLonRanch = {
+    "Lon Lon Ranch",
+    .nbItems = 11,
+    {
+        {0x0157, "From Hyrule Field (Main Entrance)"},
+        {0x02AE, "From Epona's Song Cutscene"},
+        {0x0378, "From Ranch House"},
+        {0x042F, "From Stable"},
+        {0x05D4, "From Silo"},
+        {0x04CA, "[?]"},
+        {0x04CE, "[?]"},
+        {0x0558, "[?]"},
+        {0x055C, "[?]"},
+        {0x02E2, "From Hyrule Field (South Fence)"},
+        {0x02E6, "From Hyrule Field (West Fence)"},
+    }
+};
+
+EntrancesByScene Entrances_LostWoods = {
+    "Lost Woods",
+    .nbItems = 10,
+    {
+        {0x04D2, "Boulder and Grass Square"},
+        {0x04DE, "From Hyrule Field"},
+        {0x05E0, "From Kokiri Forest (Forest Bridge)"},
+        {0x04D6, "From Goron City"},
+        {0x011E, "From Kokiri Forest (High Entrance)"},
+        {0x01A9, "From Sacred Forest Meadow"},
+        {0x04DA, "From Zora's River"},
+        {0x01AD, "[?]"},
+        {0x01B1, "[?]"},
+        {0x04C6, "[?]"},
+    }
+};
 
 EntrancesByScene Entrances_Market = {
     "Market", 
@@ -610,14 +934,6 @@ EntrancesByScene Entrances_Market = {
     }
 };
 
-EntrancesByScene Entrances_MarketBazaar = {
-    "Market Bazaar",
-    .nbitems = 1,
-    {
-        {0x052C, "From Market"},
-    }
-};
-
 EntrancesByScene Entrances_MarketEntrance = {
     "Market Entrance",
     .nbItems = 3,
@@ -630,17 +946,9 @@ EntrancesByScene Entrances_MarketEntrance = {
 
 EntrancesByScene Entrances_MarketPotionShop = {
     "Market Potion Shop",
-    .nbitems = 1,
+    .nbItems = 1,
     {
         {0x0388, "From Market"},
-    }
-};
-
-EntrancesByScene Entrances_MarketShootingGallery = {
-    "Market Shooting Gallery",
-    .nbitems = 1,
-    {
-        {0x016D, "From Market"},
     }
 };
 
@@ -680,8 +988,10 @@ EntrancesByScene Entrances_RanchHouse = {
     "Ranch House",
     .nbItems = 2,
     {
-        {0x004F, "From Lon Lon Ranch"},
+        {0x004F, "From Lon Lon Ranch (Ranch House)"},
+        {0x05D0, "From Lon Lon Ranch (Silo)"},
         {0x05E4, "[?]"},
+
     }
 };
 
@@ -702,7 +1012,7 @@ EntrancesByScene Entrances_SacredForestMeadow = {
         {0x0215, "From Forest Temple"},
         {0x02EE, "[?]"},
         {0x0608, "From Phantom Ganon's Lair: Blue Warp"},
-        {0x0600, "Warp Song: Minuet of Forest"},
+        {0x0600, "From Warp Song: Minuet of Forest"},
     }
 };
 
@@ -725,11 +1035,13 @@ EntrancesByScene Entrances_ShadowTemple = {
     }
 };
 
-EntrancesByScene Entrances_Silo = {
-    "Silo",
-    .nbItems = 1,
+EntrancesByScene Entrances_ShootingGallery = {
+    "Shooting Gallery",
+    .nbItems = 3,
     {
-        {0x05D0, "From Lon Lon Ranch"},
+        {0x016D, "From Market"},
+        {0x003B, "From Kakariko Village"},
+        {0x02F0, "From Kakariko Village"},
     }
 };
 
@@ -745,7 +1057,7 @@ EntrancesByScene Entrances_SpiritTemple = {
     }
 };
 
-EntranceByScene Entrances_Stable = {
+EntrancesByScene Entrances_Stable = {
     "Stable",
     .nbItems = 1,
     {
@@ -763,7 +1075,7 @@ EntrancesByScene Entrances_TempleOfTime = {
         {0x0324, "Cutscene: Meeting Sheik"},
         {0x058C, "Cutscene: Light Arrows"},
         {0x0590, "[?]"},
-        {0x05F4, "Warp Song: Prelude of Light"},
+        {0x05F4, "From Warp Song: Prelude of Light"},
     }
 };
 
@@ -796,7 +1108,7 @@ EntrancesByScene Entrances_ThievesHideout = {
     }
 };
 
-EntranceByScene Entrances_TreasureBoxShop = {
+EntrancesByScene Entrances_TreasureBoxShop = {
     "Treasure Box Shop",
     .nbItems = 1,
     {
@@ -804,7 +1116,7 @@ EntranceByScene Entrances_TreasureBoxShop = {
     }
 };
 
-EntranceByScene Entrances_TwinrovasLair = {
+EntrancesByScene Entrances_TwinrovasLair = {
     "Twinrova's Lair",
     .nbItems = 1,
     {
@@ -812,7 +1124,7 @@ EntranceByScene Entrances_TwinrovasLair = {
     }
 };
 
-EntranceByScene Entrances_VolvagiasLair = {
+EntrancesByScene Entrances_VolvagiasLair = {
     "Volvagia's Lair",
     .nbItems = 1,
     {
@@ -830,7 +1142,7 @@ EntrancesByScene Entrances_WaterTemple = {
 };
 
 EntrancesByScene Entrances_Windmill = {
-    "Windmill/ Dampe's Grave",
+    "Dampe's Grave & Windmill",
     .nbItems = 3,
     {
         {0x044F, "From Graveyard"},

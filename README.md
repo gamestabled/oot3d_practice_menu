@@ -49,7 +49,13 @@ TODO
 ## 2 Menus
 
 ### 2.1 Warps
-TODO
+The **Places** menu allows you to warp to any location. After choosing a scene, a new menu will prompt you to select Link's age upon spawning, the cutscene number upon spawning, and the desired entrance to the chosen scene.
+
+The "Manually Enter Entrance Index" option is similar, but allows you to manually enter the desired entrance index.
+
+The Clear CS Pointer option is TODO.
+
+Please note that many combinations of entrances index and cutscene number will crash the game. This is intended behavior, as it reflects the reality of an unmodified version of the game. Please report any crashes or other behavior that do not seem to be intended or otherwise reflective of expected in-game behavior.
 
 ### 2.2 Scene
 TODO

@@ -377,4 +377,11 @@ enum Dungeon {
 #define real_hid_addr   0x10002000
 #define real_hid        (*(hid_mem_t *) real_hid_addr)
 
+#define Z3D_TOP_SCREEN_LEFT_1 0x14313890
+#define Z3D_TOP_SCREEN_LEFT_2 0x14359DA0
+#define Z3D_TOP_SCREEN_RIGHT_1 0x14410AD0
+#define Z3D_TOP_SCREEN_RIGHT_2 0x14456FE0
+#define Z3D_BOTTOM_SCREEN_1 0x143A02B0
+#define Z3D_BOTTOM_SCREEN_2 0x143D86C0
+
 #endif //_Z3D_H_

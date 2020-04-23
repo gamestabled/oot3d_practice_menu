@@ -213,7 +213,7 @@ void Inventory_ItemsMenuInit(void){
     InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 4].on = (gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] != ITEM_EMPTY); //TODO: index on left
     InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 5].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] != ITEM_EMPTY); //TODO: index on left
     InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 6].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG] + 1] == ITEM_IRON_BOOTS); //TODO
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 7].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG] + 2] != ITEM_HOVER_BOOTS); //TODO
+    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 7].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG] + 2] == ITEM_HOVER_BOOTS); //TODO
 }
 
 void Inventory_ItemsMenuFunc(void){
@@ -500,9 +500,10 @@ void Inventory_RightGearToggle(s32 selected){
                 InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = 0;
             }
+            break;
         case(Gear_Menu_Broken_Giants_Knife):
             if ((gSaveContext.equipment & (1 << 2)) && (gSaveContext.equipment & (1 << 3))){
-                gSaveContext.equipment &= !(0x3 << 2);
+                gSaveContext.equipment &= ~(0x3 << 2);
                 InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 0;
             }
             else {
@@ -512,9 +513,10 @@ void Inventory_RightGearToggle(s32 selected){
                 InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = 0;
             }
+            break;
         case(Gear_Menu_Biggoron_Sword):
             if ((gSaveContext.equipment & (1 << 2)) && gSaveContext.bgsFlag){
-                gSaveContext.equipment &= !(0x3 << 2);
+                gSaveContext.equipment &= ~(0x3 << 2);
                 gSaveContext.bgsFlag = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = 0;
             }
@@ -526,6 +528,7 @@ void Inventory_RightGearToggle(s32 selected){
                 InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = 1;
             }
+            break;
         case(Gear_Menu_Deku_Shield):
             gSaveContext.equipment ^= (1 << 4);
             InventoryRightGearMenu.items[Gear_Menu_Deku_Shield].on = ((gSaveContext.equipment & (1 << 4)) != 0);

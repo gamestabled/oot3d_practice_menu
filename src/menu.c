@@ -31,6 +31,7 @@
 #include "menus.h"
 #include "utils.h"
 #include <stdio.h>
+#include <string.h>
 
 u32 waitInputWithTimeout(u32 msec)
 {

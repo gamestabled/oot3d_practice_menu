@@ -1,13 +1,16 @@
 #pragma once
 
 #include "menu.h"
+#include "z3D/entrances.h"
 
-Menu WarpsMenu;
-Menu WarpsPlacesMenu;
-Menu WarpsPlacesDungeonsMenu;
-Menu WarpsPlacesBossesMenu;
-Menu WarpsPlacesTownsMenu;
-Menu WarpsPlacesHousesMenu;
-Menu WarpsPlacesShopsMenu;
-Menu WarpsPlacesMiscMenu;
-Menu WarpsPlacesOverworldMenu;
+extern Menu WarpsMenu;
+extern Menu WarpsPlacesMenu;
+extern WarpsSceneMenu WarpsPlacesDungeonsMenu;
+extern WarpsSceneMenu WarpsPlacesBossesMenu;
+extern WarpsSceneMenu WarpsPlacesTownsMenu;
+extern WarpsSceneMenu WarpsPlacesHousesMenu;
+extern WarpsSceneMenu WarpsPlacesShopsMenu;
+extern WarpsSceneMenu WarpsPlacesMiscMenu;
+extern WarpsSceneMenu WarpsPlacesOverworldMenu;
+
+void WarpsPlacesMenuShow(void);

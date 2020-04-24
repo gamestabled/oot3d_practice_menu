@@ -44,7 +44,7 @@ void EntranceSelectMenuShow(EntrancesByScene* entrances){
         char ageBuf[65] = { 0 };
         sprintf(ageBuf, "Age on Load: %s", chosenAge ? "Child" : "Adult");
         Draw_DrawString(30, 30, COLOR_WHITE, ageBuf);
-        Draw_DrawCharacter(10, 30, COLOR_WHITE, selected == 0 ? '>' : ' ');
+        Draw_DrawCharacter(10, 30, COLOR_TITLE, selected == 0 ? '>' : ' ');
 
         char csBuf[65] = { 0 };
         if (cutsceneIndex < 0){
@@ -52,17 +52,17 @@ void EntranceSelectMenuShow(EntrancesByScene* entrances){
             Draw_DrawString(30, 30 + SPACING_Y, curColor, "Cutscene Number on Load: None");
         }
         else {
-            sprintf(csBuf, "Cutscene Number on Load: %d", cutsceneIndex);
+            sprintf(csBuf, "Cutscene Number on Load: %04d", cutsceneIndex);
             Draw_DrawString(30, 30 + SPACING_Y, curColor, csBuf);
 
         }
-        Draw_DrawCharacter(10, 30 + SPACING_Y, COLOR_WHITE, selected == 1 ? '>' : ' ');
+        Draw_DrawCharacter(10, 30 + SPACING_Y, COLOR_TITLE, selected == 1 ? '>' : ' ');
 
         for (s32 i = 0; i < ENTRANCE_MENU_MAX_SHOW && page * ENTRANCE_MENU_MAX_SHOW + i < entrances->nbItems; ++i)
         {
             s32 j = page * ENTRANCE_MENU_MAX_SHOW + i;
             Draw_DrawString(70, 30 + (2 + i) * SPACING_Y, COLOR_WHITE, entrances->items[j].title);
-            Draw_DrawCharacter(10, 30 + (2 + i) * SPACING_Y, COLOR_WHITE, selected == (2 + i) ? '>' : ' ');
+            Draw_DrawCharacter(10, 30 + (2 + i) * SPACING_Y, COLOR_TITLE, selected == (2 + j) ? '>' : ' ');
         }
 
         Draw_FlushFramebuffer();
@@ -113,11 +113,11 @@ void EntranceSelectMenuShow(EntrancesByScene* entrances){
             cutsceneIndex++;
         }
         if(selected < 0)
-            selected = entrances->nbItems - 1;
-        else if(selected >= entrances->nbItems) selected = 0;
+            selected = entrances->nbItems + 1;
+        else if(selected >= entrances->nbItems + 2) selected = 0;
 
         pagePrev = page;
-        page = selected / ENTRANCE_MENU_MAX_SHOW;
+        page = selected >= ENTRANCE_MENU_MAX_SHOW + 2 ? 1 : 0;
     } while(true);
 }
 

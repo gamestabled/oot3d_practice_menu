@@ -257,7 +257,7 @@ typedef struct GameState {
 // Global Context (ram start: 0871E840)
 typedef struct GlobalContext {
     // /* 0x00000 */ GameState state;
-    /* 0x00000 */ char         unk_0[0x05C00];
+    /* 0x00000 */ char         unk_0[0x0208C];
     /* 0x0208C */ ActorContext actorCtx;
     /* 0x020F8 */ char         unk_20F0[0x3B08];
     /* 0x05C00 */ u8           linkAgeOnLoad;

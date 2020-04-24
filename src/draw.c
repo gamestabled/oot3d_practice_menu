@@ -34,7 +34,6 @@
 #include <string.h>
 #include <z3D/z3D.h>
 
-// u8 FRAMEBUFFER[FB_BOTTOM_SIZE] __attribute__ ((aligned (0x80)));
 u8* FRAMEBUFFER[2];
 static RecursiveLock lock;
 
@@ -138,21 +137,8 @@ void Draw_ClearFramebuffer(void)
 
 void Draw_SetupFramebuffer(void)
 {
-    // u16 format = GSP_RGB565_OES; // https://www.3dbrew.org/wiki/GPU/External_Registers#Framebuffer_format 
-
-    // gspInit(); //todo, figure out what to do with this
-    
-    // memset(FRAMEBUFFER, 0, FB_BOTTOM_SIZE); //probably not necessary
-
-    // GSPGPU_FramebufferInfo gsp_info = {
-    //     0, FRAMEBUFFER, NULL, SCREEN_BOT_HEIGHT * 2, format, 0, 0
-    // };
-
-    // if (R_FAILED(GSPGPU_SetBufferSwap(1, &gsp_info)))
-    //     svcBreak(USERBREAK_PANIC);
-    // GSPGPU_SetBufferSwap(1, &gsp_info);
-    FRAMEBUFFER[0] = Z3D_BOTTOM_SCREEN_1;
-    FRAMEBUFFER[1] = Z3D_BOTTOM_SCREEN_2;
+    FRAMEBUFFER[0] = (u8*)Z3D_BOTTOM_SCREEN_1;
+    FRAMEBUFFER[1] = (u8*)Z3D_BOTTOM_SCREEN_2;
 }
 
 void Draw_FlushFramebuffer(void)

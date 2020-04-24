@@ -276,7 +276,7 @@ void ToggleMenuShow(ToggleMenu *menu) //displays a toggle menu, analogous to ros
     } while(true);
 }
 
-void AmountMenuShow(AmountMenu* menu){ //displays an amount menu
+void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems messed up
     s32 selected = 0, page = 0, pagePrev = 0;
     u32 curColor = COLOR_GREEN;
     u32 chosen = 0;

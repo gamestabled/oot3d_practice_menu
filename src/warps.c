@@ -252,18 +252,18 @@ void ManuallyEnterEntranceIndex(void){
         char csBuf[65] = { 0 };
         if (cutsceneIndex < 0){
             cutsceneIndex = -1;
-            Draw_DrawString(30, 30 + SPACING_Y, curColor, "Cutscene Number on Load: None");
+            Draw_DrawString(30, 30 + SPACING_Y, selected == 1 ? curColor : COLOR_WHITE, "Cutscene Number on Load: None");
         }
         else {
-            sprintf(csBuf, "Cutscene Number on Load: %d", cutsceneIndex);
-            Draw_DrawString(30, 30 + SPACING_Y, curColor, csBuf);
+            sprintf(csBuf, "Cutscene Number on Load: %04d", cutsceneIndex);
+            Draw_DrawString(30, 30 + SPACING_Y, selected == 1 ? curColor : COLOR_WHITE, csBuf);
 
         }
         Draw_DrawCharacter(10, 30 + SPACING_Y, COLOR_WHITE, selected == 1 ? '>' : ' ');
 
         char entranceBuf[65] = { 0 };
-        sprintf(entranceBuf, "Entrance Index: %04x", chosenIndex);
-        Draw_DrawString(30, 30 + 2 * SPACING_Y, curColor, entranceBuf);
+        sprintf(entranceBuf, "Entrance Index: 0x%04x", chosenIndex);
+        Draw_DrawString(30, 30 + 2 * SPACING_Y, selected == 2 ? curColor : COLOR_WHITE, entranceBuf);
         Draw_DrawCharacter(10, 30 + 2 * SPACING_Y, COLOR_WHITE, selected == 2 ? '>' : ' ');
 
         Draw_DrawString(30, 30 + 3 * SPACING_Y, COLOR_WHITE, "Go");
@@ -336,7 +336,7 @@ void ManuallyEnterEntranceIndex(void){
         }
         if(selected < 0)
             selected = 2;
-        else if(selected >= 3) selected = 0;
+        else if(selected >= 4) selected = 0;
 
     } while(true);
 }

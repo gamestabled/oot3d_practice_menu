@@ -11,10 +11,10 @@ Menu CheatsMenu = {
         {"Refill Items", MENU, .menu = &CheatsItemsMenu},
         {"Refill Keys", MENU, .menu = &CheatsKeysMenu},
         {"Refill Rupees", METHOD, .method = Cheats_Rupees},
-        {"Infinite Nayru's Love", METHOD, .method = Cheats_Nayrus},
-        {"Freeze time of day", METHOD, .method = Cheats_FreezeTime},
-        {"No music", METHOD, .method = Cheats_Music},
-        {"Usable Items", METHOD, .method = Cheats_Usability},
+        {"Infinite Nayru's Love (TODO)", METHOD, .method = Cheats_Nayrus},
+        {"Freeze time of day (TODO)", METHOD, .method = Cheats_FreezeTime},
+        {"No music (TODO)", METHOD, .method = Cheats_Music},
+        {"Usable Items (TODO)", METHOD, .method = Cheats_Usability},
         {"ISG", METHOD, .method = Cheats_ISG},
     }
 };
@@ -35,7 +35,7 @@ Menu CheatsItemsMenu = {
 
 Menu CheatsKeysMenu = {
     "Keys",
-    .nbItems = 20,
+    .nbItems = 13,
     {
         {"Deku Tree", METHOD, .method = Give_Deku_Key},
         {"Dodongo's Cavern", METHOD, .method = Give_Dodongo_Key},
@@ -45,18 +45,18 @@ Menu CheatsKeysMenu = {
         {"Water Temple", METHOD, .method = Give_Water_Key},
         {"Spirit Temple", METHOD, .method = Give_Spirit_Key},
         {"Shadow Temple", METHOD, .method = Give_Shadow_Key},
-        {"Bottom of the Well}", METHOD, .method = Give_Well_Key},
+        {"Bottom of the Well", METHOD, .method = Give_Well_Key},
         {"Ice Cavern", METHOD, .method = Give_Ice_Key},
-        {"Ganon's Castle (Second Part)", METHOD, .method = Give_GanonSecond_Key},
+        // {"Ganon's Castle (Second Part)", METHOD, .method = Give_GanonSecond_Key},
         {"Gerudo Training Grounds", METHOD, .method = Give_Grounds_Key},
         {"Gerudo Fortress", METHOD, .method = Give_Gerudo_Key},
-        {"Ganon's Castle (First Part)", METHOD, .method = Give_GanonFirst_Key},
-        {"Ganon's Castle (Floor Beneath Boss Chamber", METHOD, .method = Give_GanonBoss_Key},
-        {"Ganon's Castle (Crumbling)", METHOD, .method = Give_GanonCrumbling_Key},
+        // {"Ganon's Castle (First Part)", METHOD, .method = Give_GanonFirst_Key},
+        // {"Ganon's Castle (Floor Beneath Boss Chamber", METHOD, .method = Give_GanonBoss_Key},
+        // {"Ganon's Castle (Crumbling)", METHOD, .method = Give_GanonCrumbling_Key},
         {"Treasure Chest Shop", METHOD, .method = Give_Treasure_Key},
-        {"Deku Tree Boss Room", METHOD, .method = Give_DekuBoss_Key},
-        {"Dodongo's Cavern Boss Room", METHOD, .method = Give_DodongoBoss_Key},
-        {"Jabu-Jabu's Belly Boss Room", METHOD, .method = Give_JabuBoss_Key},
+        // {"Deku Tree Boss Room", METHOD, .method = Give_DekuBoss_Key},
+        // {"Dodongo's Cavern Boss Room", METHOD, .method = Give_DodongoBoss_Key},
+        // {"Jabu-Jabu's Belly Boss Room", METHOD, .method = Give_JabuBoss_Key},
     }
 };
 
@@ -89,11 +89,11 @@ void Cheats_Slingshot(void){
 }
 
 void Cheats_Bombchus(void){
-    gSaveContext.ammo[ITEM_BOMBCHU] = 50;
+    gSaveContext.ammo[ItemSlots[ITEM_BOMBCHU]] = 50;
 }
 
 void Cheats_Beans(void){
-    gSaveContext.ammo[ITEM_MAGIC_BEANS] = 10;
+    gSaveContext.ammo[ItemSlots[ITEM_MAGIC_BEANS]] = 10;
 }
 
 void Cheats_Rupees(void){
@@ -130,7 +130,8 @@ void Cheats_Usability(void){ //TODO
 }
 
 void Cheats_ISG(void){
-    PLAYER->isg = 1;
+    // PLAYER->isg = 1;
+    ((Player*)gGlobalContext->actorCtx.actorList[ACTORTYPE_PLAYER].first)->isg = 1;
 }
 
 void Give_Deku_Key(void){
@@ -209,6 +210,6 @@ void Give_DodongoBoss_Key(void){
     gSaveContext.dungeonKeys[DUNGEON_DODONGOS_CAVERN_BOSS_ROOM]++;
 }
 
-void Give_JabuBoss_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_JABUJABUS_BELLY_BOSS_ROOM]++;
-}
+// void Give_JabuBoss_Key(void){ commenting to remove a warning
+//     gSaveContext.dungeonKeys[DUNGEON_JABUJABUS_BELLY_BOSS_ROOM]++;
+// }

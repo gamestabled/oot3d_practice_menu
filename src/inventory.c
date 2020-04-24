@@ -11,7 +11,7 @@ Menu InventoryMenu = {
         {"Items", METHOD, .method = Inventory_ItemsMenuFunc},
         {"Right Side Gear", METHOD, .method = Inventory_RightGearMenuFunc},
         {"Left Side Gear", METHOD, .method = Inventory_LeftGearMenuFunc},
-        {"Amounts", METHOD, .method = Inventory_AmountsMenuFunc},
+        // {"Amounts", METHOD, .method = Inventory_AmountsMenuFunc},
     }
 };
 
@@ -93,7 +93,7 @@ ToggleMenu InventoryChildTradeMenu = {
 
 ToggleMenu InventoryAdultTradeMenu = {
     "Choose Adult Trade Item",
-    .nbItems = 11,
+    .nbItems = 12,
     {
         {0, "Pocket Egg", .method = Inventory_AdultTradeSelect},
         {0, "Pocket Cucco", .method = Inventory_AdultTradeSelect},
@@ -106,6 +106,7 @@ ToggleMenu InventoryAdultTradeMenu = {
         {0, "Eye Ball Frog", .method = Inventory_AdultTradeSelect},
         {0, "Eye Drops", .method = Inventory_AdultTradeSelect},
         {0, "Claim Check", .method = Inventory_AdultTradeSelect},
+        {0, "None", .method = Inventory_AdultTradeSelect},
     }
 };
 
@@ -165,7 +166,7 @@ ToggleMenu InventoryLeftGearMenu = {
 };
 
 AmountMenu InventoryAmountsMenu = {
-    "Amounts. Press A to edit/save amount. Press B to cancel.",
+    "A to edit/save amount. B to cancel.",
     .nbItems = 14,
     {
         {0, 0, "Deku Sticks", .method = Inventory_AmountsSelect},
@@ -255,10 +256,13 @@ void Inventory_ItemsToggle(s32 selected){
             }
             else {
                 gSaveContext.items[ItemSlots[ITEM_HOOKSHOT]] = ITEM_EMPTY;
-                for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
+                for (u32 i = 0; i < 0x18; ++i){ //need to remove the slot from child/adult grids
                     if (gSaveContext.itemMenuChild[i] == ItemSlots[ITEM_HOOKSHOT]){
                         gSaveContext.itemMenuChild[i] = 0xFF;
                     }
+                    if (gSaveContext.itemMenuAdult[i] == ItemSlots[ITEM_HOOKSHOT]){
+                        gSaveContext.itemMenuAdult[i] = 0xFF;
+                    }   
                 }
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 0;
                 InventoryItemsMenu.items[ITEM_LONGSHOT].on = 0;
@@ -272,10 +276,13 @@ void Inventory_ItemsToggle(s32 selected){
             }
             else {
                 gSaveContext.items[ItemSlots[ITEM_LONGSHOT]] = ITEM_EMPTY;
-                for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
+                for (u32 i = 0; i < 0x18; ++i){ //need to remove the slot from child/adult grids
                     if (gSaveContext.itemMenuChild[i] == ItemSlots[ITEM_LONGSHOT]){
                         gSaveContext.itemMenuChild[i] = 0xFF;
                     }
+                    if (gSaveContext.itemMenuAdult[i] == ItemSlots[ITEM_LONGSHOT]){
+                        gSaveContext.itemMenuAdult[i] = 0xFF;
+                    }       
                 }
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 0;
                 InventoryItemsMenu.items[ITEM_LONGSHOT].on = 0;
@@ -288,9 +295,12 @@ void Inventory_ItemsToggle(s32 selected){
             }
             else {
                 gSaveContext.items[ItemSlots[selected]] = ITEM_EMPTY;
-                for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
+                for (u32 i = 0; i < 0x18; ++i){ //need to remove the slot from child/adult grids
                     if (gSaveContext.itemMenuChild[i] == ItemSlots[selected]){
                         gSaveContext.itemMenuChild[i] = 0xFF;
+                    }
+                    if (gSaveContext.itemMenuAdult[i] == ItemSlots[selected]){
+                        gSaveContext.itemMenuAdult[i] = 0xFF;
                     }
                 }
                 InventoryItemsMenu.items[selected].on = 0;
@@ -322,14 +332,18 @@ void Inventory_BottleSelect(s32 selected){
     }
     else { //erase the bottle
         gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] = ITEM_EMPTY;
-        for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
+        for (u32 i = 0; i < 0x18; ++i){ //need to remove the slot from child/adult grids
             if (gSaveContext.itemMenuChild[i] == ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle){
                 gSaveContext.itemMenuChild[i] = 0xFF;
             }
+            if (gSaveContext.itemMenuAdult[i] == ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle){
+                gSaveContext.itemMenuAdult[i] = 0xFF;
+            }
         }
-        for(u32 i = 0; i < InventoryBottlesMenu.nbItems; ++i){ //set menu toggles off
+        for(u32 i = 0; i < InventoryBottlesMenu.nbItems - 1; ++i){ //set menu toggles off
             InventoryBottlesMenu.items[i].on = 0;
         }
+        InventoryBottlesMenu.items[InventoryBottlesMenu.nbItems - 1].on = 1;
         InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + SelectedBottle].on = 0;
     }
 }
@@ -356,14 +370,18 @@ void Inventory_ChildTradeSelect(s32 selected){ //TODO: remove hardcoded indexes
     }
     else { //erase the child trade item
         gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] = ITEM_EMPTY;
-        for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
+        for (u32 i = 0; i < 0x18; ++i){ //need to remove the slot from child/adult grids
             if (gSaveContext.itemMenuChild[i] == ItemSlots[ITEM_WEIRD_EGG]){
                 gSaveContext.itemMenuChild[i] = 0xFF;
             }
+            if (gSaveContext.itemMenuAdult[i] == ItemSlots[ITEM_WEIRD_EGG]){
+                gSaveContext.itemMenuAdult[i] = 0xFF;
+            }
         }
-        for(u32 i = 0; i < InventoryChildTradeMenu.nbItems; ++i){ //set menu toggles off
+        for(u32 i = 0; i < InventoryChildTradeMenu.nbItems - 1; ++i){ //set menu toggles off
             InventoryChildTradeMenu.items[i].on = 0;
         }
+        InventoryChildTradeMenu.items[InventoryChildTradeMenu.nbItems - 1].on = 1;
         InventoryItemsMenu.items[24].on = 0;
     }
 }
@@ -390,14 +408,18 @@ void Inventory_AdultTradeSelect(s32 selected){ //TODO: remove hardcoded indexes
     }
     else { //erase the adult trade item
         gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] = ITEM_EMPTY;
-        for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
+        for (u32 i = 0; i < 0x18; ++i){ //need to remove the slot from child/adult grids
             if (gSaveContext.itemMenuChild[i] == ItemSlots[ITEM_POCKET_EGG]){
                 gSaveContext.itemMenuChild[i] = 0xFF;
             }
+            if (gSaveContext.itemMenuAdult[i] == ItemSlots[ITEM_POCKET_EGG]){
+                gSaveContext.itemMenuAdult[i] = 0xFF;
+            }
         }
-        for(u32 i = 0; i < InventoryAdultTradeMenu.nbItems; ++i){ //set menu toggles off
+        for(u32 i = 0; i < InventoryAdultTradeMenu.nbItems - 1; ++i){ //set menu toggles off
             InventoryAdultTradeMenu.items[i].on = 0;
         }
+        InventoryAdultTradeMenu.items[InventoryAdultTradeMenu.nbItems - 1].on = 1;
         InventoryItemsMenu.items[25].on = 0;
     }
 }
@@ -414,9 +436,12 @@ void Inventory_BootsToggle(s32 selected){ //TODO: remove hardcoded values
         else {
             gSaveContext.items[24] = ITEM_EMPTY;
             gSaveContext.equipment &= ~(1 << 13);
-            for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
+            for (u32 i = 0; i < 0x18; ++i){ //need to remove the slot from child/adult grids
                 if (gSaveContext.itemMenuChild[i] == 24){
                     gSaveContext.itemMenuChild[i] = 0xFF;
+                }
+                if (gSaveContext.itemMenuAdult[i] == 24){
+                    gSaveContext.itemMenuAdult[i] = 0xFF;
                 }
             }
             InventoryItemsMenu.items[selected].on = 0;
@@ -431,9 +456,12 @@ void Inventory_BootsToggle(s32 selected){ //TODO: remove hardcoded values
         else {
             gSaveContext.items[25] = ITEM_EMPTY;
             gSaveContext.equipment &= ~(1 << 14);
-            for (u32 i = 0; i < 0x30; ++i){ //need to remove the slot from child/adult grids
+            for (u32 i = 0; i < 0x18; ++i){ //need to remove the slot from child/adult grids
                 if (gSaveContext.itemMenuChild[i] == 25){
                     gSaveContext.itemMenuChild[i] = 0xFF;
+                }
+                if (gSaveContext.itemMenuAdult[i] == 25){
+                    gSaveContext.itemMenuAdult[i] = 0xFF;
                 }
             }
             InventoryItemsMenu.items[selected].on = 0;

@@ -32,8 +32,6 @@ void Inventory_GoldSkulltulaAmount(s32);
 void Inventory_AmountsMenuFunc(void);
 void Inventory_AmountsSelect(s32);
 
-void RemoveItemSlotFromMenuGrids(u8 slot);
-
 enum { //Right Side Gear Menu Choices
     Gear_Menu_Kokiri_Sword = 0,
     Gear_Menu_Master_Sword,

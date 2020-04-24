@@ -188,7 +188,31 @@ AmountMenu InventoryAmountsMenu = {
     }
 };
 
-void Inventory_ItemsMenuInit(void){
+static void ResetSlotsIfMatchesID(u8 id) {
+    // Need to remove the slot from child/adult grids
+    for (u32 i = 0; i < 0x18; ++i) {
+        if (gSaveContext.itemMenuChild[i] == id) {
+            gSaveContext.itemMenuChild[i] = 0xFF;
+        }
+        if (gSaveContext.itemMenuAdult[i] == id) {
+            gSaveContext.itemMenuAdult[i] = 0xFF;
+        }
+    }
+}
+
+static void SetMenuToggle(ToggleMenu* menu, u32 selected) {
+    for (u32 i = 0; i < menu->nbItems; ++i) {
+        menu->items[i].on = (i == selected ? 1 : 0);
+    }
+}
+
+static void DisableMenuToggles(ToggleMenu* menu) {
+    for (u32 i = 0; i < menu->nbItems - 1; ++i) {
+        menu->items[i].on = 0;
+    }
+}
+
+static void Inventory_ItemsMenuInit(void){
     InventoryItemsMenu.items[ITEM_DEKU_STICK].on = (gSaveContext.items[ItemSlots[ITEM_DEKU_STICK]] == ITEM_DEKU_STICK);
     InventoryItemsMenu.items[ITEM_DEKU_NUT].on = (gSaveContext.items[ItemSlots[ITEM_DEKU_NUT]] == ITEM_DEKU_NUT);
     InventoryItemsMenu.items[ITEM_BOMB].on = (gSaveContext.items[ItemSlots[ITEM_BOMB]] == ITEM_BOMB);
@@ -258,7 +282,7 @@ void Inventory_ItemsToggle(s32 selected){
             }
             else {
                 gSaveContext.items[ItemSlots[ITEM_HOOKSHOT]] = ITEM_EMPTY;
-                RemoveItemSlotFromMenuGrids(ItemSlots[ITEM_HOOKSHOT]);
+                ResetSlotsIfMatchesID(ItemSlots[ITEM_HOOKSHOT]);
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 0;
                 InventoryItemsMenu.items[ITEM_LONGSHOT].on = 0;
             }
@@ -271,7 +295,7 @@ void Inventory_ItemsToggle(s32 selected){
             }
             else {
                 gSaveContext.items[ItemSlots[ITEM_LONGSHOT]] = ITEM_EMPTY;
-                RemoveItemSlotFromMenuGrids(ItemSlots[ITEM_LONGSHOT]);
+                ResetSlotsIfMatchesID(ItemSlots[ITEM_LONGSHOT]);
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 0;
                 InventoryItemsMenu.items[ITEM_LONGSHOT].on = 0;
             }
@@ -283,7 +307,7 @@ void Inventory_ItemsToggle(s32 selected){
             }
             else {
                 gSaveContext.items[ItemSlots[selected]] = ITEM_EMPTY;
-                RemoveItemSlotFromMenuGrids(ItemSlots[selected]);
+                ResetSlotsIfMatchesID(ItemSlots[selected]);
                 InventoryItemsMenu.items[selected].on = 0;
             }
             break;
@@ -306,17 +330,13 @@ void Inventory_BottlesMenuFunc(s32 selected){
 void Inventory_BottleSelect(s32 selected){
     if (selected < ITEM_WEIRD_EGG - ITEM_EMPTY_BOTTLE){ //selected a bottled content
         gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] = ITEM_EMPTY_BOTTLE + selected;
-        for(u32 i = 0; i < InventoryBottlesMenu.nbItems; ++i){ //set menu toggles on/off
-            InventoryBottlesMenu.items[i].on = (i == selected ? 1 : 0);
-        }
+        SetMenuToggle(&InventoryBottlesMenu, selected);
         InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + SelectedBottle].on = 1;
     }
     else { //erase the bottle
         gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] = ITEM_EMPTY;
-        RemoveItemSlotFromMenuGrids(ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle);
-        for(u32 i = 0; i < InventoryBottlesMenu.nbItems - 1; ++i){ //set menu toggles off
-            InventoryBottlesMenu.items[i].on = 0;
-        }
+        ResetSlotsIfMatchesID(ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle);
+        DisableMenuToggles(&InventoryBottlesMenu);
         InventoryBottlesMenu.items[InventoryBottlesMenu.nbItems - 1].on = 1;
         InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + SelectedBottle].on = 0;
     }
@@ -337,17 +357,13 @@ void Inventory_ChildTradeMenuFunc(s32 selected){
 void Inventory_ChildTradeSelect(s32 selected){ //TODO: remove hardcoded indexes
     if (selected < ITEM_POCKET_EGG - ITEM_WEIRD_EGG){ //selected a child trade item
         gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] = ITEM_WEIRD_EGG + selected;
-        for(u32 i = 0; i < InventoryChildTradeMenu.nbItems; ++i){ //set menu toggles on/off
-            InventoryChildTradeMenu.items[i].on = (i == selected ? 1 : 0);
-        }
+        SetMenuToggle(&InventoryChildTradeMenu, selected);
         InventoryItemsMenu.items[24].on = 1;
     }
     else { //erase the child trade item
         gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] = ITEM_EMPTY;
-        RemoveItemSlotFromMenuGrids(ItemSlots[ITEM_WEIRD_EGG]);
-        for(u32 i = 0; i < InventoryChildTradeMenu.nbItems - 1; ++i){ //set menu toggles off
-            InventoryChildTradeMenu.items[i].on = 0;
-        }
+        ResetSlotsIfMatchesID(ItemSlots[ITEM_WEIRD_EGG]);
+        DisableMenuToggles(&InventoryChildTradeMenu);
         InventoryChildTradeMenu.items[InventoryChildTradeMenu.nbItems - 1].on = 1;
         InventoryItemsMenu.items[24].on = 0;
     }
@@ -368,17 +384,13 @@ void Inventory_AdultTradeMenuFunc(s32 selected){
 void Inventory_AdultTradeSelect(s32 selected){ //TODO: remove hardcoded indexes
     if (selected < ITEM_FAIRY_BOW_PLUS_FIRE_ARROW - ITEM_POCKET_EGG){ //selected an adult trade item
         gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] = ITEM_POCKET_EGG + selected;
-        for(u32 i = 0; i < InventoryAdultTradeMenu.nbItems; ++i){ //set menu toggles on/off
-            InventoryAdultTradeMenu.items[i].on = (i == selected ? 1 : 0);
-        }
+        SetMenuToggle(&InventoryAdultTradeMenu, selected);
         InventoryItemsMenu.items[25].on = 1;
     }
     else { //erase the adult trade item
         gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] = ITEM_EMPTY;
-        RemoveItemSlotFromMenuGrids(ItemSlots[ITEM_POCKET_EGG]);
-        for(u32 i = 0; i < InventoryAdultTradeMenu.nbItems - 1; ++i){ //set menu toggles off
-            InventoryAdultTradeMenu.items[i].on = 0;
-        }
+        ResetSlotsIfMatchesID(ItemSlots[ITEM_POCKET_EGG]);
+        DisableMenuToggles(&InventoryAdultTradeMenu);
         InventoryAdultTradeMenu.items[InventoryAdultTradeMenu.nbItems - 1].on = 1;
         InventoryItemsMenu.items[25].on = 0;
     }
@@ -396,7 +408,7 @@ void Inventory_BootsToggle(s32 selected){ //TODO: remove hardcoded values
         else {
             gSaveContext.items[24] = ITEM_EMPTY;
             gSaveContext.equipment &= ~(1 << 13);
-            RemoveItemSlotFromMenuGrids(24);
+            ResetSlotsIfMatchesID(24);
             InventoryItemsMenu.items[selected].on = 0;
         }
     }
@@ -409,7 +421,7 @@ void Inventory_BootsToggle(s32 selected){ //TODO: remove hardcoded values
         else {
             gSaveContext.items[25] = ITEM_EMPTY;
             gSaveContext.equipment &= ~(1 << 14);
-            RemoveItemSlotFromMenuGrids(25);
+            ResetSlotsIfMatchesID(25);
             InventoryItemsMenu.items[selected].on = 0;
         }
     }
@@ -1030,18 +1042,5 @@ void Inventory_AmountsSelect(s32 selected){
         case(Amounts_Menu_Giants_Knife_hits):
             gSaveContext.bgsHitsLeft = InventoryAmountsMenu.items[Amounts_Menu_Giants_Knife_hits].amount;
             break;
-    }
-}
-
-void RemoveItemSlotFromMenuGrids(u8 slot){
-    for (size_t i = 0; i < 24; i++) {
-        if (gSaveContext.itemMenuChild[i] == slot) {
-            gSaveContext.itemMenuChild[i] = 0xFF;
-        }
-    }
-    for (size_t i = 0; i < 24; i++) {
-        if (gSaveContext.itemMenuAdult[i] == slot) {
-            gSaveContext.itemMenuAdult[i] = 0xFF;
-        }
     }
 }

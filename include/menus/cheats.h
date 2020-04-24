@@ -2,9 +2,9 @@
 
 #include "menu.h"
 
-Menu CheatsMenu;
-Menu CheatsItemsMenu;
-Menu CheatsKeysMenu;
+extern Menu CheatsMenu;
+extern Menu CheatsItemsMenu;
+extern Menu CheatsKeysMenu;
 
 void Cheats_Health(void);
 void Cheats_Magic(void);

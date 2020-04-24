@@ -2,4 +2,4 @@
 
 #include "menu.h"
 
-Menu SceneMenu;
+extern Menu SceneMenu;

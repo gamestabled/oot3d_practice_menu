@@ -3,16 +3,14 @@
 #include "menu.h"
 #include "z3D/z3D.h"
 
-Menu InventoryMenu;
-ToggleMenu InventoryItemsMenu;
-ToggleMenu InventoryBottlesMenu;
-ToggleMenu InventoryChildTradeMenu;
-ToggleMenu InventoryAdultTradeMenu;
-ToggleMenu InventoryRightGearMenu;
-ToggleMenu InventoryLeftGearMenu;
-AmountMenu InventoryAmountsMenu;
-
-u32 SelectedBottle;
+extern Menu InventoryMenu;
+extern ToggleMenu InventoryItemsMenu;
+extern ToggleMenu InventoryBottlesMenu;
+extern ToggleMenu InventoryChildTradeMenu;
+extern ToggleMenu InventoryAdultTradeMenu;
+extern ToggleMenu InventoryRightGearMenu;
+extern ToggleMenu InventoryLeftGearMenu;
+extern AmountMenu InventoryAmountsMenu;
 
 void Inventory_ItemsMenuFunc(void);
 void Inventory_ItemsToggle(s32);

@@ -2,4 +2,4 @@
 
 #include "menu.h"
 
-Menu FileMenu;
+extern Menu FileMenu;

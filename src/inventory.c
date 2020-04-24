@@ -4,6 +4,8 @@
 #include "z3D/z3D.h"
 #include <stdio.h>
 
+static u32 SelectedBottle;
+
 Menu InventoryMenu = {
     "Cheats",
     .nbItems = 3,

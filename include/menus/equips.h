@@ -2,4 +2,4 @@
 
 #include "menu.h"
 
-Menu EquipsMenu;
+extern Menu EquipsMenu;

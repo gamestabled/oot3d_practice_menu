@@ -34,7 +34,7 @@
 #include <string.h>
 #include <z3D/z3D.h>
 
-u8* FRAMEBUFFER[2];
+static u8* FRAMEBUFFER[2];
 static RecursiveLock lock;
 
 void Draw_Lock(void)

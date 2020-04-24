@@ -87,3 +87,5 @@ void toggle_advance() {
         advance_ctx.d_down_latched = 0;
     }
 }
+
+int main(void){}

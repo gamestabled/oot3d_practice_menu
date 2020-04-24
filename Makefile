@@ -2,12 +2,12 @@
 .SUFFIXES:
 #---------------------------------------------------------------------------------
 
-ifeq ($(strip $(MUSLARM)),)
-$(error "Please set MUSLARM in your environment. export MUSLARM=<path to>MUSLARM")
+ifeq ($(strip $(DEVKITARM)),)
+$(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>DEVKITARM")
 endif
 
 TOPDIR ?= $(CURDIR)
-include $(MUSLARM)/3ds_rules
+include $(DEVKITARM)/3ds_rules
 
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
@@ -68,7 +68,7 @@ LIBS	:=
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(MUSLARM) include/citro3d
+LIBDIRS	:= $(DEVKITARM) include/citro3d
 
 
 #---------------------------------------------------------------------------------

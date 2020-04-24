@@ -247,7 +247,7 @@ void ManuallyEnterEntranceIndex(void){
         char ageBuf[65] = { 0 };
         sprintf(ageBuf, "Age on Load: %s", chosenAge ? "Child" : "Adult");
         Draw_DrawString(30, 30, COLOR_WHITE, ageBuf);
-        Draw_DrawCharacter(10, 30, COLOR_WHITE, selected == 0 ? '>' : ' ');
+        Draw_DrawCharacter(10, 30, COLOR_TITLE, selected == 0 ? '>' : ' ');
 
         char csBuf[65] = { 0 };
         if (cutsceneIndex < 0){
@@ -259,15 +259,15 @@ void ManuallyEnterEntranceIndex(void){
             Draw_DrawString(30, 30 + SPACING_Y, selected == 1 ? curColor : COLOR_WHITE, csBuf);
 
         }
-        Draw_DrawCharacter(10, 30 + SPACING_Y, COLOR_WHITE, selected == 1 ? '>' : ' ');
+        Draw_DrawCharacter(10, 30 + SPACING_Y, COLOR_TITLE, selected == 1 ? '>' : ' ');
 
         char entranceBuf[65] = { 0 };
         sprintf(entranceBuf, "Entrance Index: 0x%04x", chosenIndex);
         Draw_DrawString(30, 30 + 2 * SPACING_Y, selected == 2 ? curColor : COLOR_WHITE, entranceBuf);
-        Draw_DrawCharacter(10, 30 + 2 * SPACING_Y, COLOR_WHITE, selected == 2 ? '>' : ' ');
+        Draw_DrawCharacter(10, 30 + 2 * SPACING_Y, COLOR_TITLE, selected == 2 ? '>' : ' ');
 
         Draw_DrawString(30, 30 + 3 * SPACING_Y, COLOR_WHITE, "Go");
-        Draw_DrawCharacter(10, 30 + 3 * SPACING_Y, COLOR_WHITE, selected == 3 ? '>' : ' ');
+        Draw_DrawCharacter(10, 30 + 3 * SPACING_Y, COLOR_TITLE, selected == 3 ? '>' : ' ');
 
         Draw_FlushFramebuffer();
         Draw_Unlock();

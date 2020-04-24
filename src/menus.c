@@ -40,15 +40,15 @@
 
 Menu gz3DMenu = {
     "Gamestabled's menu, fuck you",
-    .nbItems = 7,
+    .nbItems = 4,
     {
-        { "Test method placeholder, sets rupees to 50", METHOD, .method = &gz3DMenu_Test },
+        // { "Test method placeholder, sets rupees to 50", METHOD, .method = &gz3DMenu_Test },
         { "Warps", MENU, .menu = &WarpsMenu },
         { "Scene", MENU, .menu = &SceneMenu },
         { "Cheats", MENU, .menu = &CheatsMenu },
         { "Inventory", MENU, .menu = &InventoryMenu },
-        { "Equips", MENU, .menu = &EquipsMenu },
-        { "File", MENU, .menu = &FileMenu },
+        // { "Equips", MENU, .menu = &EquipsMenu },
+        // { "File", MENU, .menu = &FileMenu },
     }
 };
 

@@ -78,7 +78,7 @@ static s32 skipAtoi(const char **s)
     return i;
 }
 
-static char *processNumber(char *str, s64 num, bool isHex, s32 size, s32 precision, u32 type)
+static char *processNumber(char *str, s32 num, bool isHex, s32 size, s32 precision, u32 type)
 {
     char sign = 0;
 
@@ -122,18 +122,19 @@ static char *processNumber(char *str, s64 num, bool isHex, s32 size, s32 precisi
             // tmp[i++] = dig[num % base];
             // num = (num / base);
             if (isHex) {
-                tmp[i++] = dig[num && (16-1)];
+                tmp[i++] = dig[num & (16-1)];
                 num = (num >> 4);
             }
             else {
-                s64 mod10 = num;
+                s32 mod10 = num;
                 while (mod10 - 10 >= 0){
                     mod10 -= 10;
                 }
                 tmp[i++] = dig[mod10];
-                s64 div10 = num - mod10;
+                s32 div10 = num - mod10;
                 num = 0;
-                while (div10 - 10 > 0){
+                while (div10 - 10 >= 0){
+                    div10 -= 10;
                     num++;
                 }
             }

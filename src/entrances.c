@@ -9,6 +9,7 @@
 #define SCENE_MENU_MAX_SHOW 18
 
 void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex){
+    gSaveContext.entranceIndex = EntranceIndex;
     gGlobalContext->nextEntranceIndex = EntranceIndex;
     gGlobalContext->linkAgeOnLoad = chosenAge;
     if (cutsceneIndex < 0){

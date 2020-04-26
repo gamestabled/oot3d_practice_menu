@@ -293,6 +293,26 @@ typedef struct SubGlobalContext_118 {
     /* 0x60 */ void** unk_60; //seems to point to an array of cutscene pointers, maybe?
 } SubGlobalContext_118; // size = at least 0x64
 
+typedef struct Collider Collider; //TODO
+typedef struct OcLine OcLine; //TODO
+#define COLLISION_CHECK_AT_MAX 50
+#define COLLISION_CHECK_AC_MAX 60
+#define COLLISION_CHECK_OC_MAX 50
+#define COLLISION_CHECK_OC_LINE_MAX 3
+
+typedef struct {
+    /* 0x000 */ s16 colAtCount;
+    /* 0x002 */ u16 sacFlags;
+    /* 0x004 */ Collider* colAt[COLLISION_CHECK_AT_MAX];
+    /* 0x0CC */ s32 colAcCount;
+    /* 0x0D0 */ Collider* colAc[COLLISION_CHECK_AC_MAX];
+    /* 0x1C0 */ s32 colOcCount;
+    /* 0x1C4 */ Collider* colOc[COLLISION_CHECK_OC_MAX];
+    /* 0x28C */ s32 colOcLineCount;
+    /* 0x290 */ OcLine* colOcLine[COLLISION_CHECK_OC_LINE_MAX];
+
+} CollisionCheckContext; // size = 0x29C
+
 typedef struct GameState {
     /* 0x00 */ GraphicsContext* gfxCtx;
     /* 0x04 */ void (*main)(struct GameState*);
@@ -304,21 +324,22 @@ typedef struct GameState {
 // Global Context (ram start: 0871E840)
 typedef struct GlobalContext {
     // /* 0x0000 */ GameState state;
-    /* 0x0000 */ char                 unk_0[0x0118];
-    /* 0x0118 */ SubGlobalContext_118 sub118;
-    /* 0x017C */ char                 unk_17C[0x091C];
-    /* 0x0A98 */ CollisionContext     colCtx;
-    /* 0x208C */ ActorContext         actorCtx;
-    /* 0x20F8 */ char                 unk_20F0[0x01A0];
-    /* 0x2298 */ CutsceneContext      csCtx; // "demo_play"
-    /* 0x2304 */ char                 unk_2304[0x38FC];
-    /* 0x5C00 */ u8                   linkAgeOnLoad;
-    /* 0x5C01 */ char                 unk_5C01[0x002C];
-    /* 0x5C2D */ s8                   sceneLoadFlag; // "fade_direction"
-    /* 0x5C2E */ char                 unk_5C2E[0x0004];
-    /* 0x5C32 */ s16                  nextEntranceIndex;
-    /* 0x5C34 */ char                 unk_5C34[0x0042];
-    /* 0x5C76 */ u8                   fadeOutTransition;
+    /* 0x0000 */ char                  unk_0[0x0118];
+    /* 0x0118 */ SubGlobalContext_118  sub118;
+    /* 0x017C */ char                  unk_17C[0x091C];
+    /* 0x0A98 */ CollisionContext      colCtx;
+    /* 0x208C */ ActorContext          actorCtx;
+    /* 0x20F8 */ char                  unk_20F0[0x01A0];
+    /* 0x2298 */ CutsceneContext       csCtx; // "demo_play"
+    /* 0x2304 */ char                  unk_2304[0x38FC];
+    /* 0x5C00 */ u8                    linkAgeOnLoad;
+    /* 0x5C01 */ char                  unk_5C01[0x002C];
+    /* 0x5C2D */ s8                    sceneLoadFlag; // "fade_direction"
+    /* 0x5C2E */ char                  unk_5C2E[0x0004];
+    /* 0x5C32 */ s16                   nextEntranceIndex;
+    /* 0x5C34 */ char                  unk_5C34[0x0042];
+    /* 0x5C76 */ u8                    fadeOutTransition;
+    /* 0x5C78 */ CollisionCheckContext colChkCtx;
     //TODO
 } GlobalContext;
 

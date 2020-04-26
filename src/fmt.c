@@ -123,7 +123,7 @@ static char *processNumber(char *str, s32 num, bool isHex, s32 size, s32 precisi
             // num = (num / base);
             if (isHex) {
                 tmp[i++] = dig[num & 0xF];
-                num = (num >> 4);
+                num >>= 4;
             }
             else {
                 s32 mod10 = num;

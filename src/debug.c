@@ -22,7 +22,7 @@ typedef struct {
 } ShowActor_Info;
 
 /* give type 0xC for "all" */
-s32 PopulateActorList(ShowActor_Info* list, ActorType type){
+static s32 PopulateActorList(ShowActor_Info* list, ActorType type){
     s32 i = 0;
     ActorHeapNode* cur = (ActorHeapNode*)((u32)PLAYER - sizeof(ActorHeapNode));
     while (cur){
@@ -40,8 +40,46 @@ s32 PopulateActorList(ShowActor_Info* list, ActorType type){
     return i;
 }
 
-void DebugActors_ShowMoreInfo(Actor* actor){ //TODO
+static void DebugActors_ShowMoreInfo(Actor* actor){ //TODO
 
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_Unlock();
+
+    char buf[65];
+
+    do
+    {
+        Draw_Lock();
+        Draw_DrawString(10, 10, COLOR_TITLE, "Actor Details");
+        Draw_DrawFormattedString(30, 30, COLOR_WHITE, "ID:              %04X", actor->id);
+        Draw_DrawFormattedString(30, 30 + SPACING_Y, COLOR_WHITE, "Type:            %s", ActorTypeNames[actor->type]);
+        Draw_DrawFormattedString(30, 30 + 2 * SPACING_Y, COLOR_WHITE, "Params:          %04X", actor->params & 0xFFFF);
+        Draw_DrawFormattedString(30, 30 + 3 * SPACING_Y, COLOR_WHITE, "Pos:             x:%05.2f  y:%05.2f  z:%05.2f", actor->posRot.pos.x, actor->posRot.pos.y, actor->posRot.pos.z);
+        Draw_DrawFormattedString(30, 30 + 4 * SPACING_Y, COLOR_WHITE, "Rot:             x:%04X  y:%04X  z:%04X", actor->posRot.rot.x & 0xFFFF, actor->posRot.rot.y & 0xFFFF, actor->posRot.rot.z & 0xFFFF);
+        Draw_DrawFormattedString(30, 30 + 5 * SPACING_Y, COLOR_WHITE, "Vel:             x:%05.2f  y:%05.2f  z:%05.2f", actor->velocity.x, actor->velocity.y, actor->velocity.z);
+        Draw_DrawFormattedString(30, 30 + 6 * SPACING_Y, COLOR_WHITE, "Floor:           %08X", actor->floorPoly);
+        Draw_DrawFormattedString(30, 30 + 7 * SPACING_Y, COLOR_WHITE, "Dist. from Link: xz:%05.2f  y:%05.2f", actor->xzDistanceFromLink, actor->yDistanceFromLink);
+        Draw_DrawFormattedString(30, 30 + 8 * SPACING_Y, COLOR_WHITE, "Text ID:         %04X", actor->textId & 0xFFFF);
+        Draw_DrawFormattedString(30, 30 + 9 * SPACING_Y, COLOR_WHITE, "Held By:         %08X", actor->attachedA);
+        Draw_DrawFormattedString(30, 30 + 10 * SPACING_Y, COLOR_WHITE, "Holding:         %08X", actor->attachedB);
+        
+        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "Press START to bring actor to Link");
+
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
+
+        u32 pressed = waitInputWithTimeout(1000);
+        if(pressed & BUTTON_B)
+            break;
+        else if(pressed & BUTTON_START)
+        {
+            actor->posRot.pos = PLAYER->actor.posRot.pos;
+            actor->posRot.rot = PLAYER->actor.posRot.rot;
+        }
+
+    } while(true);
 }
 
 void DebugActors_ShowActors(void){
@@ -72,12 +110,8 @@ void DebugActors_ShowActors(void){
 
         for (s32 i = 0; i < ACTOR_LIST_MAX_SHOW && page * ACTOR_LIST_MAX_SHOW + i < listSize; ++i)
         {
-            char buf[65] = { 0 };
             s32 j = page * ACTOR_LIST_MAX_SHOW + i;
-            // sprintf(buf, "Addr: %08X ID: %04X Params: %04X", actorList[j].instance, actorList[j].id, actorList[j].params);
-            sprintf(buf, "Addr: %08X ID: %04X", actorList[j].instance, actorList[j].id);
-
-            Draw_DrawString(30, 30 + (1 + i) * SPACING_Y, COLOR_WHITE, buf);
+            Draw_DrawFormattedString(30, 30 + (1 + i) * SPACING_Y, COLOR_WHITE, "Addr: %08X  ID: %04X", actorList[j].instance, actorList[j].id & 0xFFFF);
             Draw_DrawCharacter(10, 30 + (1 + i) * SPACING_Y, COLOR_TITLE, j == selected ? '>' : ' ');
         }
 
@@ -92,6 +126,10 @@ void DebugActors_ShowActors(void){
         if(pressed & BUTTON_A)
         {
             DebugActors_ShowMoreInfo(actorList[selected].instance);
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
         }
         else if(pressed & BUTTON_DOWN)
         {

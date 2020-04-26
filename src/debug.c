@@ -48,14 +48,12 @@ static s32 PopulateActorList(ShowActor_Info* list, ActorType type){
     return i;
 }
 
-static void DebugActors_ShowMoreInfo(Actor* actor){ //TODO
-
+ // TODO
+static void DebugActors_ShowMoreInfo(Actor* actor) {
     Draw_Lock();
     Draw_ClearFramebuffer();
     Draw_FlushFramebuffer();
     Draw_Unlock();
-
-    char buf[65];
 
     do
     {
@@ -72,7 +70,7 @@ static void DebugActors_ShowMoreInfo(Actor* actor){ //TODO
         Draw_DrawFormattedString(30, 30 + 8 * SPACING_Y, COLOR_WHITE, "Text ID:         %04X", actor->textId & 0xFFFF);
         Draw_DrawFormattedString(30, 30 + 9 * SPACING_Y, COLOR_WHITE, "Held By:         %08X", actor->attachedA);
         Draw_DrawFormattedString(30, 30 + 10 * SPACING_Y, COLOR_WHITE, "Holding:         %08X", actor->attachedB);
-        
+
         Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "Press START to bring actor to Link");
 
         Draw_FlushFramebuffer();

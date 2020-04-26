@@ -14,3 +14,4 @@ extern WarpsSceneMenu WarpsPlacesMiscMenu;
 extern WarpsSceneMenu WarpsPlacesOverworldMenu;
 
 void WarpsPlacesMenuShow(void);
+void ClearCutscenePointer(void);

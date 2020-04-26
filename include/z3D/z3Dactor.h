@@ -145,6 +145,18 @@ typedef struct Actor {
 } Actor; // size = 0x148
 
 typedef struct {
+    /* 0x00 */ Actor* actor;
+    /* 0x04 */ char unk_04[0x10];
+    /* 0x14 */ Vec3f scale1;
+    /* 0x20 */ Vec3s rot1;
+    /* 0x28 */ Vec3f pos1;
+    /* 0x34 */ Vec3f scale2;
+    /* 0x40 */ Vec3s rot2;
+    /* 0x48 */ Vec3f pos2;
+    /* 0x54 */ char unk_54[0x18];
+} ActorMesh; // size = 0x6C
+
+typedef struct {
     /* 0x0000 */ Actor actor;
     /* 0x0148 */ char  unk_148[0x20DF];
     /* 0x2227 */ u8    isg;
@@ -164,6 +176,14 @@ typedef enum {
     /* 0x0A */ ACTORTYPE_DOOR,
     /* 0x0B */ ACTORTYPE_CHEST
 } ActorType;
+
+typedef struct ActorHeapNode {
+    u16 magic;
+    u16 free;
+    u32 size;
+    struct ActorHeapNode* next;
+    struct ActorHeapNode* prev;
+} ActorHeapNode;
 
 // typedef struct {
 //     /* 0x000 */ Actor actor;

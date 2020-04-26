@@ -37,10 +37,11 @@
 #include "menus/inventory.h"
 #include "menus/equips.h"
 #include "menus/file.h"
+#include "menus/debug.h"
 
 Menu gz3DMenu = {
-    "Gamestabled's menu, fuck you",
-    .nbItems = 4,
+    ";)",
+    .nbItems = 5,
     {
         // { "Test method placeholder, sets rupees to 50", METHOD, .method = &gz3DMenu_Test },
         { "Warps", MENU, .menu = &WarpsMenu },
@@ -49,6 +50,7 @@ Menu gz3DMenu = {
         { "Inventory", MENU, .menu = &InventoryMenu },
         // { "Equips", MENU, .menu = &EquipsMenu },
         // { "File", MENU, .menu = &FileMenu },
+        { "Debug", MENU, .menu = &DebugMenu },
     }
 };
 

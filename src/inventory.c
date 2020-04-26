@@ -476,12 +476,14 @@ void Inventory_RightGearToggle(s32 selected){
         case(Gear_Menu_Giants_Knife): 
             if ((gSaveContext.equipment & (1 << 2)) && !(gSaveContext.equipment & (1 << 3)) && !gSaveContext.bgsFlag){
                 gSaveContext.equipment &= ~(0x3 << 2);
+                gSaveContext.bgsFlag = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Knife].on = 0;
             }
             else {
                 gSaveContext.equipment &= ~(0x3 << 2);
                 gSaveContext.equipment |= (1 << 2);
                 gSaveContext.bgsFlag = 0;
+                gSaveContext.bgsHitsLeft = 8;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Knife].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = 0;
@@ -490,11 +492,13 @@ void Inventory_RightGearToggle(s32 selected){
         case(Gear_Menu_Broken_Giants_Knife):
             if ((gSaveContext.equipment & (1 << 2)) && (gSaveContext.equipment & (1 << 3))){
                 gSaveContext.equipment &= ~(0x3 << 2);
+                gSaveContext.bgsFlag = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 0;
             }
             else {
                 gSaveContext.equipment |= (0x3 << 2);
                 gSaveContext.bgsFlag = 0;
+                gSaveContext.bgsHitsLeft = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Knife].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = 0;
@@ -510,6 +514,7 @@ void Inventory_RightGearToggle(s32 selected){
                 gSaveContext.equipment &= ~(0x3 << 2);
                 gSaveContext.equipment |= (1 << 2);
                 gSaveContext.bgsFlag = 1;
+                gSaveContext.bgsHitsLeft = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Knife].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Broken_Giants_Knife].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Biggoron_Sword].on = 1;
@@ -811,19 +816,19 @@ void Inventory_RightGearToggle(s32 selected){
 }
 
 void Inventory_LeftGearMenuInit(void){
-    InventoryLeftGearMenu.items[Gear_Menu_Forest_Medallion].on = gSaveContext.questItems & 1;
-    InventoryLeftGearMenu.items[Gear_Menu_Fire_Medallion].on = gSaveContext.questItems & (1 << 1);
-    InventoryLeftGearMenu.items[Gear_Menu_Water_Medallion].on = gSaveContext.questItems & (1 << 2);
-    InventoryLeftGearMenu.items[Gear_Menu_Spirit_Medallion].on = gSaveContext.questItems & (1 << 3);
-    InventoryLeftGearMenu.items[Gear_Menu_Shadow_Medallion].on = gSaveContext.questItems & (1 << 4);
-    InventoryLeftGearMenu.items[Gear_Menu_Light_Medallion].on = gSaveContext.questItems & (1 << 5);
-    InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = gSaveContext.questItems & (1 << 18);
-    InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = gSaveContext.questItems & (1 << 19);
-    InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = gSaveContext.questItems & (1 << 20);
+    InventoryLeftGearMenu.items[Gear_Menu_Forest_Medallion].on = ((gSaveContext.questItems & 1) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Fire_Medallion].on = ((gSaveContext.questItems & (1 << 1)) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Water_Medallion].on = ((gSaveContext.questItems & (1 << 2)) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Spirit_Medallion].on = ((gSaveContext.questItems & (1 << 3)) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Shadow_Medallion].on = ((gSaveContext.questItems & (1 << 4)) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Light_Medallion].on = ((gSaveContext.questItems & (1 << 5)) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = ((gSaveContext.questItems & (1 << 18)) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = ((gSaveContext.questItems & (1 << 19)) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = ((gSaveContext.questItems & (1 << 20)) != 0);
     InventoryLeftGearMenu.items[Gear_Menu_Pieces_of_Heart].on = ((gSaveContext.questItems >> 24) >> 4 != 0);
-    InventoryLeftGearMenu.items[Gear_Menu_Shard_of_Agony].on = gSaveContext.questItems & (1 << 21);
-    InventoryLeftGearMenu.items[Gear_Menu_Gerudo_Token].on = gSaveContext.questItems & (1 << 22);
-    InventoryLeftGearMenu.items[Gear_Menu_Gold_Skulltulas].on = gSaveContext.questItems & (1 << 23);
+    InventoryLeftGearMenu.items[Gear_Menu_Shard_of_Agony].on = ((gSaveContext.questItems & (1 << 21)) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Gerudo_Token].on = ((gSaveContext.questItems & (1 << 22)) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Gold_Skulltulas].on = ((gSaveContext.questItems & (1 << 23)) != 0);
 }
 
 void Inventory_LeftGearMenuFunc(void){
@@ -835,49 +840,49 @@ void Inventory_LeftGearToggle(s32 selected){
     switch(selected){
         case(Gear_Menu_Forest_Medallion):
             gSaveContext.questItems ^= 1;
-            InventoryLeftGearMenu.items[Gear_Menu_Forest_Medallion].on = gSaveContext.questItems & 1;
+            InventoryLeftGearMenu.items[Gear_Menu_Forest_Medallion].on = ((gSaveContext.questItems & 1) != 0);
             break;
         case(Gear_Menu_Fire_Medallion):
             gSaveContext.questItems ^= (1 << 1);
-            InventoryLeftGearMenu.items[Gear_Menu_Fire_Medallion].on = (gSaveContext.questItems & (1 << 1));
+            InventoryLeftGearMenu.items[Gear_Menu_Fire_Medallion].on = ((gSaveContext.questItems & (1 << 1)) != 0);
             break;
         case(Gear_Menu_Water_Medallion):
             gSaveContext.questItems ^= (1 << 2);
-            InventoryLeftGearMenu.items[Gear_Menu_Water_Medallion].on = (gSaveContext.questItems & (1 << 2));
+            InventoryLeftGearMenu.items[Gear_Menu_Water_Medallion].on = ((gSaveContext.questItems & (1 << 2)) != 0);
             break;
         case(Gear_Menu_Spirit_Medallion):
             gSaveContext.questItems ^= (1 << 3);
-            InventoryLeftGearMenu.items[Gear_Menu_Spirit_Medallion].on = (gSaveContext.questItems & (1 << 3));
+            InventoryLeftGearMenu.items[Gear_Menu_Spirit_Medallion].on = ((gSaveContext.questItems & (1 << 3)) != 0);
             break;
         case(Gear_Menu_Shadow_Medallion):
             gSaveContext.questItems ^= (1 << 4);
-            InventoryLeftGearMenu.items[Gear_Menu_Shadow_Medallion].on = (gSaveContext.questItems & (1 << 4));
+            InventoryLeftGearMenu.items[Gear_Menu_Shadow_Medallion].on = ((gSaveContext.questItems & (1 << 4)) != 0);
             break;
         case(Gear_Menu_Light_Medallion):
             gSaveContext.questItems ^= (1 << 5);
-            InventoryLeftGearMenu.items[Gear_Menu_Light_Medallion].on = (gSaveContext.questItems & (1 << 5));
+            InventoryLeftGearMenu.items[Gear_Menu_Light_Medallion].on = ((gSaveContext.questItems & (1 << 5)) != 0);
             break;
         case(Gear_Menu_Kokiri_Emerald):
             gSaveContext.questItems ^= (1 << 18);
-            InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = (gSaveContext.questItems & (1 << 18));
+            InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = ((gSaveContext.questItems & (1 << 18)) != 0);
             break;
         case(Gear_Menu_Gorons_Ruby):
             gSaveContext.questItems ^= (1 << 19);
-            InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = (gSaveContext.questItems & (1 << 19));
+            InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = ((gSaveContext.questItems & (1 << 19)) != 0);
             break;
         case(Gear_Menu_Zoras_Sapphire):
             gSaveContext.questItems ^= (1 << 20);
-            InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = (gSaveContext.questItems & (1 << 20));
+            InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = ((gSaveContext.questItems & (1 << 20)) != 0);
             break;
         case(Gear_Menu_Pieces_of_Heart):
             break; //handled in another function
         case(Gear_Menu_Shard_of_Agony):
             gSaveContext.questItems ^= (1 << 21);
-            InventoryLeftGearMenu.items[Gear_Menu_Shard_of_Agony].on = (gSaveContext.questItems & (1 << 21));
+            InventoryLeftGearMenu.items[Gear_Menu_Shard_of_Agony].on = ((gSaveContext.questItems & (1 << 21)) != 0);
             break;
         case(Gear_Menu_Gerudo_Token):
             gSaveContext.questItems ^= (1 << 22);
-            InventoryLeftGearMenu.items[Gear_Menu_Gerudo_Token].on = (gSaveContext.questItems & (1 << 22));
+            InventoryLeftGearMenu.items[Gear_Menu_Gerudo_Token].on = ((gSaveContext.questItems & (1 << 22)) != 0);
             break;
         case(Gear_Menu_Gold_Skulltulas):
             break; //handled in another function

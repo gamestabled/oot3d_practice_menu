@@ -27,4 +27,9 @@ typedef struct {
     s32 x, y, z;
 } Vec3i;
 
+typedef struct {
+    f32 data[3][4];
+} nn_math_MTX34;
+
+
 #endif

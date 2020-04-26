@@ -4,6 +4,7 @@
 #include "z3Dactor.h"
 #include "z3Dvec.h"
 #include "z3Dequipment.h"
+#include "z3Dcutscene.h"
 
 #include "hid.h"
 
@@ -156,7 +157,9 @@ typedef struct {
     /* 0x156A */ s16          timerY[2]; //changing these doesn't seem to actually move the timer?
     /* 0x156E */ char         unk_156E[0x0024];
     /* 0x1592 */ u16          dungeonIndex;
-    /* 0x1594 */ char         unk_1594[0x001E];
+    /* 0x1594 */ char         unk_1594[0x000E];
+    /* 0x15A2 */ u8           cutsceneTrigger;
+    /* 0x15A3 */ char         unk_15A3[0x00F];
     /* 0x15B2 */ s16          healthAccumulator;
 
 //stuff below is from z64.h
@@ -216,6 +219,23 @@ typedef struct {
 typedef struct GraphicsContext GraphicsContext; //TODO
 
 typedef struct {
+    /* 0x00 */ void* colHeader; //TODO: CollisionHeader* struct
+    /* 0x04 */ char             unk_04[0x4C];
+} StaticCollisionContext; // size = 0x50
+
+typedef struct {
+    /* 0x0000 */ char   unk_00[0x04];
+    /* 0x0004 */ ActorMesh actorMeshArr[50];
+    /* 0x151C */ u16    flags[50];
+    /* 0x1580 */ char   unk_13F0[0x24];
+} DynaCollisionContext; // size = 0x15A4
+
+typedef struct {
+    /* 0x0000 */ StaticCollisionContext stat;
+    /* 0x0050 */ DynaCollisionContext   dyna;
+} CollisionContext; // size = 0x15F4
+
+typedef struct {
     /* 0x00 */ u32    length; // number of actors loaded of this type
     /* 0x04 */ Actor* first;  // pointer to first actor of this type
 } ActorListEntry; // size = 0x08
@@ -246,6 +266,33 @@ typedef struct {
     // /* 0x013C */ void*  absoluteSpace; // Space used to allocate actor overlays of alloc type 1
 } ActorContext; // TODO: size = 0x140
 
+typedef struct CutsceneContext {
+    /* 0x00 */ char  unk_00[0x4];
+    /* 0x04 */ void* segment;
+    /* 0x08 */ u8    state;
+    /* 0x09 */ char  unk_09[0x13];
+    /* 0x1C */ f32   unk_1C;
+    /* 0x20 */ u16   frames;
+    /* 0x22 */ u16   unk_22;
+    /* 0x24 */ s32   unk_24;
+    /* 0x28 */ char  unk_28[0x18];
+    /* 0x40 */ CsCmdActorAction* linkAction;
+    /* 0x44 */ CsCmdActorAction* actorActions[10]; // "npcdemopnt"
+} CutsceneContext; // size = 0x6C
+
+typedef struct Sub_118_C {
+    s32 data[4];
+} Sub_118_C;
+
+typedef struct SubGlobalContext_118 {
+    /* 0x00 */ char unk_00[0x0C];
+    /* 0x0C */ Sub_118_C* sub0C; //an array of these
+    /* 0x10 */ char unk_10[0x24];
+    /* 0x34 */ s32 indexInto0C;
+    /* 0x38 */ char unk_38[0x28];
+    /* 0x60 */ void** unk_60; //seems to point to an array of cutscene pointers, maybe?
+} SubGlobalContext_118; // size = at least 0x64
+
 typedef struct GameState {
     /* 0x00 */ GraphicsContext* gfxCtx;
     /* 0x04 */ void (*main)(struct GameState*);
@@ -256,17 +303,22 @@ typedef struct GameState {
 
 // Global Context (ram start: 0871E840)
 typedef struct GlobalContext {
-    // /* 0x00000 */ GameState state;
-    /* 0x00000 */ char         unk_0[0x0208C];
-    /* 0x0208C */ ActorContext actorCtx;
-    /* 0x020F8 */ char         unk_20F0[0x3B08];
-    /* 0x05C00 */ u8           linkAgeOnLoad;
-    /* 0x05C01 */ char         unk_5C01[0x0002C];
-    /* 0x05C2D */ s8           sceneLoadFlag; //fade_direction"
-    /* 0x05C2E */ char         unk_5C2E[0x00004];
-    /* 0x05C32 */ s16          nextEntranceIndex;
-    /* 0x05C34 */ char         unk_5C34[0x00042];
-    /* 0x05C76 */ u8           fadeOutTransition;
+    // /* 0x0000 */ GameState state;
+    /* 0x0000 */ char                 unk_0[0x0118];
+    /* 0x0118 */ SubGlobalContext_118 sub118;
+    /* 0x017C */ char                 unk_17C[0x091C];
+    /* 0x0A98 */ CollisionContext     colCtx;
+    /* 0x208C */ ActorContext         actorCtx;
+    /* 0x20F8 */ char                 unk_20F0[0x01A0];
+    /* 0x2298 */ CutsceneContext      csCtx; // "demo_play"
+    /* 0x2304 */ char                 unk_2304[0x38FC];
+    /* 0x5C00 */ u8                   linkAgeOnLoad;
+    /* 0x5C01 */ char                 unk_5C01[0x002C];
+    /* 0x5C2D */ s8                   sceneLoadFlag; // "fade_direction"
+    /* 0x5C2E */ char                 unk_5C2E[0x0004];
+    /* 0x5C32 */ s16                  nextEntranceIndex;
+    /* 0x5C34 */ char                 unk_5C34[0x0042];
+    /* 0x5C76 */ u8                   fadeOutTransition;
     //TODO
 } GlobalContext;
 
@@ -308,7 +360,7 @@ enum Item {
     ITEM_BUG,
     ITEM_BIG_POE,
     ITEM_LON_LON_MILK_HALF,
-    ITEM_POE, //to be continued...
+    ITEM_POE,
     ITEM_WEIRD_EGG,
     ITEM_CUCCO,
     ITEM_ZELDAS_LETTER,

@@ -7,11 +7,11 @@
 
 Menu WarpsMenu = {
     "Warps",
-    .nbItems = 2,
+    .nbItems = 3,
     {
         {"Places", METHOD, .method = WarpsPlacesMenuShow},
         {"Manually Enter Entrance Index", METHOD, .method = ManuallyEnterEntranceIndex},
-        {"Clear CS Pointer", METHOD, .method = NULL}, //TODO
+        {"Clear CS Pointer (TODO)", METHOD, .method = ClearCutscenePointer}, //TODO
     }
 };
 
@@ -339,4 +339,9 @@ void ManuallyEnterEntranceIndex(void){
         else if(selected >= 4) selected = 0;
 
     } while(true);
+}
+
+void ClearCutscenePointer(void){
+    static u32 nullCS[] = { 0, 0 };
+    gGlobalContext->csCtx.state = &nullCS; //TODO: this crashes the game lol
 }

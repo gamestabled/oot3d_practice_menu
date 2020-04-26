@@ -314,7 +314,7 @@ void Inventory_ItemsToggle(s32 selected){
     }
 }
 
-void Inventory_BottlesMenuInit(void){
+static void Inventory_BottlesMenuInit(void){
     for (u32 i = 0; i < ITEM_WEIRD_EGG - ITEM_EMPTY_BOTTLE; ++i){
         InventoryBottlesMenu.items[i].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] == ITEM_EMPTY_BOTTLE + i);
     }
@@ -342,7 +342,7 @@ void Inventory_BottleSelect(s32 selected){
     }
 }
 
-void Inventory_ChildTradeMenuInit(void){
+static void Inventory_ChildTradeMenuInit(void){
     for (u32 i = 0; i < ITEM_POCKET_EGG - ITEM_WEIRD_EGG; ++i){
         InventoryChildTradeMenu.items[i].on = (gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] == ITEM_WEIRD_EGG + i);
     }
@@ -369,7 +369,7 @@ void Inventory_ChildTradeSelect(s32 selected){ //TODO: remove hardcoded indexes
     }
 }
 
-void Inventory_AdultTradeMenuInit(void){
+static void Inventory_AdultTradeMenuInit(void){
     for (u32 i = 0; i < ITEM_FAIRY_BOW_PLUS_FIRE_ARROW - ITEM_POCKET_EGG; ++i){
         InventoryAdultTradeMenu.items[i].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] == ITEM_POCKET_EGG + i);
     }
@@ -427,7 +427,7 @@ void Inventory_BootsToggle(s32 selected){ //TODO: remove hardcoded values
     }
 }
 
-void Inventory_RightGearMenu_Init(void){
+static void Inventory_RightGearMenu_Init(void){
     InventoryRightGearMenu.items[Gear_Menu_Kokiri_Sword].on = ((gSaveContext.equipment & 1) != 0);
     InventoryRightGearMenu.items[Gear_Menu_Master_Sword].on = ((gSaveContext.equipment & (1 << 1)) != 0);
     InventoryRightGearMenu.items[Gear_Menu_Giants_Knife].on = (((gSaveContext.equipment & (1 << 2)) != 0) && ((gSaveContext.equipment & (1 << 3)) == 0) && !gSaveContext.bgsFlag);
@@ -815,16 +815,16 @@ void Inventory_RightGearToggle(s32 selected){
     }
 }
 
-void Inventory_LeftGearMenuInit(void){
-    InventoryLeftGearMenu.items[Gear_Menu_Forest_Medallion].on = ((gSaveContext.questItems & 1) != 0);
-    InventoryLeftGearMenu.items[Gear_Menu_Fire_Medallion].on = ((gSaveContext.questItems & (1 << 1)) != 0);
-    InventoryLeftGearMenu.items[Gear_Menu_Water_Medallion].on = ((gSaveContext.questItems & (1 << 2)) != 0);
-    InventoryLeftGearMenu.items[Gear_Menu_Spirit_Medallion].on = ((gSaveContext.questItems & (1 << 3)) != 0);
-    InventoryLeftGearMenu.items[Gear_Menu_Shadow_Medallion].on = ((gSaveContext.questItems & (1 << 4)) != 0);
-    InventoryLeftGearMenu.items[Gear_Menu_Light_Medallion].on = ((gSaveContext.questItems & (1 << 5)) != 0);
-    InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = ((gSaveContext.questItems & (1 << 18)) != 0);
-    InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = ((gSaveContext.questItems & (1 << 19)) != 0);
-    InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = ((gSaveContext.questItems & (1 << 20)) != 0);
+static void Inventory_LeftGearMenuInit(void){
+    InventoryLeftGearMenu.items[Gear_Menu_Forest_Medallion].on = gSaveContext.questItems & 1;
+    InventoryLeftGearMenu.items[Gear_Menu_Fire_Medallion].on = gSaveContext.questItems & (1 << 1);
+    InventoryLeftGearMenu.items[Gear_Menu_Water_Medallion].on = gSaveContext.questItems & (1 << 2);
+    InventoryLeftGearMenu.items[Gear_Menu_Spirit_Medallion].on = gSaveContext.questItems & (1 << 3);
+    InventoryLeftGearMenu.items[Gear_Menu_Shadow_Medallion].on = gSaveContext.questItems & (1 << 4);
+    InventoryLeftGearMenu.items[Gear_Menu_Light_Medallion].on = gSaveContext.questItems & (1 << 5);
+    InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = gSaveContext.questItems & (1 << 18);
+    InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = gSaveContext.questItems & (1 << 19);
+    InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = gSaveContext.questItems & (1 << 20);
     InventoryLeftGearMenu.items[Gear_Menu_Pieces_of_Heart].on = ((gSaveContext.questItems >> 24) >> 4 != 0);
     InventoryLeftGearMenu.items[Gear_Menu_Shard_of_Agony].on = ((gSaveContext.questItems & (1 << 21)) != 0);
     InventoryLeftGearMenu.items[Gear_Menu_Gerudo_Token].on = ((gSaveContext.questItems & (1 << 22)) != 0);
@@ -981,7 +981,7 @@ void Inventory_GoldSkulltulaAmount(s32 selected){
     gSaveContext.questItems |= ((gSaveContext.gsTokens != 0) << 22);
 }
 
-void Inventory_AmountsMenuInit(void){
+static void Inventory_AmountsMenuInit(void){
     InventoryAmountsMenu.items[Amounts_Menu_Deku_Sticks].amount = gSaveContext.ammo[ItemSlots[ITEM_DEKU_STICK]];
     InventoryAmountsMenu.items[Amounts_Menu_Deku_Nuts].amount = gSaveContext.ammo[ItemSlots[ITEM_DEKU_NUT]];
     InventoryAmountsMenu.items[Amounts_Menu_Bombs].amount = gSaveContext.ammo[ItemSlots[ITEM_BOMB]];

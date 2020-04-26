@@ -7,5 +7,3 @@
 extern Menu DebugMenu;
 
 void DebugActors_ShowActors(void);
-
-extern const char* ActorTypeNames[];

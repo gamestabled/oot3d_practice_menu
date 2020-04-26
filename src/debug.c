@@ -21,6 +21,22 @@ typedef struct {
     s16    params;
 } ShowActor_Info;
 
+static const char* const ActorTypeNames[] = {
+    "SWITCH", //0x0
+    "BG",
+    "PLAYER",
+    "EXPLOSIVES",
+    "NPC",
+    "ENEMY",
+    "PROP",
+    "ITEMACTION",
+    "MISC",
+    "BOSS",
+    "DOOR",
+    "CHEST",
+    "ALL", //0xC
+};
+
 /* give type 0xC for "all" */
 static s32 PopulateActorList(ShowActor_Info* list, ActorType type){
     s32 i = 0;
@@ -189,21 +205,4 @@ void DebugActors_ShowActors(void){
         page = selected / ACTOR_LIST_MAX_SHOW;
 
     } while(true);
-
 }
-
-const char* ActorTypeNames[] = {
-    "SWITCH", //0x0
-    "BG",
-    "PLAYER",
-    "EXPLOSIVES",
-    "NPC",
-    "ENEMY",
-    "PROP",
-    "ITEMACTION",
-    "MISC",
-    "BOSS",
-    "DOOR",
-    "CHEST",
-    "ALL", //0xC
-};

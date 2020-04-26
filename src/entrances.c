@@ -21,7 +21,7 @@ void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex){
     gGlobalContext->sceneLoadFlag = 0x14;
 }
 
-void EntranceSelectMenuShow(EntrancesByScene* entrances){
+void EntranceSelectMenuShow(const EntrancesByScene* entrances){
     s32 selected = 0, page = 0, pagePrev = 0;
     s32 chosenAge = gSaveContext.linkAge;
     u32 curColor = COLOR_WHITE;
@@ -122,7 +122,7 @@ void EntranceSelectMenuShow(EntrancesByScene* entrances){
     } while(true);
 }
 
-void WarpsSceneMenuShow(WarpsSceneMenu* menu){
+void WarpsSceneMenuShow(const WarpsSceneMenu* menu){
     s32 selected = 0, page = 0, pagePrev = 0;
 
     Draw_Lock();
@@ -194,7 +194,7 @@ void WarpsSceneMenuShow(WarpsSceneMenu* menu){
     } while(true);
 }
 
-EntrancesByScene Entrances_BackAlley = {
+const EntrancesByScene Entrances_BackAlley = {
     "Back Alley",
     .nbItems = 5,
     {
@@ -206,7 +206,7 @@ EntrancesByScene Entrances_BackAlley = {
     }
 };
 
-EntrancesByScene Entrances_BackAlleyHouseDogLady = {
+const EntrancesByScene Entrances_BackAlleyHouseDogLady = {
     "Back Alley House (Dog Lady)",
     .nbItems = 1,
     {
@@ -214,7 +214,7 @@ EntrancesByScene Entrances_BackAlleyHouseDogLady = {
     }
 };
 
-EntrancesByScene Entrances_BackAlleyHouseManInGreen = {
+const EntrancesByScene Entrances_BackAlleyHouseManInGreen = {
     "Back Alley House (Man in Green)",
     .nbItems = 1,
     {
@@ -222,7 +222,7 @@ EntrancesByScene Entrances_BackAlleyHouseManInGreen = {
     }
 };
 
-EntrancesByScene Entrances_BarinadesLair = {
+const EntrancesByScene Entrances_BarinadesLair = {
     "Barinade's Lair",
     .nbItems = 1,
     {
@@ -230,7 +230,7 @@ EntrancesByScene Entrances_BarinadesLair = {
     }
 };
 
-EntrancesByScene Entrances_Bazaar = {
+const EntrancesByScene Entrances_Bazaar = {
     "Bazaar",
     .nbItems = 2,
     {
@@ -239,7 +239,7 @@ EntrancesByScene Entrances_Bazaar = {
     }
 };
 
-EntrancesByScene Entrances_BombchuBowlingAlley = {
+const EntrancesByScene Entrances_BombchuBowlingAlley = {
     "Bombchu Bowling Alley",
     .nbItems = 1,
     {
@@ -247,7 +247,7 @@ EntrancesByScene Entrances_BombchuBowlingAlley = {
     }
 };
 
-EntrancesByScene Entrances_BombchuShop = {
+const EntrancesByScene Entrances_BombchuShop = {
     "Bombchu Shop",
     .nbItems = 2,
     {
@@ -256,7 +256,7 @@ EntrancesByScene Entrances_BombchuShop = {
     }
 };
 
-EntrancesByScene Entrances_BongoBongosLair = {
+const EntrancesByScene Entrances_BongoBongosLair = {
     "Bongo Bongo's Lair",
     .nbItems = 1,
     {
@@ -264,7 +264,7 @@ EntrancesByScene Entrances_BongoBongosLair = {
     }
 };
 
-EntrancesByScene Entrances_BottomOfTheWell = {
+const EntrancesByScene Entrances_BottomOfTheWell = {
     "Bottom of the Well",
     .nbItems = 2,
     {
@@ -273,7 +273,7 @@ EntrancesByScene Entrances_BottomOfTheWell = {
     }
 };
 
-EntrancesByScene Entrances_CarpenterBosssHouse = {
+const EntrancesByScene Entrances_CarpenterBosssHouse = {
     "Carpenter Boss's House",
     .nbItems = 1,
     {
@@ -281,7 +281,7 @@ EntrancesByScene Entrances_CarpenterBosssHouse = {
     }
 };
 
-EntrancesByScene Entrances_CarpentersTent = {
+const EntrancesByScene Entrances_CarpentersTent = {
     "Carpenter's Tent",
     .nbItems = 1,
     {
@@ -289,7 +289,7 @@ EntrancesByScene Entrances_CarpentersTent = {
     }
 };
 
-EntrancesByScene Entrances_CastleCourtyard = {
+const EntrancesByScene Entrances_CastleCourtyard = {
     "Castle Courtyard",
     .nbItems = 2,
     {
@@ -298,7 +298,7 @@ EntrancesByScene Entrances_CastleCourtyard = {
     }
 };
 
-EntrancesByScene Entrances_CastleHeadgeMaze = {
+const EntrancesByScene Entrances_CastleHeadgeMaze = {
     "Castle Hedge Maze",
     .nbItems = 3,
     {
@@ -308,7 +308,7 @@ EntrancesByScene Entrances_CastleHeadgeMaze = {
     }
 };
 
-EntrancesByScene Entrances_ChamberOfTheSages = {
+const EntrancesByScene Entrances_ChamberOfTheSages = {
     "Chamber of the Sages",
     .nbItems = 2,
     {
@@ -317,7 +317,7 @@ EntrancesByScene Entrances_ChamberOfTheSages = {
     }
 };
 
-EntrancesByScene Entrances_CutsceneMap = {
+const EntrancesByScene Entrances_CutsceneMap = {
     "Cutscene Map",
     .nbItems = 2,
     {
@@ -326,7 +326,7 @@ EntrancesByScene Entrances_CutsceneMap = {
     }
 };
 
-EntrancesByScene Entrances_DeathMountainCrater = {
+const EntrancesByScene Entrances_DeathMountainCrater = {
     "Death Mountain Crater",
     .nbItems = 6,
     {
@@ -339,8 +339,8 @@ EntrancesByScene Entrances_DeathMountainCrater = {
     }
 };
 
-EntrancesByScene Entrances_DeathMountainTrail = {
-    "Death Mountain Trail", 
+const EntrancesByScene Entrances_DeathMountainTrail = {
+    "Death Mountain Trail",
     .nbItems = 6,
     {
         {0x013D, "From Kakariko Village"},
@@ -352,7 +352,7 @@ EntrancesByScene Entrances_DeathMountainTrail = {
     }
 };
 
-EntrancesByScene Entrances_DesertColossus = {
+const EntrancesByScene Entrances_DesertColossus = {
     "Desert Colossus",
     .nbItems = 9,
     {
@@ -368,7 +368,7 @@ EntrancesByScene Entrances_DesertColossus = {
     }
 };
 
-EntrancesByScene Entrances_DodongosCavern = {
+const EntrancesByScene Entrances_DodongosCavern = {
     "Dodongo's Cavern",
     .nbItems = 2,
     {
@@ -377,7 +377,7 @@ EntrancesByScene Entrances_DodongosCavern = {
     }
 };
 
-EntrancesByScene Entrances_FairysFountain = {
+const EntrancesByScene Entrances_FairysFountain = {
     "Fairy's Fountain",
     .nbItems = 1,
     {
@@ -385,7 +385,7 @@ EntrancesByScene Entrances_FairysFountain = {
     }
 };
 
-EntrancesByScene Entrances_FireTemple = {
+const EntrancesByScene Entrances_FireTemple = {
     "Fire Temple",
     .nbItems = 2,
     {
@@ -394,7 +394,7 @@ EntrancesByScene Entrances_FireTemple = {
     }
 };
 
-EntrancesByScene Entrances_FishingPond = {
+const EntrancesByScene Entrances_FishingPond = {
     "Fishing Pond",
     .nbItems = 1,
     {
@@ -402,7 +402,7 @@ EntrancesByScene Entrances_FishingPond = {
     }
 };
 
-EntrancesByScene Entrances_ForestTemple = {
+const EntrancesByScene Entrances_ForestTemple = {
     "Forest Temple",
     .nbItems = 3,
     {
@@ -412,7 +412,7 @@ EntrancesByScene Entrances_ForestTemple = {
     }
 };
 
-EntrancesByScene Entrances_GanonsTower = {
+const EntrancesByScene Entrances_GanonsTower = {
     "Ganon's Tower",
     .nbItems = 3,
     {
@@ -422,7 +422,7 @@ EntrancesByScene Entrances_GanonsTower = {
     }
 };
 
-EntrancesByScene Entrances_GanonsTowerCollapsing = {
+const EntrancesByScene Entrances_GanonsTowerCollapsing = {
     "Ganon's Tower (Collapsing)",
     .nbItems = 8,
     {
@@ -437,7 +437,7 @@ EntrancesByScene Entrances_GanonsTowerCollapsing = {
     }
 };
 
-EntrancesByScene Entrances_GanonsBattleArena = {
+const EntrancesByScene Entrances_GanonsBattleArena = {
     "Ganon's Tower Collapse & Battle Arena",
     .nbItems = 1,
     {
@@ -445,7 +445,7 @@ EntrancesByScene Entrances_GanonsBattleArena = {
     }
 };
 
-EntrancesByScene Entrances_GanonsTowerExterior = {
+const EntrancesByScene Entrances_GanonsTowerExterior = {
     "Ganon's Tower Exterior (Collapsing)",
     .nbItems = 8,
     {
@@ -460,7 +460,7 @@ EntrancesByScene Entrances_GanonsTowerExterior = {
     }
 };
 
-EntrancesByScene Entrances_GanondorfsLair = {
+const EntrancesByScene Entrances_GanondorfsLair = {
     "Ganondorf's Lair",
     .nbItems = 1,
     {
@@ -468,7 +468,7 @@ EntrancesByScene Entrances_GanondorfsLair = {
     }
 };
 
-EntrancesByScene Entrances_GerudoTrainingGround = {
+const EntrancesByScene Entrances_GerudoTrainingGround = {
     "Gerudo Training Ground",
     .nbItems = 1,
     {
@@ -476,7 +476,7 @@ EntrancesByScene Entrances_GerudoTrainingGround = {
     }
 };
 
-EntrancesByScene Entrances_GerudoValley = {
+const EntrancesByScene Entrances_GerudoValley = {
     "Gerudo Valley",
     .nbItems = 5,
     {
@@ -488,7 +488,7 @@ EntrancesByScene Entrances_GerudoValley = {
     }
 };
 
-EntrancesByScene Entrances_GerudosFortress = {
+const EntrancesByScene Entrances_GerudosFortress = {
     "Gerudo's Fortress",
     .nbItems = 19,
     {
@@ -514,7 +514,7 @@ EntrancesByScene Entrances_GerudosFortress = {
     }
 };
 
-EntrancesByScene Entrances_GohmasLair = {
+const EntrancesByScene Entrances_GohmasLair = {
     "Gohma's Lair",
     .nbItems = 1,
     {
@@ -522,7 +522,7 @@ EntrancesByScene Entrances_GohmasLair = {
     }
 };
 
-EntrancesByScene Entrances_GoronCity = {
+const EntrancesByScene Entrances_GoronCity = {
     "Goron City",
     .nbItems = 4,
     {
@@ -533,7 +533,7 @@ EntrancesByScene Entrances_GoronCity = {
     }
 };
 
-EntrancesByScene Entrances_GoronShop = {
+const EntrancesByScene Entrances_GoronShop = {
     "Goron Shop",
     .nbItems = 1,
     {
@@ -541,7 +541,7 @@ EntrancesByScene Entrances_GoronShop = {
     }
 };
 
-EntrancesByScene Entrances_GrannysPotionShop = {
+const EntrancesByScene Entrances_GrannysPotionShop = {
     "Granny's Potion Shop",
     .nbItems = 1,
     {
@@ -549,7 +549,7 @@ EntrancesByScene Entrances_GrannysPotionShop = {
     }
 };
 
-EntrancesByScene Entrances_GraveFairysFountain = {
+const EntrancesByScene Entrances_GraveFairysFountain = {
     "Grave (Fairy's Fountain)",
     .nbItems = 1,
     {
@@ -557,7 +557,7 @@ EntrancesByScene Entrances_GraveFairysFountain = {
     }
 };
 
-EntrancesByScene Entrances_GraveRedead = {
+const EntrancesByScene Entrances_GraveRedead = {
     "Grave (Redead)",
     .nbItems = 1,
     {
@@ -565,7 +565,7 @@ EntrancesByScene Entrances_GraveRedead = {
     }
 };
 
-EntrancesByScene Entrances_GravekeepersHut = {
+const EntrancesByScene Entrances_GravekeepersHut = {
     "Gravekeeper's Hut",
     .nbItems = 1,
     {
@@ -573,7 +573,7 @@ EntrancesByScene Entrances_GravekeepersHut = {
     }
 };
 
-EntrancesByScene Entrances_Graveyard = {
+const EntrancesByScene Entrances_Graveyard = {
     "Graveyard",
     .nbItems = 9,
     {
@@ -589,7 +589,7 @@ EntrancesByScene Entrances_Graveyard = {
     }
 };
 
-EntrancesByScene Entrances_GreatFairysFountainSpells = {
+const EntrancesByScene Entrances_GreatFairysFountainSpells = {
     "Great Fairy's Fountain (Spells)",
     .nbItems = 3,
     {
@@ -599,7 +599,7 @@ EntrancesByScene Entrances_GreatFairysFountainSpells = {
     }
 };
 
-EntrancesByScene Entrances_GreatFairysFountainUpgrades = {
+const EntrancesByScene Entrances_GreatFairysFountainUpgrades = {
     "Great Fairy's Fountain (Upgrades)",
     .nbItems = 4,
     {
@@ -610,7 +610,7 @@ EntrancesByScene Entrances_GreatFairysFountainUpgrades = {
     }
 };
 
-EntrancesByScene Entrances_Grottos = {
+const EntrancesByScene Entrances_Grottos = {
     "Grottos",
     .nbItems = 14,
     {
@@ -631,7 +631,7 @@ EntrancesByScene Entrances_Grottos = {
     }
 };
 
-EntrancesByScene Entrances_GuardHouse = {
+const EntrancesByScene Entrances_GuardHouse = {
     "Guard House (Lots o' Pots)",
     .nbItems = 1,
     {
@@ -639,7 +639,7 @@ EntrancesByScene Entrances_GuardHouse = {
     }
 };
 
-EntrancesByScene Entrances_HappyMaskShop = {
+const EntrancesByScene Entrances_HappyMaskShop = {
     "Happy Mask Shop",
     .nbItems = 1,
     {
@@ -647,7 +647,7 @@ EntrancesByScene Entrances_HappyMaskShop = {
     }
 };
 
-EntrancesByScene Entrances_HauntedWasteland = {
+const EntrancesByScene Entrances_HauntedWasteland = {
     "Haunted Wasteland",
     .nbItems = 3,
     {
@@ -657,7 +657,7 @@ EntrancesByScene Entrances_HauntedWasteland = {
     }
 };
 
-EntrancesByScene Entrances_HouseOfTwins = {
+const EntrancesByScene Entrances_HouseOfTwins = {
     "House of Twins",
     .nbItems = 1,
     {
@@ -665,7 +665,7 @@ EntrancesByScene Entrances_HouseOfTwins = {
     }
 };
 
-EntrancesByScene Entrances_HouseOfSkulltula = {
+const EntrancesByScene Entrances_HouseOfSkulltula = {
     "House of Skulltula",
     .nbItems = 1,
     {
@@ -673,7 +673,7 @@ EntrancesByScene Entrances_HouseOfSkulltula = {
     }
 };
 
-EntrancesByScene Entrances_HyruleCastleGanonsCastleExterior = {
+const EntrancesByScene Entrances_HyruleCastleGanonsCastleExterior = {
     "Hyrule Castle / Ganon's Castle Exterior", //TODO: force age in wrong one
     .nbItems = 5,
     {
@@ -685,7 +685,7 @@ EntrancesByScene Entrances_HyruleCastleGanonsCastleExterior = {
     }
 };
 
-EntrancesByScene Entrances_HyruleField = {
+const EntrancesByScene Entrances_HyruleField = {
     "Hyrule Field",
     .nbItems = 18,
     {
@@ -710,7 +710,7 @@ EntrancesByScene Entrances_HyruleField = {
     }
 };
 
-EntrancesByScene Entrances_IceCavern = {
+const EntrancesByScene Entrances_IceCavern = {
     "Ice Cavern",
     .nbItems = 2,
     {
@@ -719,7 +719,7 @@ EntrancesByScene Entrances_IceCavern = {
     }
 };
 
-EntrancesByScene Entrances_ImpasHouse = {
+const EntrancesByScene Entrances_ImpasHouse = {
     "Impa's House",
     .nbItems = 2,
     {
@@ -728,7 +728,7 @@ EntrancesByScene Entrances_ImpasHouse = {
     }
 };
 
-EntrancesByScene Entrances_InsideGanonsCastle = {
+const EntrancesByScene Entrances_InsideGanonsCastle = {
     "Inside Ganon's Castle",
     .nbItems = 9,
     {
@@ -744,7 +744,7 @@ EntrancesByScene Entrances_InsideGanonsCastle = {
     }
 };
 
-EntrancesByScene Entrances_InsideGanonsCastleCollapsing = {
+const EntrancesByScene Entrances_InsideGanonsCastleCollapsing = {
     "Inside Ganon's Castle (Collapsing)",
     .nbItems = 1,
     {
@@ -752,7 +752,7 @@ EntrancesByScene Entrances_InsideGanonsCastleCollapsing = {
     }
 };
 
-EntrancesByScene Entrances_InsideJabuJabusBelly = {
+const EntrancesByScene Entrances_InsideJabuJabusBelly = {
     "Inside Jabu-Jabu's Belly",
     .nbItems = 2,
     {
@@ -761,7 +761,7 @@ EntrancesByScene Entrances_InsideJabuJabusBelly = {
     }
 };
 
-EntrancesByScene Entrances_InsideTheDekuTree = {
+const EntrancesByScene Entrances_InsideTheDekuTree = {
     "Inside the Deku Tree",
     .nbItems = 2,
     {
@@ -770,7 +770,7 @@ EntrancesByScene Entrances_InsideTheDekuTree = {
     }
 };
 
-EntrancesByScene Entrances_KakarikoPotionShop = {
+const EntrancesByScene Entrances_KakarikoPotionShop = {
     "Kakariko Potion Shop",
     .nbItems = 2,
     {
@@ -780,7 +780,7 @@ EntrancesByScene Entrances_KakarikoPotionShop = {
     }
 };
 
-EntrancesByScene Entrances_KakarikoVillage = {
+const EntrancesByScene Entrances_KakarikoVillage = {
     "Kakariko Village",
     .nbItems = 16,
     {
@@ -803,7 +803,7 @@ EntrancesByScene Entrances_KakarikoVillage = {
     }
 };
 
-EntrancesByScene Entrances_KingDodongosLair = {
+const EntrancesByScene Entrances_KingDodongosLair = {
     "King Dodongo's Lair",
     .nbItems = 1,
     {
@@ -811,7 +811,7 @@ EntrancesByScene Entrances_KingDodongosLair = {
     }
 };
 
-EntrancesByScene Entrances_KnowItAllBrothersHouse = {
+const EntrancesByScene Entrances_KnowItAllBrothersHouse = {
     "Know-It-All Brothers' House",
     .nbItems = 1,
     {
@@ -819,7 +819,7 @@ EntrancesByScene Entrances_KnowItAllBrothersHouse = {
     }
 };
 
-EntrancesByScene Entrances_KokiriForest = {
+const EntrancesByScene Entrances_KokiriForest = {
     "Kokiri Forest",
     .nbItems = 13,
     {
@@ -839,7 +839,7 @@ EntrancesByScene Entrances_KokiriForest = {
     }
 };
 
-EntrancesByScene Entrances_KokiriShop = {
+const EntrancesByScene Entrances_KokiriShop = {
     "Kokiri Shop",
     .nbItems = 1,
     {
@@ -847,7 +847,7 @@ EntrancesByScene Entrances_KokiriShop = {
     }
 };
 
-EntrancesByScene Entrances_LakeHylia = {
+const EntrancesByScene Entrances_LakeHylia = {
     "Lake Hylia",
     .nbItems = 10,
     {
@@ -864,7 +864,7 @@ EntrancesByScene Entrances_LakeHylia = {
     }
 };
 
-EntrancesByScene Entrances_LakesideLaboratory = {
+const EntrancesByScene Entrances_LakesideLaboratory = {
     "Lakeside Laboratory",
     .nbItems = 2,
     {
@@ -873,7 +873,7 @@ EntrancesByScene Entrances_LakesideLaboratory = {
     }
 };
 
-EntrancesByScene Entrances_LinksHouse = {
+const EntrancesByScene Entrances_LinksHouse = {
     "Link's House",
     .nbItems = 2,
     {
@@ -882,7 +882,7 @@ EntrancesByScene Entrances_LinksHouse = {
     }
 };
 
-EntrancesByScene Entrances_LonLonRanch = {
+const EntrancesByScene Entrances_LonLonRanch = {
     "Lon Lon Ranch",
     .nbItems = 11,
     {
@@ -900,7 +900,7 @@ EntrancesByScene Entrances_LonLonRanch = {
     }
 };
 
-EntrancesByScene Entrances_LostWoods = {
+const EntrancesByScene Entrances_LostWoods = {
     "Lost Woods",
     .nbItems = 10,
     {
@@ -917,8 +917,8 @@ EntrancesByScene Entrances_LostWoods = {
     }
 };
 
-EntrancesByScene Entrances_Market = {
-    "Market", 
+const EntrancesByScene Entrances_Market = {
+    "Market",
     .nbItems = 11,
     {
         {0x00B1, "From Market Entrance"},
@@ -935,7 +935,7 @@ EntrancesByScene Entrances_Market = {
     }
 };
 
-EntrancesByScene Entrances_MarketEntrance = {
+const EntrancesByScene Entrances_MarketEntrance = {
     "Market Entrance",
     .nbItems = 3,
     {
@@ -945,7 +945,7 @@ EntrancesByScene Entrances_MarketEntrance = {
     }
 };
 
-EntrancesByScene Entrances_MarketPotionShop = {
+const EntrancesByScene Entrances_MarketPotionShop = {
     "Market Potion Shop",
     .nbItems = 1,
     {
@@ -953,7 +953,7 @@ EntrancesByScene Entrances_MarketPotionShop = {
     }
 };
 
-EntrancesByScene Entrances_MidosHouse = {
+const EntrancesByScene Entrances_MidosHouse = {
     "Mido's House",
     .nbItems = 1,
     {
@@ -961,7 +961,7 @@ EntrancesByScene Entrances_MidosHouse = {
     }
 };
 
-EntrancesByScene Entrances_MorphasLair = {
+const EntrancesByScene Entrances_MorphasLair = {
     "Morpha's Lair",
     .nbItems = 1,
     {
@@ -969,7 +969,7 @@ EntrancesByScene Entrances_MorphasLair = {
     }
 };
 
-EntrancesByScene Entrances_NaboorusMiniBossRoom = {
+const EntrancesByScene Entrances_NaboorusMiniBossRoom = {
     "Nabooru's Mini-Boss Room",
     .nbItems = 1,
     {
@@ -977,7 +977,7 @@ EntrancesByScene Entrances_NaboorusMiniBossRoom = {
     }
 };
 
-EntrancesByScene Entrances_PhantomGanonsLair = {
+const EntrancesByScene Entrances_PhantomGanonsLair = {
     "Phantom Ganon's Lair",
     .nbItems = 1,
     {
@@ -985,7 +985,7 @@ EntrancesByScene Entrances_PhantomGanonsLair = {
     }
 };
 
-EntrancesByScene Entrances_RanchHouse = {
+const EntrancesByScene Entrances_RanchHouse = {
     "Ranch House",
     .nbItems = 2,
     {
@@ -996,7 +996,7 @@ EntrancesByScene Entrances_RanchHouse = {
     }
 };
 
-EntrancesByScene Entrances_RoyalFamilysTomb = {
+const EntrancesByScene Entrances_RoyalFamilysTomb = {
     "Royal Family's Tomb",
     .nbItems = 2,
     {
@@ -1005,7 +1005,7 @@ EntrancesByScene Entrances_RoyalFamilysTomb = {
     }
 };
 
-EntrancesByScene Entrances_SacredForestMeadow = {
+const EntrancesByScene Entrances_SacredForestMeadow = {
     "Sacred Forest Meadow",
     .nbItems = 5,
     {
@@ -1017,7 +1017,7 @@ EntrancesByScene Entrances_SacredForestMeadow = {
     }
 };
 
-EntrancesByScene Entrances_SariasHouse = {
+const EntrancesByScene Entrances_SariasHouse = {
     "Saria's House",
     .nbItems = 1,
     {
@@ -1025,7 +1025,7 @@ EntrancesByScene Entrances_SariasHouse = {
     }
 };
 
-EntrancesByScene Entrances_ShadowTemple = {
+const EntrancesByScene Entrances_ShadowTemple = {
     "Shadow Temple",
     .nbItems = 4,
     {
@@ -1036,7 +1036,7 @@ EntrancesByScene Entrances_ShadowTemple = {
     }
 };
 
-EntrancesByScene Entrances_ShootingGallery = {
+const EntrancesByScene Entrances_ShootingGallery = {
     "Shooting Gallery",
     .nbItems = 3,
     {
@@ -1046,7 +1046,7 @@ EntrancesByScene Entrances_ShootingGallery = {
     }
 };
 
-EntrancesByScene Entrances_SpiritTemple = {
+const EntrancesByScene Entrances_SpiritTemple = {
     "Spirit Temple",
     .nbItems = 5,
     {
@@ -1058,7 +1058,7 @@ EntrancesByScene Entrances_SpiritTemple = {
     }
 };
 
-EntrancesByScene Entrances_Stable = {
+const EntrancesByScene Entrances_Stable = {
     "Stable",
     .nbItems = 1,
     {
@@ -1066,7 +1066,7 @@ EntrancesByScene Entrances_Stable = {
     }
 };
 
-EntrancesByScene Entrances_TempleOfTime = {
+const EntrancesByScene Entrances_TempleOfTime = {
     "Temple of Time",
     .nbItems = 7,
     {
@@ -1080,7 +1080,7 @@ EntrancesByScene Entrances_TempleOfTime = {
     }
 };
 
-EntrancesByScene Entrances_TempleOfTimeExterior = {
+const EntrancesByScene Entrances_TempleOfTimeExterior = {
     "Temple of Time Exterior",
     .nbItems = 2,
     {
@@ -1089,7 +1089,7 @@ EntrancesByScene Entrances_TempleOfTimeExterior = {
     }
 };
 
-EntrancesByScene Entrances_ThievesHideout = {
+const EntrancesByScene Entrances_ThievesHideout = {
     "Thieves' Hideout",
     .nbItems = 13,
     {
@@ -1109,7 +1109,7 @@ EntrancesByScene Entrances_ThievesHideout = {
     }
 };
 
-EntrancesByScene Entrances_TreasureBoxShop = {
+const EntrancesByScene Entrances_TreasureBoxShop = {
     "Treasure Box Shop",
     .nbItems = 1,
     {
@@ -1117,7 +1117,7 @@ EntrancesByScene Entrances_TreasureBoxShop = {
     }
 };
 
-EntrancesByScene Entrances_TwinrovasLair = {
+const EntrancesByScene Entrances_TwinrovasLair = {
     "Twinrova's Lair",
     .nbItems = 1,
     {
@@ -1125,7 +1125,7 @@ EntrancesByScene Entrances_TwinrovasLair = {
     }
 };
 
-EntrancesByScene Entrances_VolvagiasLair = {
+const EntrancesByScene Entrances_VolvagiasLair = {
     "Volvagia's Lair",
     .nbItems = 1,
     {
@@ -1133,7 +1133,7 @@ EntrancesByScene Entrances_VolvagiasLair = {
     }
 };
 
-EntrancesByScene Entrances_WaterTemple = {
+const EntrancesByScene Entrances_WaterTemple = {
     "Water Temple",
     .nbItems = 2,
     {
@@ -1142,7 +1142,7 @@ EntrancesByScene Entrances_WaterTemple = {
     }
 };
 
-EntrancesByScene Entrances_Windmill = {
+const EntrancesByScene Entrances_Windmill = {
     "Dampe's Grave & Windmill",
     .nbItems = 3,
     {
@@ -1152,7 +1152,7 @@ EntrancesByScene Entrances_Windmill = {
     }
 };
 
-EntrancesByScene Entrances_ZoraShop = {
+const EntrancesByScene Entrances_ZoraShop = {
     "Zora Shop",
     .nbItems = 1,
     {
@@ -1161,7 +1161,7 @@ EntrancesByScene Entrances_ZoraShop = {
 
 };
 
-EntrancesByScene Entrances_ZorasDomain = {
+const EntrancesByScene Entrances_ZorasDomain = {
     "Zora's Domain",
     .nbItems = 5,
     {
@@ -1173,7 +1173,7 @@ EntrancesByScene Entrances_ZorasDomain = {
     }
 };
 
-EntrancesByScene Entrances_ZorasFountain = {
+const EntrancesByScene Entrances_ZorasFountain = {
     "Zora's Fountain",
     .nbItems = 6,
     {
@@ -1186,7 +1186,7 @@ EntrancesByScene Entrances_ZorasFountain = {
     }
 };
 
-EntrancesByScene Entrances_ZorasRiver = {
+const EntrancesByScene Entrances_ZorasRiver = {
     "Zora's River",
     .nbItems = 5,
     {

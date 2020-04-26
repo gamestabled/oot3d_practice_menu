@@ -3,19 +3,7 @@
 #include "draw.h"
 #include "z3D/z3D.h"
 
-Menu CollisionMenu;
-Menu CameraMenu;
-
-Menu SceneMenu = {
-    "Scene",
-    .nbItems = 2,
-    {
-        {"Collision", MENU, .menu = &CollisionMenu},
-        {"Free camera", MENU, .menu = &CameraMenu},
-    }
-};
-
-Menu CollisionMenu = {
+static Menu CollisionMenu = {
     "Collision",
     .nbItems = 1,
     {
@@ -23,10 +11,19 @@ Menu CollisionMenu = {
     }
 };
 
-Menu CameraMenu = {
+static Menu CameraMenu = {
     "Free camera",
     .nbItems = 1,
     {
         {"TODO Placeholder", METHOD, .method = NULL}, //TODO: free camera options
+    }
+};
+
+Menu SceneMenu = {
+    "Scene",
+    .nbItems = 2,
+    {
+        {"Collision", MENU, .menu = &CollisionMenu},
+        {"Free camera", MENU, .menu = &CameraMenu},
     }
 };

@@ -5,15 +5,7 @@
 #include <stdio.h>
 
 
-Menu DebugMenu = {
-    "Debug",
-    .nbItems = 3,
-    {
-        {"Actors", METHOD, .method = DebugActors_ShowActors},
-        {"Flags", METHOD, .method = NULL}, //TODO
-        {"Memory", METHOD, .method = NULL}, //TODO
-    }
-};
+#define ACTOR_LIST_MAX_SHOW 15
 
 typedef struct {
     Actor* instance;
@@ -98,7 +90,7 @@ static void DebugActors_ShowMoreInfo(Actor* actor){ //TODO
     } while(true);
 }
 
-void DebugActors_ShowActors(void){
+static void DebugActors_ShowActors(void) {
     static ShowActor_Info actorList[200];
     s32 selected = 0, page = 0, pagePrev = 0;
     s32 type = 0xC;
@@ -206,3 +198,13 @@ void DebugActors_ShowActors(void){
 
     } while(true);
 }
+
+Menu DebugMenu = {
+    "Debug",
+    .nbItems = 3,
+    {
+        {"Actors", METHOD, .method = DebugActors_ShowActors},
+        {"Flags", METHOD, .method = NULL}, //TODO
+        {"Memory", METHOD, .method = NULL}, //TODO
+    }
+};

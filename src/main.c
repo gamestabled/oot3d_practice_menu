@@ -17,16 +17,29 @@ uint8_t advance_init;
 
 GlobalContext* gGlobalContext;
 
-void toggle_advance();
-
-void scan_inputs() {
+static void scan_inputs() {
     inputs.cur.val = real_hid.pad.pads[real_hid.pad.index].curr.val;
     inputs.pressed.val = (inputs.cur.val) & (~inputs.old.val);
     inputs.up.val = (~inputs.cur.val) & (inputs.old.val);
     inputs.old.val = inputs.cur.val;
 }
 
-void drawWatches(void) {
+static void toggle_advance() {
+    //scan_inputs();
+    if(inputs.pressed.d_up && advance_ctx.advance_state == NORMAL && !advance_ctx.d_down_latched){
+        advance_ctx.advance_state = PAUSED;
+        advance_ctx.d_down_latched = 1;
+    } else if(inputs.pressed.d_up && advance_ctx.advance_state != NORMAL && !advance_ctx.d_down_latched) {
+        advance_ctx.advance_state = NORMAL;
+        advance_ctx.d_down_latched = 1;
+    } else if (advance_ctx.advance_state == NORMAL && inputs.pressed.d_down){
+        advance_ctx.advance_state = LATCHED;
+    } else if(!inputs.pressed.d_up) {
+        advance_ctx.d_down_latched = 0;
+    }
+}
+
+static void drawWatches(void) {
     for(u32 i = 0; i < WATCHES_MAX; ++i) {
         if (watches[i].display){
             switch(watches[i].type) {
@@ -147,20 +160,5 @@ void setGlobalContext(GlobalContext* globalContext){
 }
 
 void area_load_main(){}
-
-void toggle_advance() {
-    //scan_inputs();
-    if(inputs.pressed.d_up && advance_ctx.advance_state == NORMAL && !advance_ctx.d_down_latched){
-        advance_ctx.advance_state = PAUSED;
-        advance_ctx.d_down_latched = 1;
-    } else if(inputs.pressed.d_up && advance_ctx.advance_state != NORMAL && !advance_ctx.d_down_latched) {
-        advance_ctx.advance_state = NORMAL;
-        advance_ctx.d_down_latched = 1;
-    } else if (advance_ctx.advance_state == NORMAL && inputs.pressed.d_down){
-        advance_ctx.advance_state = LATCHED;
-    } else if(!inputs.pressed.d_up) {
-        advance_ctx.d_down_latched = 0;
-    }
-}
 
 int main(void){}

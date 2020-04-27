@@ -116,7 +116,7 @@ static void WatchesEditWatch(s32 selected){
 
     } while(true);    
     
-    watches[selected].addr = (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | (bytes[3]);
+    watches[selected].addr = (u8*)((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | (bytes[3]));
     if (watches[selected].addr == NULL){
         watches[selected].display = 0;
     }

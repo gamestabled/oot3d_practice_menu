@@ -32,10 +32,10 @@
 
 #define FB_BOTTOM_VRAM_ADDR         ((void *)0x1F48F000) // cached
 #define FB_BOTTOM_VRAM_PA           0x1848F000
-#define FB_BOTTOM_SIZE              (320 * 240 * 3) //(320 * 240 * 2)
+#define FB_BOTTOM_SIZE              (320 * 240 * 3)
 
-#define SCREEN_BOT_WIDTH  320 //320
-#define SCREEN_BOT_HEIGHT 240 //240
+#define SCREEN_BOT_WIDTH  320
+#define SCREEN_BOT_HEIGHT 240
 
 #define SPACING_Y 11
 #define SPACING_X 6

@@ -11,7 +11,7 @@ Menu WarpsMenu = {
     {
         {"Places", METHOD, .method = WarpsPlacesMenuShow},
         {"Manually Enter Entrance Index", METHOD, .method = ManuallyEnterEntranceIndex},
-        {"Clear CS Pointer (TODO)", METHOD, .method = ClearCutscenePointer}, //TODO
+        {"Clear CS Pointer", METHOD, .method = ClearCutscenePointer},
     }
 };
 
@@ -343,5 +343,5 @@ void ManuallyEnterEntranceIndex(void){
 
 void ClearCutscenePointer(void){
     static u32 nullCS[] = { 0, 0 };
-    gGlobalContext->csCtx.state = &nullCS; //TODO: this crashes the game lol
+    gGlobalContext->csCtx.segment = &nullCS;
 }

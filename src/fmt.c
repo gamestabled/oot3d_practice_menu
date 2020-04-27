@@ -118,25 +118,13 @@ static char *processNumber(char *str, s32 num, bool isHex, s32 size, s32 precisi
     {
         while(num != 0)
         {
-            // s32 base = isHex ? (s32)16 : (s32)10;
-            // tmp[i++] = dig[num % base];
-            // num = (num / base);
-            if (isHex) {
-                tmp[i++] = dig[num & 0xF];
-                num >>= 4;
+            if(isHex){
+                tmp[i++] = dig[(u32)num % 16U];
+                num = (s32)((u32)num / 16U);
             }
             else {
-                s32 mod10 = num;
-                while (mod10 - 10 >= 0){
-                    mod10 -= 10;
-                }
-                tmp[i++] = dig[mod10];
-                s32 div10 = num - mod10;
-                num = 0;
-                while (div10 - 10 >= 0){
-                    div10 -= 10;
-                    num++;
-                }
+                tmp[i++] = dig[(u32)num % 10U];
+                num = (s32)((u32)num / 10U);
             }
         }
     }
@@ -297,7 +285,7 @@ int vsprintf(char *buf, const char *fmt, va_list args)
                 continue;
         }
 
-        s64 num;
+        s32 num;
 
         if(flags & SIGN)
         {

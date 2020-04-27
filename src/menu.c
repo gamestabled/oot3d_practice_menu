@@ -379,3 +379,86 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         page = selected / AMOUNT_MENU_MAX_SHOW;
     } while(true);
 }
+
+u32 KeyboardFill(char * buf, u32 len){
+    const char* Upper = "1234567890QWERTYUIOPASDFGHJKL'ZXCVBNM,.+";
+    const char* Lower = "1234567890qwertyuiopasdfghjkl'zxcvbnm,.+";
+
+    const char* keys = Lower;
+    s32 selected = 0;
+    u32 idx = strlen(buf);
+
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_Unlock();
+
+    do
+    {
+        Draw_Lock();
+        Draw_DrawString(10, 10, COLOR_TITLE, "Edit Watch Name");
+
+
+        for(u32 i = 0; i < 10; ++i){
+            Draw_DrawFormattedString(30 + (i * 2 * SPACING_X), 30, selected == i ? COLOR_GREEN : COLOR_WHITE, "%c ", keys[i]);
+        }
+        for(u32 i = 0; i < 10; ++i){
+            u32 j = 10 + i;
+            Draw_DrawFormattedString(30 + (i * 2 * SPACING_X), 30 + 2 * SPACING_Y, selected == j ? COLOR_GREEN : COLOR_WHITE, "%c ", keys[j]);
+        }
+        for(u32 i = 0; i < 10; ++i){
+            u32 j = 20 + i;
+            Draw_DrawFormattedString(30 + (i * 2 * SPACING_X), 30 + 4 * SPACING_Y, selected == j ? COLOR_GREEN : COLOR_WHITE, "%c ", keys[j]);
+        }
+        for(u32 i = 0; i < 10; ++i){
+            u32 j = 30 + i;
+            Draw_DrawFormattedString(30 + (i * 2 * SPACING_X), 30 + 6 * SPACING_Y, selected == j ? COLOR_GREEN : COLOR_WHITE, "%c ", keys[j]);
+        }
+        Draw_DrawString(30, 30 + 7 * SPACING_Y, COLOR_RED, buf);
+
+        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "L/R to switch case. Start to save and return.");
+
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
+
+        u32 pressed = waitInputWithTimeout(1000);
+        if(pressed & BUTTON_B){
+            idx--;
+            if(idx < 0) idx = 0;
+            buf[idx] = '\0';
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
+        }
+        else if(pressed & BUTTON_A){
+            if(idx >= len) idx = len - 1;
+            buf[idx] = keys[selected];
+            idx++;
+            buf[idx] = '\0';
+        }
+        else if(pressed & (BUTTON_R1 | BUTTON_L1)){
+            keys = (keys == Lower) ? Upper : Lower;
+        }
+        else if(pressed & BUTTON_DOWN){
+            selected += 10;
+        }
+        else if(pressed & BUTTON_UP){
+            selected -= 10;
+        }
+        else if(pressed & BUTTON_RIGHT){
+            selected++;
+        }
+        else if(pressed & BUTTON_LEFT){
+            selected--;
+        }
+        else if(pressed & BUTTON_START){
+            break;
+        }    
+
+        if (selected >= 40) selected = 0;
+        if (selected < 0) selected = 39;
+    } while(true); 
+
+    return idx;
+}

@@ -5,6 +5,9 @@
 #include "menu.h"
 #include "MyThread.h"
 #include "advance.h"
+#include "draw.h"
+#include "menus/watches.h"
+#include <string.h>
 
 #include "z3D/z3D.h"
 
@@ -23,6 +26,50 @@ void scan_inputs() {
     inputs.old.val = inputs.cur.val;
 }
 
+void drawWatches(void){
+
+    for(u32 i = 0; i < WATCHES_MAX; ++i){
+        if (watches[i].display){
+            switch(watches[i].type){
+                case(S8):
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %03d", watches[i].name, *(s8*)watches[i].addr & 0xFF);
+                    break;
+                case(U8):
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %03u", watches[i].name, *(u8*)watches[i].addr & 0xFF);
+                    break;
+                case(X8):
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %02X", watches[i].name, *(u8*)watches[i].addr & 0xFF);
+                    break;
+                case(S16):
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %05d", watches[i].name, *(s16*)watches[i].addr & 0xFFFF);
+                    break;
+                case(U16):
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %05u", watches[i].name, *(u16*)watches[i].addr & 0xFFFF);
+                    break;
+                case(X16):
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %04X", watches[i].name, *(u16*)watches[i].addr & 0xFFFF);
+                    break;
+                case(S32):
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %010d", watches[i].name, *(s32*)watches[i].addr & 0xFFFFFFFF);
+                    break;
+                case(U32):
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %010u", watches[i].name, *(u32*)watches[i].addr & 0xFFFFFFFF);
+                    break;
+                case(X32): {
+                    u32 dst;
+                    memcpy(&dst, watches[i].addr, sizeof(dst));
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %08X", watches[i].name, dst);
+                    break;
+                }
+                case(F32):
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %05.2F", watches[i].name, *(f32*)watches[i].addr);
+                    break;
+            }
+        }
+    }
+    Draw_FlushFramebuffer();
+}
+
 void advance_main() {
 
     scan_inputs();
@@ -32,7 +79,9 @@ void advance_main() {
         MyThread_Join(menuThread, -1LL);
     }
 
-        /*Frame Advance begins here
+    drawWatches();
+
+    /*Frame Advance begins here
     Stolen from n3rdswithgame <3
     ---------------------------*/
     if(advance_init == 0) {

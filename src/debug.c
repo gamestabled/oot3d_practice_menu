@@ -5,21 +5,29 @@
 #include <stdio.h>
 
 
-Menu DebugMenu = {
-    "Debug",
-    .nbItems = 3,
-    {
-        {"Actors", METHOD, .method = DebugActors_ShowActors},
-        {"Flags", METHOD, .method = NULL}, //TODO
-        {"Memory", METHOD, .method = NULL}, //TODO
-    }
-};
+#define ACTOR_LIST_MAX_SHOW 15
 
 typedef struct {
     Actor* instance;
     s16    id;
     s16    params;
 } ShowActor_Info;
+
+static const char* const ActorTypeNames[] = {
+    "SWITCH", //0x0
+    "BG",
+    "PLAYER",
+    "EXPLOSIVES",
+    "NPC",
+    "ENEMY",
+    "PROP",
+    "ITEMACTION",
+    "MISC",
+    "BOSS",
+    "DOOR",
+    "CHEST",
+    "ALL", //0xC
+};
 
 /* give type 0xC for "all" */
 static s32 PopulateActorList(ShowActor_Info* list, ActorType type){
@@ -40,14 +48,12 @@ static s32 PopulateActorList(ShowActor_Info* list, ActorType type){
     return i;
 }
 
-static void DebugActors_ShowMoreInfo(Actor* actor){ //TODO
-
+ // TODO
+static void DebugActors_ShowMoreInfo(Actor* actor) {
     Draw_Lock();
     Draw_ClearFramebuffer();
     Draw_FlushFramebuffer();
     Draw_Unlock();
-
-    char buf[65];
 
     do
     {
@@ -64,7 +70,7 @@ static void DebugActors_ShowMoreInfo(Actor* actor){ //TODO
         Draw_DrawFormattedString(30, 30 + 8 * SPACING_Y, COLOR_WHITE, "Text ID:         %04X", actor->textId & 0xFFFF);
         Draw_DrawFormattedString(30, 30 + 9 * SPACING_Y, COLOR_WHITE, "Held By:         %08X", actor->attachedA);
         Draw_DrawFormattedString(30, 30 + 10 * SPACING_Y, COLOR_WHITE, "Holding:         %08X", actor->attachedB);
-        
+
         Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "Press START to bring actor to Link");
 
         Draw_FlushFramebuffer();
@@ -82,7 +88,7 @@ static void DebugActors_ShowMoreInfo(Actor* actor){ //TODO
     } while(true);
 }
 
-void DebugActors_ShowActors(void){
+static void DebugActors_ShowActors(void) {
     static ShowActor_Info actorList[200];
     s32 selected = 0, page = 0, pagePrev = 0;
     s32 type = 0xC;
@@ -189,21 +195,14 @@ void DebugActors_ShowActors(void){
         page = selected / ACTOR_LIST_MAX_SHOW;
 
     } while(true);
-
 }
 
-const char* ActorTypeNames[] = {
-    "SWITCH", //0x0
-    "BG",
-    "PLAYER",
-    "EXPLOSIVES",
-    "NPC",
-    "ENEMY",
-    "PROP",
-    "ITEMACTION",
-    "MISC",
-    "BOSS",
-    "DOOR",
-    "CHEST",
-    "ALL", //0xC
+Menu DebugMenu = {
+    "Debug",
+    .nbItems = 3,
+    {
+        {"Actors", METHOD, .method = DebugActors_ShowActors},
+        {"Flags", METHOD, .method = NULL}, //TODO
+        {"Memory", METHOD, .method = NULL}, //TODO
+    }
 };

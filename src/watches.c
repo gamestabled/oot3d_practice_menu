@@ -7,7 +7,7 @@
 
 Watch watches[WATCHES_MAX];
 
-const char* WatchTypeNames[] = {
+static const char* const WatchTypeNames[] = {
     "S8 ",
     "U8 ",
     "X8 ",

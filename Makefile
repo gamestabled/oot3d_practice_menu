@@ -51,7 +51,7 @@ VERFLAGS := -D OOT3D=$(OOT3D) -D MM3D=$(MM3D) -D Z3D=$(Z3D)
 
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=softfp -mtp=soft
 
-CFLAGS	:=	-g -Wall -Os -mword-relocations -D DEBUG -ffast-math\
+CFLAGS	:=	-g -Wall -Os -mword-relocations -D DEBUG \
 			-fomit-frame-pointer -ffunction-sections \
 			$(ARCH)
 

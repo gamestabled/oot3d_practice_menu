@@ -27,6 +27,6 @@ typedef struct Watch {
     char name[WATCHES_MAXNAME + 1];
 } Watch;
 
+extern Watch watches[WATCHES_MAX];
 
-extern Watch watches[];
 void WatchesMenuFunc(void);

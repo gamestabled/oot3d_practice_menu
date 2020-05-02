@@ -33,9 +33,13 @@
 #define FB_BOTTOM_VRAM_ADDR         ((void *)0x1F48F000) // cached
 #define FB_BOTTOM_VRAM_PA           0x1848F000
 #define FB_BOTTOM_SIZE              (320 * 240 * 3)
+#define FB_TOP_SIZE                 (400 * 240 * 3)
 
 #define SCREEN_BOT_WIDTH  320
 #define SCREEN_BOT_HEIGHT 240
+
+#define SCREEN_TOP_WIDTH  400
+#define SCREEN_TOP_HEIGHT 240
 
 #define SPACING_Y 11
 #define SPACING_X 6
@@ -55,7 +59,12 @@ void Draw_DrawCharacter(u32 posX, u32 posY, u32 color, char character);
 u32 Draw_DrawString(u32 posX, u32 posY, u32 color, const char *string);
 u32 Draw_DrawFormattedString(u32 posX, u32 posY, u32 color, const char *fmt, ...);
 
+void Draw_DrawCharacterTop(u32 posX, u32 posY, u32 color, char character);
+u32 Draw_DrawStringTop(u32 posX, u32 posY, u32 color, const char *string);
+u32 Draw_DrawFormattedStringTop(u32 posX, u32 posY, u32 color, const char *fmt, ...);
+
 void Draw_FillFramebuffer(u32 value);
 void Draw_ClearFramebuffer(void);
 void Draw_SetupFramebuffer(void);
 void Draw_FlushFramebuffer(void);
+void Draw_FlushFramebufferTop(void);

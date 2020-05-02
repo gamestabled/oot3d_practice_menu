@@ -158,7 +158,9 @@ typedef struct {
 
 typedef struct {
     /* 0x0000 */ Actor actor;
-    /* 0x0148 */ char  unk_148[0x20DF];
+    /* 0x0148 */ char  unk_148[0x20D4];
+    /* 0x221C */ float xzSpeed; //probably
+    /* 0x2220 */ char  unk_2220[0x0007];
     /* 0x2227 */ u8    isg;
 } Player;
 

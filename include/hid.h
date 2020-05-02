@@ -8,7 +8,7 @@
 #include <stdint.h>
 
 typedef union {
-    int32_t val;
+    uint32_t val;
     struct {
         uint32_t       a :  1; //1
         uint32_t       b :  1; //2
@@ -32,7 +32,7 @@ typedef union {
 } btn_t;
 
 typedef union {
-    int32_t val;
+    uint32_t val;
     struct {
         int16_t x;
         int16_t y;

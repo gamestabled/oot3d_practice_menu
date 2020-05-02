@@ -8,12 +8,12 @@ static u32 SelectedBottle;
 
 Menu InventoryMenu = {
     "Cheats",
-    .nbItems = 3,
+    .nbItems = 4,
     {
         {"Items", METHOD, .method = Inventory_ItemsMenuFunc},
         {"Right Side Gear", METHOD, .method = Inventory_RightGearMenuFunc},
         {"Left Side Gear", METHOD, .method = Inventory_LeftGearMenuFunc},
-        // {"Amounts", METHOD, .method = Inventory_AmountsMenuFunc},
+        {"Amounts", METHOD, .method = Inventory_AmountsMenuFunc},
     }
 };
 
@@ -168,8 +168,8 @@ ToggleMenu InventoryLeftGearMenu = {
 };
 
 AmountMenu InventoryAmountsMenu = {
-    "A to edit/save amount. B to cancel.",
-    .nbItems = 14,
+    "Edit Amounts",
+    .nbItems = 12,
     {
         {0, 0, "Deku Sticks", .method = Inventory_AmountsSelect},
         {0, 0, "Deku Nuts", .method = Inventory_AmountsSelect},
@@ -179,12 +179,12 @@ AmountMenu InventoryAmountsMenu = {
         {0, 0, "Bombchus", .method = Inventory_AmountsSelect},
         {0, 0, "Magic Beans", .method = Inventory_AmountsSelect},
         {0, 0, "Rupees", .method = Inventory_AmountsSelect},
+        {0, 0, "Giant's Knife hits remaining", .method = Inventory_AmountsSelect},
         {0, 0, "Double Defense (1 for on, 0 for off)", .method = Inventory_AmountsSelect},
         {0, 1, "Heart Containers (0x10 per container)", .method = Inventory_AmountsSelect},
         {0, 1, "Current Health (0x10 per container)", .method = Inventory_AmountsSelect},
-        {0, 1, "Magic meter size (0x30 for normal, 0x60 for double)", .method = Inventory_AmountsSelect},
-        {0, 1, "Current Magic (0x30 for normal, 0x60 for double)", .method = Inventory_AmountsSelect},
-        {0, 1, "Giant's Knife hits remaining", .method = Inventory_AmountsSelect},
+        // {0, 1, "Magic meter size (0x30 for normal, 0x60 for double)", .method = Inventory_AmountsSelect}, TODO: this doesnt work
+        // {0, 1, "Current Magic (0x30 for normal, 0x60 for double)", .method = Inventory_AmountsSelect}, TODO: this doesnt work
     }
 };
 
@@ -990,12 +990,12 @@ static void Inventory_AmountsMenuInit(void){
     InventoryAmountsMenu.items[Amounts_Menu_Bombchus].amount = gSaveContext.ammo[ItemSlots[ITEM_BOMBCHU]];
     InventoryAmountsMenu.items[Amounts_Menu_Magic_Beans].amount = gSaveContext.ammo[ItemSlots[ITEM_MAGIC_BEANS]];
     InventoryAmountsMenu.items[Amounts_Menu_Rupees].amount = gSaveContext.rupees;
+    InventoryAmountsMenu.items[Amounts_Menu_Giants_Knife_hits].amount = gSaveContext.bgsHitsLeft;
     InventoryAmountsMenu.items[Amounts_Menu_Double_Defense].amount = gSaveContext.doubleDefense;
     InventoryAmountsMenu.items[Amounts_Menu_Heart_Containers].amount = gSaveContext.healthCapacity;
     InventoryAmountsMenu.items[Amounts_Menu_Current_Health].amount = gSaveContext.health;
-    InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount = gSaveContext.magicLevel;
-    InventoryAmountsMenu.items[Amounts_Menu_Current_Magic].amount = gSaveContext.magic;
-    InventoryAmountsMenu.items[Amounts_Menu_Giants_Knife_hits].amount = gSaveContext.bgsHitsLeft;
+    // InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount = gSaveContext.magicLevel;
+    // InventoryAmountsMenu.items[Amounts_Menu_Current_Magic].amount = gSaveContext.magic;
 }
 
 void Inventory_AmountsMenuFunc(void){
@@ -1029,6 +1029,9 @@ void Inventory_AmountsSelect(s32 selected){
         case(Amounts_Menu_Rupees):
             gSaveContext.rupees = InventoryAmountsMenu.items[Amounts_Menu_Rupees].amount;
             break;
+        case(Amounts_Menu_Giants_Knife_hits):
+            gSaveContext.bgsHitsLeft = InventoryAmountsMenu.items[Amounts_Menu_Giants_Knife_hits].amount;
+            break;
         case(Amounts_Menu_Double_Defense):
             gSaveContext.doubleDefense = InventoryAmountsMenu.items[Amounts_Menu_Double_Defense].amount;
             break;
@@ -1038,14 +1041,11 @@ void Inventory_AmountsSelect(s32 selected){
         case(Amounts_Menu_Current_Health):
             gSaveContext.health = InventoryAmountsMenu.items[Amounts_Menu_Current_Health].amount;
             break;
-        case(Amounts_Menu_Magic_meter_size):
-            gSaveContext.magicLevel = InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount;
-            break;
-        case(Amounts_Menu_Current_Magic):
-            gSaveContext.magic = InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount;
-            break;
-        case(Amounts_Menu_Giants_Knife_hits):
-            gSaveContext.bgsHitsLeft = InventoryAmountsMenu.items[Amounts_Menu_Giants_Knife_hits].amount;
-            break;
+        // case(Amounts_Menu_Magic_meter_size):
+        //     gSaveContext.magicLevel = InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount;
+        //     break;
+        // case(Amounts_Menu_Current_Magic):
+        //     gSaveContext.magic = InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount;
+        //     break;
     }
 }

@@ -98,7 +98,6 @@ void menuThreadMain(void)
 
 void menuEnter(void)
 {
-    Draw_SetupFramebuffer();
     Draw_ClearFramebuffer();
 }
 
@@ -301,11 +300,11 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
             s32 j = page * AMOUNT_MENU_MAX_SHOW + i;
             if (menu->items[j].hex)
             {
-                sprintf(buf, "0x%03x", menu->items[j].amount);
+                sprintf(buf, "0x%04x", menu->items[j].amount);
             }
             else 
             {
-                sprintf(buf, "  %03d", menu->items[j].amount);
+                sprintf(buf, "  %05d", menu->items[j].amount);
             }
             Draw_DrawString(70, 30 + i * SPACING_Y, COLOR_WHITE, menu->items[j].title);
             Draw_DrawString(10, 30 + i * SPACING_Y, j == selected ? curColor : COLOR_TITLE, buf);
@@ -317,17 +316,12 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         u32 pressed = waitInputWithTimeout(1000);
         if(pressed & BUTTON_B && !chosen)
             break;
-        else if(pressed & BUTTON_B && chosen)
-        {
-            curColor = COLOR_GREEN;
-            chosen = 0;
-        }
         else if(pressed & BUTTON_A && !chosen)
         {
             curColor = COLOR_RED;
             chosen = 1;
         }
-        else if(pressed & BUTTON_A && chosen)
+        else if(pressed & (BUTTON_A | BUTTON_B) & chosen)
         {
             if(menu->items[selected].method != NULL) {
                 menu->items[selected].method(selected); //the method will handle changing amount
@@ -357,7 +351,7 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         }
         else if(pressed & BUTTON_LEFT && chosen)
         {
-            menu->items[selected].amount -= (menu->items[selected].hex ? 16 : 10);
+            menu->items[selected].amount += (menu->items[selected].hex ? 16 : 10);
         }
         else if(pressed & BUTTON_RIGHT && !chosen)
         {
@@ -369,7 +363,7 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         }
         else if(pressed & BUTTON_RIGHT && chosen)
         {
-            menu->items[selected].amount += (menu->items[selected].hex ? 16 : 10);
+            menu->items[selected].amount -= (menu->items[selected].hex ? 16 : 10);
         }
         if(selected < 0)
             selected = menu->nbItems - 1;

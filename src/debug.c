@@ -199,10 +199,9 @@ static void DebugActors_ShowActors(void) {
 
 Menu DebugMenu = {
     "Debug",
-    .nbItems = 3,
+    .nbItems = 2,
     {
         {"Actors", METHOD, .method = DebugActors_ShowActors},
-        {"Flags", METHOD, .method = NULL}, //TODO
-        {"Memory", METHOD, .method = NULL}, //TODO
+        {"Flags (TODO)", METHOD, .method = NULL}, //TODO
     }
 };

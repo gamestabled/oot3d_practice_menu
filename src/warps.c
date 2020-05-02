@@ -252,10 +252,10 @@ void ManuallyEnterEntranceIndex(void){
         char csBuf[65] = { 0 };
         if (cutsceneIndex < 0){
             cutsceneIndex = -1;
-            Draw_DrawString(30, 30 + SPACING_Y, selected == 1 ? curColor : COLOR_WHITE, "Cutscene Number on Load: None");
+            Draw_DrawString(30, 30 + SPACING_Y, selected == 1 ? curColor : COLOR_WHITE, "Cutscene Number on Load (TODO): None");
         }
         else {
-            sprintf(csBuf, "Cutscene Number on Load: %04d", cutsceneIndex);
+            sprintf(csBuf, "Cutscene Number on Load (TODO): %04d", cutsceneIndex);
             Draw_DrawString(30, 30 + SPACING_Y, selected == 1 ? curColor : COLOR_WHITE, csBuf);
 
         }

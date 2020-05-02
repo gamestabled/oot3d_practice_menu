@@ -9,8 +9,8 @@
 #include "hid.h"
 
 typedef struct {
-    /* 0x00 */ u8 buttonItems[5];
-    /* 0x05 */ u8 buttonSlots[4];
+    /* 0x00 */ u8 buttonItems[5]; //B,Y,X,I,II
+    /* 0x05 */ u8 buttonSlots[4]; //Y,X,I,II
     /* 0x0A */ u16 equipment;
 } ItemEquips; // size = 0x0C
 
@@ -250,21 +250,22 @@ typedef struct {
     /* 0x0009 */ char   unk_09[0x03];
     /* 0x000C */ ActorListEntry actorList[12];
     // /* 0x006C */ TargetContext targetCtx;
-    // struct {
-    //     /* 0x0104 */ u32    swch;
-    //     /* 0x0108 */ u32    tempSwch;
-    //     /* 0x010C */ u32    unk0;
-    //     /* 0x0110 */ u32    unk1;
-    //     /* 0x0114 */ u32    chest;
-    //     /* 0x0118 */ u32    clear;
-    //     /* 0x011C */ u32    tempClear;
-    //     /* 0x0120 */ u32    collect;
-    //     /* 0x0124 */ u32    tempCollect;
-    // }                   flags;
+    /* 0x006C */ char   unk_6C[0x130];
+    struct {
+        /* 0x019C */ u32    swch;
+        /* 0x01A0 */ u32    tempSwch;
+        /* 0x01A4 */ u32    unk0;
+        /* 0x01A8 */ u32    unk1;
+        /* 0x01AC */ u32    chest;
+        /* 0x01B0 */ u32    clear;
+        /* 0x01B4 */ u32    tempClear;
+        /* 0x01B8 */ u32    collect;
+        /* 0x01BC */ u32    tempCollect;
+    }                   flags;
     // /* 0x0128 */ TitleCardContext titleCtx;
     // /* 0x0138 */ char   unk_138[0x04];
     // /* 0x013C */ void*  absoluteSpace; // Space used to allocate actor overlays of alloc type 1
-} ActorContext; // TODO: size = 0x140
+} ActorContext; // TODO: size = 0x1C0
 
 typedef struct CutsceneContext {
     /* 0x00 */ char  unk_00[0x4];
@@ -312,6 +313,7 @@ typedef struct {
     /* 0x290 */ OcLine* colOcLine[COLLISION_CHECK_OC_LINE_MAX];
 
 } CollisionCheckContext; // size = 0x29C
+_Static_assert(sizeof(CollisionCheckContext) == 0x29C, "CollisionCheckContext size");
 
 typedef struct GameState {
     /* 0x00 */ GraphicsContext* gfxCtx;
@@ -329,7 +331,7 @@ typedef struct GlobalContext {
     /* 0x017C */ char                  unk_17C[0x091C];
     /* 0x0A98 */ CollisionContext      colCtx;
     /* 0x208C */ ActorContext          actorCtx;
-    /* 0x20F8 */ char                  unk_20F0[0x01A0];
+    /* 0x224C */ char                  unk_20F0[0x004C];
     /* 0x2298 */ CutsceneContext       csCtx; // "demo_play"
     /* 0x2304 */ char                  unk_2304[0x38FC];
     /* 0x5C00 */ u8                    linkAgeOnLoad;
@@ -341,11 +343,22 @@ typedef struct GlobalContext {
     /* 0x5C76 */ u8                    fadeOutTransition;
     /* 0x5C78 */ CollisionCheckContext colChkCtx;
     //TODO
-} GlobalContext;
+} GlobalContext; // size = 0x5F14 TODO
+_Static_assert(sizeof(GlobalContext) == 0x5F14, "Global Context size");
+
+typedef struct StaticContext {
+    /* 0x0000 */ char unk_0[0x0E72];
+    /* 0x0E72 */ u16 collisionDisplay;
+    /* 0x0E74 */ char unk_E74[0x015C];
+    /* 0x0FD0 */ u16 renderGeometryDisable;
+    /* 0x0FD2 */ char unk_FD2[0x0602];
+} StaticContext; //size 0x15D4
+_Static_assert(sizeof(StaticContext) == 0x15D4, "Static Context size");
 
 extern GlobalContext* gGlobalContext;
 extern const u32 ItemSlots[];
 #define gSaveContext (*(SaveContext*)0x00587958)
+#define gStaticContext (*(StaticContext*)0x08080010)
 #define PLAYER ((Player*)gGlobalContext->actorCtx.actorList[ACTORTYPE_PLAYER].first)
 
 enum Item {

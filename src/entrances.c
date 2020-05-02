@@ -50,10 +50,10 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
         char csBuf[65] = { 0 };
         if (cutsceneIndex < 0){
             cutsceneIndex = -1;
-            Draw_DrawString(30, 30 + SPACING_Y, curColor, "Cutscene Number on Load: None");
+            Draw_DrawString(30, 30 + SPACING_Y, curColor, "Cutscene Number on Load (TODO): None");
         }
         else {
-            sprintf(csBuf, "Cutscene Number on Load: %04d", cutsceneIndex);
+            sprintf(csBuf, "Cutscene Number on Load (TODO): %04d", cutsceneIndex);
             Draw_DrawString(30, 30 + SPACING_Y, curColor, csBuf);
 
         }
@@ -70,14 +70,14 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
         Draw_Unlock();
 
         u32 pressed = waitInputWithTimeout(1000);
-        if(pressed & BUTTON_B && !chosen)
+        if((pressed & BUTTON_B) && !chosen)
             break;
-        else if(pressed & BUTTON_B && chosen)
+        else if((pressed & BUTTON_B) && chosen)
         {
             curColor = COLOR_WHITE;
             chosen = 0;
         }
-        else if(pressed & BUTTON_A && !chosen)
+        else if((pressed & BUTTON_A) && !chosen)
         {
             if(selected == 1){
                 chosen = 1;
@@ -92,24 +92,24 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
                 break;
             }
         }
-        else if(pressed & BUTTON_A && chosen) //should be guaranteed selected == 1
+        else if((pressed & BUTTON_A) && chosen) //should be guaranteed selected == 1
         {
             curColor = COLOR_WHITE;
             chosen = 0;
         }
-        else if(pressed & BUTTON_DOWN && !chosen)
+        else if((pressed & BUTTON_DOWN) && !chosen)
         {
             selected++;
         }
-        else if(pressed & BUTTON_DOWN && chosen)
+        else if((pressed & BUTTON_DOWN) && chosen)
         {
             cutsceneIndex--;
         }
-        else if(pressed & BUTTON_UP && !chosen)
+        else if((pressed & BUTTON_UP) && !chosen)
         {
             selected--;
         }
-        else if(pressed & BUTTON_UP && chosen)
+        else if((pressed & BUTTON_UP) && chosen)
         {
             cutsceneIndex++;
         }

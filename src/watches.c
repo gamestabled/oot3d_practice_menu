@@ -131,6 +131,16 @@ static void WatchesDeleteWatch(u32 selected){
     memset(watches[selected].name, 0, WATCHES_MAXNAME + 1);
 }
 
+void Watches_ToggleWatches(void){
+    u8 display = watches[0].display;
+
+    for (u32 i = 0; i < WATCHES_MAX; ++i){
+        if (watches[i].addr != NULL){
+            watches[i].display = !display;
+        }
+    }
+}
+
 void WatchesMenuFunc(void){
     
     s32 selected = 0;

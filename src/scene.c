@@ -23,7 +23,7 @@ Menu SceneMenu = {
     "Scene",
     .nbItems = 2,
     {
-        {"Collision", MENU, .menu = &CollisionMenu},
-        {"Free camera", MENU, .menu = &CameraMenu},
+        {"Collision (TODO)", MENU, .menu = &CollisionMenu},
+        {"Free camera (TODO)", MENU, .menu = &CameraMenu},
     }
 };

@@ -18,7 +18,7 @@ typedef enum {
 
 typedef struct{
     frame_state_t advance_state;
-    uint8_t d_down_latched;
+    uint8_t latched;
 } advance_ctx_t;
 
 typedef struct {

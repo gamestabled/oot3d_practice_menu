@@ -5,8 +5,6 @@ This is a project which opens an on-screen menu in OoT3D, which can be packed wi
 
 There is nothing special about OoT3D in the methods used here, though the relevant addresses and size are currently hard-coded to work for OoT3D. Someday, these can all be generalized and automated, and this work for almost all, if not all, 3DS games.
 
-The required modified exheader.bin is not included here because it is technically original code from OoT3D, if you want to try and use this in its current state, you will need to modify the exheader on your own (Someday this will be automated). In the meantime feel free to message me for questions about this.
-
 Also, be sure to use this version of Luma3DS, which has critical game patching fixes https://github.com/leoetlino/Luma3DS/releases (NOTE: the necessary fixes have been merged upstream into the main Luma3DS repository, meaning you may now use a recent build of Luma3DS).
 
 # Shoutouts
@@ -49,13 +47,13 @@ Below you may see the sorts of features which are already implemented, and an id
 ## 2 Menus
 
 ### 2.1 Warps
-The **Places** menu allows you to warp to any location. After choosing a scene, a new menu will prompt you to select Link's age upon spawning, the cutscene number upon spawning, and the desired entrance to the chosen scene.
+The **Places** menu allows you to warp to any location. After choosing a scene, a new menu will prompt you to select Link's age upon spawning, the cutscene number upon spawning, and the desired entrance to the chosen scene. (NOTE: As of now, it is unsafe to set the cutscene number to anything except None. Any other option will frequently crash).
 
 The "Manually Enter Entrance Index" option is similar, but allows you to manually enter the desired entrance index.
 
-The Clear CS Pointer option is TODO.
+The Clear CS Pointer option sets the cutscene pointer to point to a null cutscene. In the N64 version, this prevents many wrong warps from crashing. In this version, its usefullness has not been well-tested.
 
-Please note that many combinations of entrance index and cutscene number will crash the game. This is intended behavior, as it reflects the reality of an unmodified version of the game. Please report any crashes or other behavior that do not seem to be intended or otherwise reflective of expected in-game behavior. (NOTE: Currently, there is a bug which causes frequent crashes when choosing anything besides "None" for your cutscene index when using these menu options, this is not intended.)
+Please note that many combinations of entrance index and cutscene number will crash the game. This is intended behavior, as it reflects the reality of an unmodified version of the game. Please report any crashes or other behavior that do not seem to be intended or otherwise reflective of expected in-game behavior.
 
 ### 2.2 Scene
 TODO
@@ -76,10 +74,10 @@ The **Right Side Gear** menu allows you to modify the right side of the Gear scr
 
 The **Left Side Gear** menu allows you to modify the left side of the Gear screen. This includes medallions, spiritual stones, pieces of heart, the Shard of Agony, the Gerudo Token, and Golden Skull Tokens. (NOTE: Currently, there is a bug in which the spiritual stones, Shard of Agony, and Gerudo Token do not correctly display their on/off status in the menu, despite their otherwise toggling working correctly.)
 
-The **Amounts** menu allows you to modify directly the amount of various items. This includes the Items menu items, Double Defense, Heart Containers, Current Health, Magic meter size, Magic amount, the number of hits left on Giant's Knife, and rupee amount. (NOTE: Currently, this menu has major bugs, and is not even displayed for usage.)
+The **Amounts** menu allows you to modify directly the amount of various items. This includes the Items menu items, Double Defense, Heart Containers, Current Health, Magic meter size, Magic amount, the number of hits left on Giant's Knife, and rupee amount.
 
 ### 2.5 Equips
-TODO
+This menu allows you to change the item on your B,Y,X,I, and II button items. Note that changing the item on a button will not change the equipped item slot, or the visual item slot on that button. This means that that changes to the button items will not be reflected visually on the bottom screen, and that they will not persist through pausing or load zones. If requested, this can be changed in the future.
 
 ### 2.6 File
 TODO
@@ -88,10 +86,10 @@ TODO
 TODO
 
 ### 2.8 Watches
-TODO
+This menu allows you to set memory watches which will appear on the bottom screen. Watches can be named. Watches can be set to 8, 16, or 32 bit integers, displayed as signed decimal, unsigned decimal, or hexadecimal, or as 32 bit floats. (NOTE: As of now, printing floats is not supported. In the meantime, I suggest that you instead opt for X32.) A watch is considered to be "enabled" if its address is not 0x00000000, the null address. The **Draw** option can be used to toggle whether or not a watch is currently to be displayed.
 
 ### 2.9 Debug
-TODO
+The **Actors** menu displays a list of all allocations currently on the "Actor Heap". (Note that in reality, this actor heap is part of a larger game arena, which contains other allocations besides actors, though this is by-and-large unimportant information to know.) By scrolling with L/R, the actor list can be filtered by actor type. By pressing A on an actor, more details about that actor will be shown. (NOTE: As of now printing floats is not supported, so some actor values will be rendered as simply "%f".) The "X to delete" option is not yet implemented, pressing X will currently not do anything on this menu.
 
-### 2.10 Settings
-TODO
+### 2.10 Commands
+This menu allows you to change the input combo for various commands. A command input combo may consist of up to 4 buttons. If a combo is "Relaxed", the command will execute whenever all of the buttons in its combo are held. If a combo is "Strict", the command will execute only if the buttons are held in the order that they are displayed, with no other simultaneous input. (NOTE: For the time being, please press buttons one at a time while editing menu combos, improving this feature is a WIP.)

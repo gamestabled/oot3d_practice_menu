@@ -30,3 +30,4 @@ typedef struct Watch {
 
 extern Watch watches[];
 void WatchesMenuFunc(void);
+void Watches_ToggleWatches(void);

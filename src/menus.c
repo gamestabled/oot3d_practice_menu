@@ -39,20 +39,22 @@
 #include "menus/file.h"
 #include "menus/watches.h"
 #include "menus/debug.h"
+#include "menus/commands.h"
 
 Menu gz3DMenu = {
-    ";)",
-    .nbItems = 6,
+    "Practice Menu",
+    .nbItems = 8,
     {
         // { "Test method placeholder, sets rupees to 50", METHOD, .method = &gz3DMenu_Test },
         { "Warps", MENU, .menu = &WarpsMenu },
         { "Scene", MENU, .menu = &SceneMenu },
         { "Cheats", MENU, .menu = &CheatsMenu },
         { "Inventory", MENU, .menu = &InventoryMenu },
-        // { "Equips", MENU, .menu = &EquipsMenu },
+        { "Equips", MENU, .menu = &EquipsMenu },
         // { "File", MENU, .menu = &FileMenu },
         { "Watches", METHOD, .method = &WatchesMenuFunc },
         { "Debug", MENU, .menu = &DebugMenu },
+        { "Commands", METHOD, .method = Commands_ShowCommands },
     }
 };
 

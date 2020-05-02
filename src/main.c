@@ -18,14 +18,14 @@ uint8_t framebuffers_init = 0;
 
 GlobalContext* gGlobalContext;
 
-void scan_inputs() {
+static void scan_inputs() {
     inputs.cur.val = real_hid.pad.pads[real_hid.pad.index].curr.val;
     inputs.pressed.val = (inputs.cur.val) & (~inputs.old.val);
     inputs.up.val = (~inputs.cur.val) & (inputs.old.val);
     inputs.old.val = inputs.cur.val;
 }
 
-void toggle_advance() {
+static void toggle_advance() {
     if(pauseUnpause && advance_ctx.advance_state == NORMAL && !advance_ctx.latched){
         advance_ctx.advance_state = PAUSED;
         advance_ctx.latched = 1;
@@ -39,51 +39,77 @@ void toggle_advance() {
     }
 }
 
-void drawWatches(void){
-
-    for(u32 i = 0; i < WATCHES_MAX; ++i){
+static void drawWatches(void) {
+    for(u32 i = 0; i < WATCHES_MAX; ++i) {
         if (watches[i].display){
-            switch(watches[i].type){
-                case(S8):
-                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %03d", watches[i].name, *(s8*)watches[i].addr & 0xFF);
+            switch(watches[i].type) {
+                case(S8): {
+                    s8 dst;
+                    memcpy(&dst, watches[i].addr, sizeof(dst));
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %03d", watches[i].name, dst);
                     break;
-                case(U8):
-                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %03u", watches[i].name, *(u8*)watches[i].addr & 0xFF);
+                }
+                case(U8): {
+                    u8 dst;
+                    memcpy(&dst, watches[i].addr, sizeof(dst));
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %03u", watches[i].name, dst);
                     break;
-                case(X8):
-                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %02X", watches[i].name, *(u8*)watches[i].addr & 0xFF);
+                }
+                case(X8): {
+                    u8 dst;
+                    memcpy(&dst, watches[i].addr, sizeof(dst));
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %02X", watches[i].name, dst);
                     break;
-                case(S16):
-                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %05d", watches[i].name, *(s16*)watches[i].addr & 0xFFFF);
+                }
+                case(S16): {
+                    s16 dst;
+                    memcpy(&dst, watches[i].addr, sizeof(dst));
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %05d", watches[i].name, dst);
                     break;
-                case(U16):
-                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %05u", watches[i].name, *(u16*)watches[i].addr & 0xFFFF);
+                }
+                case(U16): {
+                    u16 dst;
+                    memcpy(&dst, watches[i].addr, sizeof(dst));
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %05u", watches[i].name, dst);
                     break;
-                case(X16):
-                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %04X", watches[i].name, *(u16*)watches[i].addr & 0xFFFF);
+                }
+                case(X16): {
+                    u16 dst;
+                    memcpy(&dst, watches[i].addr, sizeof(dst));
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %04X", watches[i].name, dst);
                     break;
-                case(S32):
-                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %010d", watches[i].name, *(s32*)watches[i].addr & 0xFFFFFFFF);
+                }
+                case(S32): {
+                    s32 dst;
+                    memcpy(&dst, watches[i].addr, sizeof(dst));
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %010d", watches[i].name, dst);
                     break;
-                case(U32):
-                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %010u", watches[i].name, *(u32*)watches[i].addr & 0xFFFFFFFF);
+                }
+                case(U32): {
+                    u32 dst;
+                    memcpy(&dst, watches[i].addr, sizeof(dst));
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %010u", watches[i].name, dst);
                     break;
+                }
                 case(X32): {
                     u32 dst;
                     memcpy(&dst, watches[i].addr, sizeof(dst));
                     Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %08X", watches[i].name, dst);
                     break;
                 }
-                case(F32):
-                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %05.2F", watches[i].name, *(f32*)watches[i].addr);
+                case(F32): {
+                    float dst;
+                    memcpy(&dst, watches[i].addr, sizeof(dst));
+                    Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: %05.2F", watches[i].name, dst);
                     break;
+                }
             }
         }
     }
     Draw_FlushFramebuffer();
 }
 
-void titleScreenDisplay(void){
+static void titleScreenDisplay(void){
     Draw_DrawFormattedStringTop(150, 20, COLOR_WHITE, "OoT3D Practice Patch");
     Draw_FlushFramebufferTop();
 }

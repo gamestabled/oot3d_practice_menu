@@ -31,6 +31,4 @@ typedef struct {
 extern advance_ctx_t advance_ctx;
 extern advance_input_t inputs;
 
-void scan_inputs();
-
 #endif //ADVANCE_H

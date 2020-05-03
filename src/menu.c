@@ -94,6 +94,7 @@ void menuThreadMain(void)
 {
     menuEnter();
     menuShow(&gz3DMenu);
+    svcSleepThread(1000 * 1000 * 300LL); //wait 300 milliseconds for users to buffer inputs
 }
 
 void menuEnter(void)

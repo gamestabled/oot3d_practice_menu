@@ -8,11 +8,12 @@ static u32 SelectedBottle;
 
 Menu InventoryMenu = {
     "Cheats",
-    .nbItems = 4,
+    .nbItems = 5,
     {
         {"Items", METHOD, .method = Inventory_ItemsMenuFunc},
         {"Right Side Gear", METHOD, .method = Inventory_RightGearMenuFunc},
         {"Left Side Gear", METHOD, .method = Inventory_LeftGearMenuFunc},
+        {"Ocarina Songs", METHOD, .method = Inventory_SongsMenuFunc},
         {"Amounts", METHOD, .method = Inventory_AmountsMenuFunc},
     }
 };
@@ -164,6 +165,25 @@ ToggleMenu InventoryLeftGearMenu = {
         {0, "Shard of Agony", .method = Inventory_LeftGearToggle},
         {0, "Gerudo Token", .method = Inventory_LeftGearToggle},
         {0, "Gold Skulltulas (Select to Choose Amount)", .method = Inventory_GoldSkulltulaAmount},
+    }
+};
+
+ToggleMenu InventorySongsMenu = {
+    "Ocarina Songs",
+    .nbItems = 12,
+    {
+        {0, "Zelda's Lullaby", .method = Inventory_SongsToggle},
+        {0, "Epona's Song", .method = Inventory_SongsToggle},
+        {0, "Saria's Song", .method = Inventory_SongsToggle},
+        {0, "Sun's Song", .method = Inventory_SongsToggle},
+        {0, "Song of Time", .method = Inventory_SongsToggle},
+        {0, "Song of Storms", .method = Inventory_SongsToggle},
+        {0, "Minuet of Forest", .method = Inventory_SongsToggle},
+        {0, "Bolero of Fire", .method = Inventory_SongsToggle},
+        {0, "Serenade of Water", .method = Inventory_SongsToggle},
+        {0, "Requiem of Spirit", .method = Inventory_SongsToggle},
+        {0, "Nocturne of Shadow", .method = Inventory_SongsToggle},
+        {0, "Prelude of Light", .method = Inventory_SongsToggle},
     }
 };
 
@@ -979,6 +999,79 @@ void Inventory_GoldSkulltulaAmount(s32 selected){
 
     gSaveContext.questItems &= ~(1 << 22);
     gSaveContext.questItems |= ((gSaveContext.gsTokens != 0) << 22);
+}
+
+static void Inventory_SongsMenuInit(void){ //TODO
+    InventorySongsMenu.items[Songs_Menu_Zeldas_Lullaby].on = (gSaveContext.questItems >> 12) & 1;
+    InventorySongsMenu.items[Songs_Menu_Eponas_Song].on = (gSaveContext.questItems >> 13) & 1;
+    InventorySongsMenu.items[Songs_Menu_Sarias_Song].on = (gSaveContext.questItems >> 14) & 1;
+    InventorySongsMenu.items[Songs_Menu_Suns_Song].on = (gSaveContext.questItems >> 15) & 1;
+    InventorySongsMenu.items[Songs_Menu_Song_of_Time].on = (gSaveContext.questItems >> 16) & 1;
+    InventorySongsMenu.items[Songs_Menu_Song_of_Storms].on = (gSaveContext.questItems >> 17) & 1;
+    InventorySongsMenu.items[Songs_Menu_Minuet].on = (gSaveContext.questItems >> 6) & 1;
+    InventorySongsMenu.items[Songs_Menu_Bolero].on = (gSaveContext.questItems >> 7) & 1;
+    InventorySongsMenu.items[Songs_Menu_Serenade].on = (gSaveContext.questItems >> 8) & 1;
+    InventorySongsMenu.items[Songs_Menu_Requiem].on = (gSaveContext.questItems >> 9) & 1;
+    InventorySongsMenu.items[Songs_Menu_Nocturne].on = (gSaveContext.questItems >> 10) & 1;
+    InventorySongsMenu.items[Songs_Menu_Prelude].on = (gSaveContext.questItems >> 11) & 1;
+}
+
+void Inventory_SongsMenuFunc(void){
+    Inventory_SongsMenuInit();
+    ToggleMenuShow(&InventorySongsMenu);
+}
+
+void Inventory_SongsToggle(s32 selected){
+    switch(selected){
+        case(Songs_Menu_Zeldas_Lullaby):
+            gSaveContext.questItems ^= (1 << 12);
+            InventorySongsMenu.items[Songs_Menu_Zeldas_Lullaby].on = ((gSaveContext.questItems & (1 << 12)) != 0);
+            break;
+        case(Songs_Menu_Eponas_Song):
+            gSaveContext.questItems ^= (1 << 13);
+            InventorySongsMenu.items[Songs_Menu_Eponas_Song].on = ((gSaveContext.questItems & (1 << 13)) != 0);
+            break;        
+        case(Songs_Menu_Sarias_Song):
+            gSaveContext.questItems ^= (1 << 14);
+            InventorySongsMenu.items[Songs_Menu_Sarias_Song].on = ((gSaveContext.questItems & (1 << 14)) != 0);
+            break;        
+        case(Songs_Menu_Suns_Song):
+            gSaveContext.questItems ^= (1 << 15);
+            InventorySongsMenu.items[Songs_Menu_Suns_Song].on = ((gSaveContext.questItems & (1 << 15)) != 0);
+            break;        
+        case(Songs_Menu_Song_of_Time):
+            gSaveContext.questItems ^= (1 << 16);
+            InventorySongsMenu.items[Songs_Menu_Song_of_Time].on = ((gSaveContext.questItems & (1 << 16)) != 0);
+            break;        
+        case(Songs_Menu_Song_of_Storms):
+            gSaveContext.questItems ^= (1 << 17);
+            InventorySongsMenu.items[Songs_Menu_Song_of_Storms].on = ((gSaveContext.questItems & (1 << 17)) != 0);
+            break;   
+        case(Songs_Menu_Minuet):
+            gSaveContext.questItems ^= (1 << 6);
+            InventorySongsMenu.items[Songs_Menu_Minuet].on = ((gSaveContext.questItems & (1 << 6)) != 0);
+            break;    
+        case(Songs_Menu_Bolero):
+            gSaveContext.questItems ^= (1 << 7);
+            InventorySongsMenu.items[Songs_Menu_Bolero].on = ((gSaveContext.questItems & (1 << 7)) != 0);
+            break;    
+        case(Songs_Menu_Serenade):
+            gSaveContext.questItems ^= (1 << 8);
+            InventorySongsMenu.items[Songs_Menu_Serenade].on = ((gSaveContext.questItems & (1 << 8)) != 0);
+            break;    
+        case(Songs_Menu_Requiem):
+            gSaveContext.questItems ^= (1 << 9);
+            InventorySongsMenu.items[Songs_Menu_Requiem].on = ((gSaveContext.questItems & (1 << 9)) != 0);
+            break;    
+        case(Songs_Menu_Nocturne):
+            gSaveContext.questItems ^= (1 << 10);
+            InventorySongsMenu.items[Songs_Menu_Nocturne].on = ((gSaveContext.questItems & (1 << 10)) != 0);
+            break;    
+        case(Songs_Menu_Prelude):
+            gSaveContext.questItems ^= (1 << 11);
+            InventorySongsMenu.items[Songs_Menu_Prelude].on = ((gSaveContext.questItems & (1 << 11)) != 0);
+            break;     
+    }
 }
 
 static void Inventory_AmountsMenuInit(void){

@@ -29,6 +29,9 @@ void Inventory_LeftGearToggle(s32);
 void Inventory_HeartPiecesAmount(s32);
 void Inventory_GoldSkulltulaAmount(s32);
 
+void Inventory_SongsMenuFunc(void);
+void Inventory_SongsToggle(s32);
+
 void Inventory_AmountsMenuFunc(void);
 void Inventory_AmountsSelect(s32);
 
@@ -77,6 +80,21 @@ enum { //Left Side Gear Menu Choices
     Gear_Menu_Shard_of_Agony,
     Gear_Menu_Gerudo_Token,
     Gear_Menu_Gold_Skulltulas,
+};
+
+enum { //Songs Menu Choices
+    Songs_Menu_Zeldas_Lullaby,
+    Songs_Menu_Eponas_Song,
+    Songs_Menu_Sarias_Song,
+    Songs_Menu_Suns_Song,
+    Songs_Menu_Song_of_Time,
+    Songs_Menu_Song_of_Storms,
+    Songs_Menu_Minuet,
+    Songs_Menu_Bolero,
+    Songs_Menu_Serenade,
+    Songs_Menu_Requiem,
+    Songs_Menu_Nocturne,
+    Songs_Menu_Prelude,
 };
 
 enum { //Amounts Menu Choices

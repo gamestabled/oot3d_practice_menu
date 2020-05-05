@@ -27,10 +27,10 @@
 
 #include "fmt.h"
 #include "draw.h"
-#include "font.h"
 #include "utils.h"
 #include "3ds/svc.h"
 #include "3ds/synchronization.h"
+#include "fonts/ascii_font.h"
 #include <string.h>
 #include <z3D/z3D.h>
 
@@ -60,17 +60,15 @@ void Draw_DrawCharacter(u32 posX, u32 posY, u32 color, char character)
     volatile u8 *const fb0 = (volatile u8 *const)FRAMEBUFFER[0];
     volatile u8 *const fb1 = (volatile u8 *const)FRAMEBUFFER[1];
 
-
-    s32 y;
-    for(y = 0; y < 10; y++)
+    for(s32 y = 0; y < 10; y++)
     {
-        char charPos = font[character * 10 + y];
+        const char charPos = ascii_font[character * 10 + y];
 
-        s32 x;
-        for(x = 6; x >= 1; x--)
+        for(s32 x = 6; x >= 1; x--)
         {
-            u32 screenPos = (posX * SCREEN_BOT_HEIGHT + (SCREEN_BOT_HEIGHT - y - posY - 1)) + (5 - x) * SCREEN_BOT_HEIGHT;
-            u32 pixelColor = ((charPos >> x) & 1) ? color : COLOR_BLACK;
+            const u32 screenPos = (posX * SCREEN_BOT_HEIGHT + (SCREEN_BOT_HEIGHT - y - posY - 1)) + (5 - x) * SCREEN_BOT_HEIGHT;
+            const u32 pixelColor = ((charPos >> x) & 1) ? color : COLOR_BLACK;
+
             fb0[screenPos * 3] = (pixelColor) & 0xFF;
             fb0[screenPos * 3 + 1] = (pixelColor >> 8) & 0xFF;
             fb0[screenPos * 3 + 2] = (pixelColor >> 16) & 0xFF;
@@ -88,16 +86,15 @@ void Draw_DrawCharacterTop(u32 posX, u32 posY, u32 color, char character)
     volatile u8 *const fb4 = (volatile u8 *const)FRAMEBUFFER[4];
     volatile u8 *const fb5 = (volatile u8 *const)FRAMEBUFFER[5];
 
-    s32 y;
-    for(y = 0; y < 10; y++)
+    for(s32 y = 0; y < 10; y++)
     {
-        char charPos = font[character * 10 + y];
+        const char charPos = ascii_font[character * 10 + y];
 
-        s32 x;
-        for(x = 6; x >= 1; x--)
+        for(s32 x = 6; x >= 1; x--)
         {
-            u32 screenPos = (posX * SCREEN_TOP_HEIGHT + (SCREEN_TOP_HEIGHT - y - posY - 1)) + (5 - x) * SCREEN_TOP_HEIGHT;
-            u32 pixelColor = ((charPos >> x) & 1) ? color : COLOR_BLACK;
+            const u32 screenPos = (posX * SCREEN_TOP_HEIGHT + (SCREEN_TOP_HEIGHT - y - posY - 1)) + (5 - x) * SCREEN_TOP_HEIGHT;
+            const u32 pixelColor = ((charPos >> x) & 1) ? color : COLOR_BLACK;
+
             fb2[screenPos * 3] = (pixelColor) & 0xFF;
             fb2[screenPos * 3 + 1] = (pixelColor >> 8) & 0xFF;
             fb2[screenPos * 3 + 2] = (pixelColor >> 16) & 0xFF;

@@ -31,21 +31,21 @@ static void Command_RunFast(void){
 }
 
 static void Command_Reset(void){
-    EntranceWarp(0xFFFF, gSaveContext.linkAge, -1);
+    EntranceWarp(0xFFFF, gSaveContext.linkAge, -1, 0);
 }
 
 static void Command_ReloadScene(void){
     if(gGlobalContext->nextEntranceIndex != -1)
-        EntranceWarp(gGlobalContext->nextEntranceIndex, gSaveContext.linkAge, -1);
+        EntranceWarp(gGlobalContext->nextEntranceIndex, gSaveContext.linkAge, -1, 0);
     else
-        EntranceWarp(gSaveContext.entranceIndex, gSaveContext.linkAge, -1);    
+        EntranceWarp(gSaveContext.entranceIndex, gSaveContext.linkAge, -1, 0);    
 }
 
 static void Command_VoidOut(void){
     gSaveContext.respawn[RESPAWN_MODE_DOWN].tempSwchFlags = gGlobalContext->actorCtx.flags.tempSwch;
     gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags = gGlobalContext->actorCtx.flags.tempCollect;
     gSaveContext.respawnFlag = 1;
-    EntranceWarp(gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex, gSaveContext.linkAge, -1);
+    EntranceWarp(gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex, gSaveContext.linkAge, -1, 0);
 }
 
 static void Command_ToggleAge(void){

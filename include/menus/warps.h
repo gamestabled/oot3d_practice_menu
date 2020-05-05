@@ -15,3 +15,11 @@ extern WarpsSceneMenu WarpsPlacesOverworldMenu;
 
 void WarpsPlacesMenuShow(void);
 void ClearCutscenePointer(void);
+
+enum {
+    Manual_Entrance_Menu_Age,
+    Manual_Entrance_Menu_Time,
+    Manual_Entrance_Menu_CsIdx,
+    Manual_Entrance_Menu_EtcIdx,
+    Manual_Entrance_Menu_Go,
+};

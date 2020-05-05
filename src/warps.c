@@ -226,9 +226,18 @@ void WarpsPlacesMenuShow(void){
     } while(true);
 }
 
+static const char* TimeNames[] = {
+    "Current ",
+    "Midnight",
+    "6 AM    ",
+    "Noon    ",
+    "6 PM    ",
+};
+
 void ManuallyEnterEntranceIndex(void){
     s32 selected = 0;
     s32 chosenAge = gSaveContext.linkAge;
+    u32 chosenTime = 0;
     u16 chosenIndex = 0x0000;
     u32 curColor = COLOR_WHITE;
     s32 cutsceneIndex = -1;
@@ -244,30 +253,28 @@ void ManuallyEnterEntranceIndex(void){
         Draw_Lock();
         Draw_DrawFormattedString(10, 10, COLOR_TITLE, "Manually Enter Entrance Index");
 
-        char ageBuf[65] = { 0 };
-        sprintf(ageBuf, "Age on Load: %s", chosenAge ? "Child" : "Adult");
-        Draw_DrawString(30, 30, COLOR_WHITE, ageBuf);
-        Draw_DrawCharacter(10, 30, COLOR_TITLE, selected == 0 ? '>' : ' ');
+        Draw_DrawFormattedString(30, 30, COLOR_WHITE, "Age on Load: %s", chosenAge ? "Child" : "Adult");
+        Draw_DrawCharacter(10, 30, COLOR_TITLE, selected == Manual_Entrance_Menu_Age ? '>' : ' ');
 
-        char csBuf[65] = { 0 };
+        Draw_DrawFormattedString(30, 30 + SPACING_Y * Manual_Entrance_Menu_Time, COLOR_WHITE, "Time of Day: %s", TimeNames[chosenTime]);
+        Draw_DrawCharacter(10, 30 + SPACING_Y * Manual_Entrance_Menu_Time, COLOR_TITLE, selected == Manual_Entrance_Menu_Time ? '>' : ' ');
+
         if (cutsceneIndex < 0){
             cutsceneIndex = -1;
-            Draw_DrawString(30, 30 + SPACING_Y, selected == 1 ? curColor : COLOR_WHITE, "Cutscene Number on Load (TODO): None");
+            Draw_DrawString(30, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, selected == 1 ? curColor : COLOR_WHITE, "Cutscene Number on Load (TODO): None");
         }
         else {
-            sprintf(csBuf, "Cutscene Number on Load (TODO): %04d", cutsceneIndex);
-            Draw_DrawString(30, 30 + SPACING_Y, selected == 1 ? curColor : COLOR_WHITE, csBuf);
-
+            Draw_DrawFormattedString(30, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, 
+                selected == Manual_Entrance_Menu_CsIdx ? curColor : COLOR_WHITE, "Cutscene Number on Load (TODO): %04d", cutsceneIndex);
         }
-        Draw_DrawCharacter(10, 30 + SPACING_Y, COLOR_TITLE, selected == 1 ? '>' : ' ');
+        Draw_DrawCharacter(10, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, COLOR_TITLE, selected == Manual_Entrance_Menu_CsIdx ? '>' : ' ');
 
-        char entranceBuf[65] = { 0 };
-        sprintf(entranceBuf, "Entrance Index: 0x%04x", chosenIndex);
-        Draw_DrawString(30, 30 + 2 * SPACING_Y, selected == 2 ? curColor : COLOR_WHITE, entranceBuf);
-        Draw_DrawCharacter(10, 30 + 2 * SPACING_Y, COLOR_TITLE, selected == 2 ? '>' : ' ');
+        Draw_DrawFormattedString(30, 30 + SPACING_Y * Manual_Entrance_Menu_EtcIdx, selected == Manual_Entrance_Menu_EtcIdx ? curColor : COLOR_WHITE,
+            "Entrance Index: 0x%04X", chosenIndex);
+        Draw_DrawCharacter(10, 30 + SPACING_Y * Manual_Entrance_Menu_EtcIdx, COLOR_TITLE, selected == Manual_Entrance_Menu_EtcIdx ? '>' : ' ');
 
-        Draw_DrawString(30, 30 + 3 * SPACING_Y, COLOR_WHITE, "Go");
-        Draw_DrawCharacter(10, 30 + 3 * SPACING_Y, COLOR_TITLE, selected == 3 ? '>' : ' ');
+        Draw_DrawString(30, 30 + SPACING_Y * Manual_Entrance_Menu_Go, COLOR_WHITE, "Go");
+        Draw_DrawCharacter(10, 30 + SPACING_Y * Manual_Entrance_Menu_Go, COLOR_TITLE, selected == Manual_Entrance_Menu_Go ? '>' : ' ');
 
         Draw_FlushFramebuffer();
         Draw_Unlock();
@@ -282,20 +289,24 @@ void ManuallyEnterEntranceIndex(void){
         }
         else if(pressed & BUTTON_A && !chosen)
         {
-            if(selected == 1 || selected == 2){
+            if(selected == Manual_Entrance_Menu_CsIdx || selected == Manual_Entrance_Menu_EtcIdx){
                 chosen = 1;
                 curColor = COLOR_RED;
             }
-            else if(selected == 0){
+            else if(selected == Manual_Entrance_Menu_Age){
                 chosenAge = 1 - chosenAge;
             }
-            else if(selected == 3){
-                EntranceWarp(chosenIndex, chosenAge, cutsceneIndex);
+            else if(selected == Manual_Entrance_Menu_Time){
+                chosenTime++;
+                chosenTime %= 5;
+            }
+            else if(selected == Manual_Entrance_Menu_Go){
+                EntranceWarp(chosenIndex, chosenAge, cutsceneIndex, chosenTime);
                 svcExitThread();
                 break;
             }
         }
-        else if(pressed & BUTTON_A && chosen) //should be guaranteed selected == 1 or selected == 2
+        else if(pressed & BUTTON_A && chosen)
         {
             curColor = COLOR_WHITE;
             chosen = 0;
@@ -304,39 +315,39 @@ void ManuallyEnterEntranceIndex(void){
         {
             selected++;
         }
-        else if(pressed & BUTTON_DOWN && chosen && selected == 1)
+        else if(pressed & BUTTON_DOWN && chosen && selected == Manual_Entrance_Menu_CsIdx)
         {
             cutsceneIndex--;
         }
-        else if(pressed & BUTTON_DOWN && chosen && selected == 2){
+        else if(pressed & BUTTON_DOWN && chosen && selected == Manual_Entrance_Menu_EtcIdx){
             chosenIndex--;
         }
         else if(pressed & BUTTON_UP && !chosen)
         {
             selected--;
         }
-        else if(pressed & BUTTON_UP && chosen && selected == 1)
+        else if(pressed & BUTTON_UP && chosen && selected == Manual_Entrance_Menu_CsIdx)
         {
             cutsceneIndex++;
         }
-        else if(pressed & BUTTON_UP && chosen && selected == 2){
+        else if(pressed & BUTTON_UP && chosen && selected == Manual_Entrance_Menu_EtcIdx){
             chosenIndex++;
         }
-        else if(pressed & BUTTON_LEFT && chosen && selected == 1){
+        else if(pressed & BUTTON_LEFT && chosen && selected == Manual_Entrance_Menu_CsIdx){
             cutsceneIndex -= 10;
         }
-        else if(pressed & BUTTON_LEFT && chosen && selected == 2){
+        else if(pressed & BUTTON_LEFT && chosen && selected == Manual_Entrance_Menu_EtcIdx){
             chosenIndex -= 16;
         }
-        else if(pressed & BUTTON_RIGHT && chosen && selected == 1){
+        else if(pressed & BUTTON_RIGHT && chosen && selected == Manual_Entrance_Menu_CsIdx){
             cutsceneIndex += 10;
         }
-        else if(pressed & BUTTON_RIGHT && chosen && selected == 2){
+        else if(pressed & BUTTON_RIGHT && chosen && selected == Manual_Entrance_Menu_EtcIdx){
             chosenIndex += 16;
         }
         if(selected < 0)
-            selected = 2;
-        else if(selected >= 4) selected = 0;
+            selected = Manual_Entrance_Menu_Go;
+        else if(selected > Manual_Entrance_Menu_Go) selected = Manual_Entrance_Menu_Age;
 
     } while(true);
 }

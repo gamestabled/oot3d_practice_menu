@@ -5,10 +5,21 @@
 #include "utils.h"
 #include <stdio.h>
 
-#define ENTRANCE_MENU_MAX_SHOW 16
+#define ENTRANCE_MENU_MAX_SHOW 15
 #define SCENE_MENU_MAX_SHOW 18
 
-void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex){
+static const u16 EntranceTimes[] = {
+    0xFFFF, //unused
+    0x0000,
+    0x4001,
+    0x8000,
+    0xC001,
+};
+
+void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex, u32 chosenTimeIndex){
+    if (chosenTimeIndex != 0){
+        gSaveContext.dayTime = EntranceTimes[chosenTimeIndex];
+    }
     gSaveContext.entranceIndex = EntranceIndex;
     gGlobalContext->nextEntranceIndex = EntranceIndex;
     gGlobalContext->linkAgeOnLoad = chosenAge;
@@ -21,9 +32,18 @@ void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex){
     gGlobalContext->sceneLoadFlag = 0x14;
 }
 
+static const char* TimeNames[] = {
+    "Current ",
+    "Midnight",
+    "6 AM    ",
+    "Noon    ",
+    "6 PM    ",
+};
+
 void EntranceSelectMenuShow(const EntrancesByScene* entrances){
     s32 selected = 0, page = 0, pagePrev = 0;
     s32 chosenAge = gSaveContext.linkAge;
+    u32 chosenTime = 0;
     u32 curColor = COLOR_WHITE;
     s32 cutsceneIndex = -1;
     u32 chosen = 0;
@@ -42,28 +62,26 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
         }
         Draw_DrawFormattedString(10, 10, COLOR_TITLE, entrances->title);
 
-        char ageBuf[65] = { 0 };
-        sprintf(ageBuf, "Age on Load: %s", chosenAge ? "Child" : "Adult");
-        Draw_DrawString(30, 30, COLOR_WHITE, ageBuf);
-        Draw_DrawCharacter(10, 30, COLOR_TITLE, selected == 0 ? '>' : ' ');
+        Draw_DrawFormattedString(30, 30, COLOR_WHITE, "Age on Load: %s", chosenAge ? "Child" : "Adult");
+        Draw_DrawCharacter(10, 30, COLOR_TITLE, selected == Entrance_Select_Menu_Age ? '>' : ' ');
 
-        char csBuf[65] = { 0 };
+        Draw_DrawFormattedString(30, 30 + SPACING_Y * Entrance_Select_Menu_Time, COLOR_WHITE, "Time of Day: %s", TimeNames[chosenTime]);
+        Draw_DrawCharacter(10, 30 + SPACING_Y * Entrance_Select_Menu_Time, COLOR_TITLE, selected == Entrance_Select_Menu_Time ? '>' : ' ');
+
         if (cutsceneIndex < 0){
             cutsceneIndex = -1;
-            Draw_DrawString(30, 30 + SPACING_Y, curColor, "Cutscene Number on Load (TODO): None");
+            Draw_DrawString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, curColor, "Cutscene Number on Load (TODO): None");
         }
         else {
-            sprintf(csBuf, "Cutscene Number on Load (TODO): %04d", cutsceneIndex);
-            Draw_DrawString(30, 30 + SPACING_Y, curColor, csBuf);
-
+            Draw_DrawFormattedString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, curColor, "Cutscene Number on Load (TODO): %04d", cutsceneIndex);
         }
-        Draw_DrawCharacter(10, 30 + SPACING_Y, COLOR_TITLE, selected == 1 ? '>' : ' ');
+        Draw_DrawCharacter(10, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, COLOR_TITLE, selected == Entrance_Select_Menu_CsIdx ? '>' : ' ');
 
         for (s32 i = 0; i < ENTRANCE_MENU_MAX_SHOW && page * ENTRANCE_MENU_MAX_SHOW + i < entrances->nbItems; ++i)
         {
             s32 j = page * ENTRANCE_MENU_MAX_SHOW + i;
-            Draw_DrawString(70, 30 + (2 + i) * SPACING_Y, COLOR_WHITE, entrances->items[j].title);
-            Draw_DrawCharacter(10, 30 + (2 + i) * SPACING_Y, COLOR_TITLE, selected == (2 + j) ? '>' : ' ');
+            Draw_DrawString(70, 30 + (Entrance_Select_Menu_Etcs + i) * SPACING_Y, COLOR_WHITE, entrances->items[j].title);
+            Draw_DrawCharacter(10, 30 + (Entrance_Select_Menu_Etcs + i) * SPACING_Y, COLOR_TITLE, selected == (Entrance_Select_Menu_Etcs + j) ? '>' : ' ');
         }
 
         Draw_FlushFramebuffer();
@@ -79,15 +97,19 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
         }
         else if((pressed & BUTTON_A) && !chosen)
         {
-            if(selected == 1){
+            if(selected == Entrance_Select_Menu_CsIdx){
                 chosen = 1;
                 curColor = COLOR_RED;
             }
-            else if(selected == 0){
+            else if(selected == Entrance_Select_Menu_Age){
                 chosenAge = 1 - chosenAge;
             }
-            else {
-                EntranceWarp(entrances->items[selected - 2].entranceIndex, chosenAge, cutsceneIndex);
+            else if(selected == Entrance_Select_Menu_Time){
+                chosenTime++;
+                chosenTime %= 5;
+            }
+            else if(selected >= Entrance_Select_Menu_Etcs){
+                EntranceWarp(entrances->items[selected - Entrance_Select_Menu_Etcs].entranceIndex, chosenAge, cutsceneIndex, chosenTime);
                 svcExitThread();
                 break;
             }
@@ -114,11 +136,11 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
             cutsceneIndex++;
         }
         if(selected < 0)
-            selected = entrances->nbItems + 1;
-        else if(selected >= entrances->nbItems + 2) selected = 0;
+            selected = Entrance_Select_Menu_Etcs + entrances->nbItems - 1;
+        else if(selected >= Entrance_Select_Menu_Etcs + entrances->nbItems) selected = Entrance_Select_Menu_Age;
 
         pagePrev = page;
-        page = selected >= ENTRANCE_MENU_MAX_SHOW + 2 ? 1 : 0;
+        page = selected >= ENTRANCE_MENU_MAX_SHOW + Entrance_Select_Menu_Etcs ? 1 : 0;
     } while(true);
 }
 

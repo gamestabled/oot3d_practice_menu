@@ -32,7 +32,7 @@ typedef struct WarpsPlacesMenuEntry {
 } WarpsPlacesMenuEntry;
 
 void EntranceSelectMenuShow(const EntrancesByScene* entrances);
-void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex);
+void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex, u32 chosenTimeIndex);
 void WarpsSceneMenuShow(const WarpsSceneMenu* menu);
 
 void ManuallyEnterEntranceIndex(void);
@@ -130,3 +130,10 @@ extern const EntrancesByScene Entrances_ZoraShop;
 extern const EntrancesByScene Entrances_ZorasDomain;
 extern const EntrancesByScene Entrances_ZorasFountain;
 extern const EntrancesByScene Entrances_ZorasRiver;
+
+enum {
+    Entrance_Select_Menu_Age,
+    Entrance_Select_Menu_Time,
+    Entrance_Select_Menu_CsIdx,
+    Entrance_Select_Menu_Etcs,
+};

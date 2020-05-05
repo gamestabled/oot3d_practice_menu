@@ -7,7 +7,7 @@
 static u32 SelectedBottle;
 
 Menu InventoryMenu = {
-    "Cheats",
+    "Inventory",
     .nbItems = 5,
     {
         {"Items", METHOD, .method = Inventory_ItemsMenuFunc},

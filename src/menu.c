@@ -39,11 +39,27 @@ u32 waitInputWithTimeout(u32 msec)
     u32 key = 0;
     u32 n = 0;
 
-    //Wait for no keys to be pressed
-    while(HID_PAD && (msec == 0 || n < msec))
+    const bool isDPadPressed = (HID_PAD & BUTTON_UP) != 0 ||
+                               (HID_PAD & BUTTON_DOWN) != 0 ||
+                               (HID_PAD & BUTTON_LEFT) != 0 ||
+                               (HID_PAD & BUTTON_RIGHT) != 0;
+
+    // We special the D-Pad as we want to automatically scroll the cursor or
+    // allow amount editing at a reasonable pace as long as it's held down.
+    if (isDPadPressed)
     {
-        svcSleepThread(1 * 1000 * 1000LL);
-        n++;
+        // By default wait 75 milliseconds before moving the cursor so that
+        // we don't scroll the menu too fast.
+        svcSleepThread(75 * 1000 * 1000LL);
+    }
+    else
+    {
+        // Wait for no keys to be pressed in the event that up and down are not pressed.
+        while (HID_PAD && (msec == 0 || n <= msec))
+        {
+            svcSleepThread(1 * 1000 * 1000LL);
+            n++;
+        }
     }
 
     if(msec != 0 && n >= msec)

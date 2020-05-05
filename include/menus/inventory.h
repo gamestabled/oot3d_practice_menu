@@ -108,8 +108,8 @@ enum { //Amounts Menu Choices
     Amounts_Menu_Rupees,
     Amounts_Menu_Giants_Knife_hits,
     Amounts_Menu_Double_Defense,
+    Amounts_Menu_Magic_meter_size,
     Amounts_Menu_Heart_Containers,
     Amounts_Menu_Current_Health,
-    // Amounts_Menu_Magic_meter_size,
-    // Amounts_Menu_Current_Magic,
+    Amounts_Menu_Current_Magic,
 };

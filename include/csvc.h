@@ -87,6 +87,14 @@ Result svcMapProcessMemoryEx(Handle process, u32 destAddr, u32 srcAddr, u32 size
 Result svcUnmapProcessMemoryEx(Handle process, u32 destAddress, u32 size);
 
 /**
+ * @brief Queries memory information.
+ * @param[out] info Pointer to output memory info to.
+ * @param out Pointer to output page info to.
+ * @param addr Virtual memory address to query.
+ */
+Result svcQueryMemory(MemInfo* info, PageInfo* out, u32 addr);
+
+/**
  * @brief Controls memory mapping, with the choice to use region attributes or not.
  * @param[out] addr_out The virtual address resulting from the operation. Usually the same as addr0.
  * @param addr0    The virtual address to be used for the operation.

@@ -18,14 +18,14 @@ uint8_t framebuffers_init = 0;
 
 GlobalContext* gGlobalContext;
 
-static void scan_inputs() {
+static void scan_inputs(void) {
     inputs.cur.val = real_hid.pad.pads[real_hid.pad.index].curr.val;
     inputs.pressed.val = (inputs.cur.val) & (~inputs.old.val);
     inputs.up.val = (~inputs.cur.val) & (inputs.old.val);
     inputs.old.val = inputs.cur.val;
 }
 
-static void toggle_advance() {
+static void toggle_advance(void) {
     if(pauseUnpause && advance_ctx.advance_state == NORMAL && !advance_ctx.latched){
         advance_ctx.advance_state = PAUSED;
         advance_ctx.latched = 1;
@@ -136,8 +136,7 @@ static void titleScreenDisplay(void){
     Draw_FlushFramebufferTop();
 }
 
-void advance_main() {
-
+void advance_main(void) {
     if(framebuffers_init == 0){
         Draw_SetupFramebuffer();
         framebuffers_init = 1;
@@ -184,5 +183,5 @@ void setGlobalContext(GlobalContext* globalContext){
     gGlobalContext = globalContext;
 }
 
-void area_load_main(){}
+void area_load_main(void){}
 int main(void){}

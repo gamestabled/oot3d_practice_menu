@@ -38,16 +38,16 @@ INCLUDES	:=	include
 # options for code generation
 #---------------------------------------------------------------------------------
 OOT3D	 	:= 1
-MM3D 		:= 2
-Z3D			:= $(OOT3D)
+OOT3DJ 		:= 2
+Z3D			:= $(OOT3DJ)
 
 ifeq ($(OOT3D), $(Z3D))
   LINK_SCRIPT 	:= oot.ld
 else
-  LINK_SCRIPT 	:= mm.ld
+  LINK_SCRIPT 	:= oot_j.ld
 endif
 
-VERFLAGS := -D OOT3D=$(OOT3D) -D MM3D=$(MM3D) -D Z3D=$(Z3D)
+VERFLAGS := -D OOT3D=$(OOT3D) -D OOT3DJ=$(OOT3DJ) -D Z3D=$(Z3D)
 
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=softfp -mtp=soft
 

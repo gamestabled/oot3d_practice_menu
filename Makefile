@@ -37,14 +37,18 @@ INCLUDES	:=	include
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-OOT3D	 	:= 1
-OOT3DJ 		:= 2
-Z3D			:= $(OOT3DJ)
+OOT3D	 	:= OOT3D
+OOT3DJ 		:= OOT3DJ
+Z3D			:= OOT3D
 
 ifeq ($(OOT3D), $(Z3D))
   LINK_SCRIPT 	:= oot.ld
+  ASFLAGS += -D _USA_=1 -D _JP_=0
 else
+ifeq ($(OOT3DJ), $(Z3D))
   LINK_SCRIPT 	:= oot_j.ld
+  ASFLAGS += -D _USA_=0 -D _JP_=1
+endif
 endif
 
 VERFLAGS := -D OOT3D=$(OOT3D) -D OOT3DJ=$(OOT3DJ) -D Z3D=$(Z3D)
@@ -59,7 +63,7 @@ CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS $(VERFLAGS)
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 
-ASFLAGS	:=	-g $(ARCH) $(VERFLAGS)
+ASFLAGS	+=	-g $(ARCH) $(VERFLAGS)
 LDFLAGS	=	-g $(ARCH) -Wl,-Map,$(notdir $*.map) -T $(TOPDIR)/$(LINK_SCRIPT) -nostdlib $(VERFLAGS) -lgcc
 
 LIBS	:= 

@@ -22,8 +22,8 @@ SECTIONS
 
     . = 0x45240C;
     . = ALIGN(4);
-    .patch_get_global_context_j : {
-        *(.patch_get_global_context_j*)
+    .patch_get_global_context : {
+        *(.patch_get_global_context*)
     }
 
 	. = 0x4C99A8;

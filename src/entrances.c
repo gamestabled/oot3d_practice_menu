@@ -80,7 +80,7 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
         for (s32 i = 0; i < ENTRANCE_MENU_MAX_SHOW && page * ENTRANCE_MENU_MAX_SHOW + i < entrances->nbItems; ++i)
         {
             s32 j = page * ENTRANCE_MENU_MAX_SHOW + i;
-            Draw_DrawString(70, 30 + (Entrance_Select_Menu_Etcs + i) * SPACING_Y, COLOR_WHITE, entrances->items[j].title);
+            Draw_DrawString(45, 30 + (Entrance_Select_Menu_Etcs + i) * SPACING_Y, COLOR_WHITE, entrances->items[j].title);
             Draw_DrawCharacter(10, 30 + (Entrance_Select_Menu_Etcs + i) * SPACING_Y, COLOR_TITLE, selected == (Entrance_Select_Menu_Etcs + j) ? '>' : ' ');
         }
 
@@ -627,7 +627,7 @@ const EntrancesByScene Entrances_GreatFairysFountainUpgrades = {
     {
         {0x04C2, "From Ganon's Castle Exterior"},
         {0x04BE, "From Death Mountain Crater"},
-        {0x04F2, "From Death Mountain Crater(Kakariko Village)"},
+        {0x04F2, "From Death Mountain Crater (Kakariko Village)"},
         {0x0315, "From Death Mountain Trail"},
     }
 };

@@ -31,11 +31,3 @@
 #include "menu.h"
 
 extern Menu gz3DMenu;
-
-void gz3DMenu_Test(void);
-// void RosalinaMenu_TakeScreenshot(void);
-// void RosalinaMenu_ShowCredits(void);
-// void RosalinaMenu_ProcessList(void);
-// void RosalinaMenu_PowerOff(void);
-// void RosalinaMenu_Reboot(void);
-// void RosalinaMenu_Cheats(void);

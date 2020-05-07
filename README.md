@@ -25,7 +25,8 @@ Also, be sure to use this version of Luma3DS, which has critical game patching f
 
 # How to Use:
 * Install a recent build of Luma3DS, or use the one linked above. If you already have Luma3DS, you can upgrade by simply replacing "boot.firm" at the root of your SD card.
-* Place "code.ips" and "exheader.bin" in the folder /luma/titles/0004000000033500 . You may new to create this folder.
+* USA: Place "code.ips" and "exheader.bin" in the folder /luma/titles/0004000000033500 . You may new to create this folder.
+* JP: Place "code_j.ips" and "exheader.bin" in the folder /luma/titles/0004000000033400 . Rename "code_j.ips" to "code.ips". 
 * Hold Select while powering on the console to launch the Luma3DS menu. Turn on "Enable game patching". You should only need to do this once, unless if you disable game patching in the future.
 * It should work now! If not, you likely need to use a different version of Luma3DS (try the one linked above).
 

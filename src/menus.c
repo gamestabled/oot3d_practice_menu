@@ -45,7 +45,6 @@ Menu gz3DMenu = {
     "Practice Menu",
     .nbItems = 8,
     {
-        // { "Test method placeholder, sets rupees to 50", METHOD, .method = &gz3DMenu_Test },
         { "Warps", MENU, .menu = &WarpsMenu },
         { "Scene", MENU, .menu = &SceneMenu },
         { "Cheats", MENU, .menu = &CheatsMenu },
@@ -57,8 +56,3 @@ Menu gz3DMenu = {
         { "Commands", METHOD, .method = Commands_ShowCommands },
     }
 };
-
-void gz3DMenu_Test(void){
-    gSaveContext.rupees = 50;
-    return;
-}

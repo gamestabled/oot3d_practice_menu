@@ -217,6 +217,7 @@ typedef struct {
 } SaveContext; // size = 0x1428
 
 typedef struct GraphicsContext GraphicsContext; //TODO
+typedef struct Camera Camera; //TODO
 
 typedef struct {
     /* 0x00 */ void* colHeader; //TODO: CollisionHeader* struct
@@ -328,7 +329,10 @@ typedef struct GlobalContext {
     // /* 0x0000 */ GameState state;
     /* 0x0000 */ char                  unk_0[0x0118];
     /* 0x0118 */ SubGlobalContext_118  sub118;
-    /* 0x017C */ char                  unk_17C[0x091C];
+    /* 0x017C */ char                  unk_17C[0x08D8];
+    /* 0x0A54 */ Camera*               cameraPtrs[4];
+    /* 0x0A64 */ s16                   activeCamera;
+    /* 0x0A66 */ char                  unk_A66[0x0032];
     /* 0x0A98 */ CollisionContext      colCtx;
     /* 0x208C */ ActorContext          actorCtx;
     /* 0x224C */ char                  unk_20F0[0x004C];

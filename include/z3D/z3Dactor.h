@@ -162,7 +162,7 @@ typedef struct {
     /* 0x221C */ float xzSpeed; //probably
     /* 0x2220 */ char  unk_2220[0x0007];
     /* 0x2227 */ u8    isg;
-} Player;
+} Player; //total size (from init vars): 2A4C
 
 typedef enum {
     /* 0x00 */ ACTORTYPE_SWITCH,
@@ -187,12 +187,6 @@ typedef struct ActorHeapNode {
     struct ActorHeapNode* prev;
 } ActorHeapNode;
 
-// typedef struct {
-//     /* 0x000 */ Actor actor;
-//     /* 0x148 */ char unk_148[0x5C];
-//     /* 0x1A4 */ ActorFunc actionFunc;
-//     /* 0x1A8 */ char unk_1A8[0x68];
-// } BgHidanFirewall; // size = 0x210/
-
+void Actor_Kill(Actor* actor);
 
 #endif

@@ -58,7 +58,7 @@ The **Places** menu allows you to warp to any location. After choosing a scene, 
 
 The "Manually Enter Entrance Index" option is similar, but allows you to manually enter the desired entrance index.
 
-The Clear CS Pointer option sets the cutscene pointer to point to a null cutscene. In the N64 version, this prevents many wrong warps from crashing. In this version, its usefullness has not been well-tested.
+The Clear CS Pointer option sets the cutscene pointer to point to a null cutscene. In the N64 version, this prevents many wrong warps from crashing. In this version, its usefullness has not been well-tested, but it can be used to escape from many cutscenes.
 
 Please note that many combinations of entrance index and cutscene number will crash the game. This is intended behavior, as it reflects the reality of an unmodified version of the game. Please report any crashes or other behavior that do not seem to be intended or otherwise reflective of expected in-game behavior.
 
@@ -68,6 +68,7 @@ TODO
 ### 2.3 Cheats
 This menu provides a number of built in quick cheats. These cheats include:
 -   Refill Health, Magic, Items, Keys, Rupees
+-   Change Quest Mode (Regular/Master Quest). Note: this only toggles the mirroring and double damage effects of Master Quest until reloading the save file. Double Note: This option will eventually move to the **File** menu.
 -   Infinite Nayru's Love (TODO)
 -   Freeze time of day (TODO)
 -   No music (TODO)
@@ -96,7 +97,7 @@ TODO
 This menu allows you to set memory watches which will appear on the bottom screen. Watches can be named. Watches can be set to 8, 16, or 32 bit integers, displayed as signed decimal, unsigned decimal, or hexadecimal, or as 32 bit floats. (NOTE: As of now, printing floats is not supported. In the meantime, I suggest that you instead opt for X32.) A watch is considered to be "enabled" if its address is not 0x00000000, the null address. The **Draw** option can be used to toggle whether or not a watch is currently to be displayed.
 
 ### 2.9 Debug
-The **Actors** menu displays a list of all allocations currently on the "Actor Heap". (Note that in reality, this actor heap is part of a larger game arena, which contains other allocations besides actors, though this is by-and-large unimportant information to know.) By scrolling with L/R, the actor list can be filtered by actor type. By pressing A on an actor, more details about that actor will be shown. (NOTE: As of now printing floats is not supported, so some actor values will be rendered as simply "%f".) The "X to delete" option is not yet implemented, pressing X will currently not do anything on this menu.
+The **Actors** menu displays a list of all allocations currently on the "Actor Heap". (Note that in reality, this actor heap is part of a larger game arena, which contains other allocations besides actors, though this is by-and-large unimportant information to know.) By scrolling with L/R, the actor list can be filtered by actor type. By pressing A on an actor, more details about that actor will be shown. (NOTE: As of now printing floats is not supported, so some actor values will be rendered as simply "%f".) By pressing X on an actor, that actor will be deleted on the next frame of gameplay.
 
 ### 2.10 Commands
-This menu allows you to change the input combo for various commands. A command input combo may consist of up to 4 buttons. If a combo is "Relaxed", the command will execute whenever all of the buttons in its combo are held. If a combo is "Strict", the command will execute only if the buttons are held in the order that they are displayed, with no other simultaneous input. (NOTE: For the time being, please press buttons one at a time while editing menu combos, improving this feature is a WIP.)
+This menu allows you to change the input combo for various commands. A command input combo may consist of up to 4 buttons. If a combo is "Relaxed", the command will execute whenever all of the buttons in its combo are held. If a combo is "Strict", the command will execute only if the buttons are held in the order that they are displayed, with no other simultaneous input. (NOTE: For the time being, please press buttons one at a time while editing menu combos, improving this feature is a WIP.) You can press X on the Edit Command page to clear/disable the command.

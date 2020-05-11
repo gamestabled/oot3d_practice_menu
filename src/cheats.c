@@ -55,8 +55,12 @@ static void Cheats_Rupees(void){
     }
 }
 
-static void Cheats_Nayrus(void){ //TODO
+static void Cheats_QuestMode(void){
+    gSaveContext.masterQuestFlag = !gSaveContext.masterQuestFlag;
+}
 
+static void Cheats_Nayrus(void){
+    gSaveContext.nayrusLoveTimer = -1; //TODO: this isnt forever, and doesnt turn it on.
 }
 
 static void Cheats_FreezeTime(void){ //TODO
@@ -159,13 +163,14 @@ static void Give_Treasure_Key(void){
 
 Menu CheatsMenu = {
     "Cheats",
-    .nbItems = 10,
+    .nbItems = 11,
     {
         {"Refill Health", METHOD, .method = Cheats_Health},
         {"Refill Magic", METHOD, .method = Cheats_Magic},
         {"Refill Items", MENU, .menu = &CheatsItemsMenu},
         {"Refill Keys", MENU, .menu = &CheatsKeysMenu},
         {"Refill Rupees", METHOD, .method = Cheats_Rupees},
+        {"Change Quest Mode", METHOD, .method = Cheats_QuestMode},
         {"Infinite Nayru's Love (TODO)", METHOD, .method = Cheats_Nayrus},
         {"Freeze time of day (TODO)", METHOD, .method = Cheats_FreezeTime},
         {"No music (TODO)", METHOD, .method = Cheats_Music},

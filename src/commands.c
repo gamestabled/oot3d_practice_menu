@@ -65,8 +65,8 @@ static void Command_StorePos(void){
 
 static void Command_LoadPos(void){
     if (PLAYER){
+        PLAYER->actor.initPosRot.pos = storedPosRot.pos;
         PLAYER->actor.posRot.pos = storedPosRot.pos;
-        PLAYER->actor.posRot2.pos = storedPosRot.pos;
         PLAYER->actor.posRot.rot = storedPosRot.rot;
         PLAYER->actor.posRot2.rot = storedPosRot.rot;
         PLAYER->actor.shape.rot = storedPosRot.rot;
@@ -270,6 +270,9 @@ static void Commands_EditCommand(u32 commandIndex){
 
         Draw_DrawFormattedString(30, 30 + SPACING_Y, COLOR_WHITE, "Type: %s", commandList[commandIndex].strict ? "Strict " : "Relaxed");
         Draw_DrawCharacter(10, 30 + SPACING_Y, COLOR_TITLE, selected == 1 ? '>' : ' ');
+
+        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "Use X to clear the command");
+
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
@@ -288,6 +291,9 @@ static void Commands_EditCommand(u32 commandIndex){
                     curColor = COLOR_RED;
                     commandList[commandIndex].comboLen = 0;
                 }
+            }
+            else if (pressed & BUTTON_X){
+                commandList[commandIndex].comboLen = 0;
             }
             else if (pressed & BUTTON_B){
                 break;

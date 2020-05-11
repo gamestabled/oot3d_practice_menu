@@ -48,7 +48,6 @@ static s32 PopulateActorList(ShowActor_Info* list, ActorType type){
     return i;
 }
 
- // TODO
 static void DebugActors_ShowMoreInfo(Actor* actor) {
     Draw_Lock();
     Draw_ClearFramebuffer();
@@ -136,6 +135,10 @@ static void DebugActors_ShowActors(void) {
             Draw_ClearFramebuffer();
             Draw_FlushFramebuffer();
             Draw_Unlock();
+        }
+        else if(pressed & BUTTON_X)
+        {
+            Actor_Kill(actorList[selected].instance);
         }
         else if(pressed & BUTTON_DOWN)
         {

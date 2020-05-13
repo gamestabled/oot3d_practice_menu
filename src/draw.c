@@ -25,7 +25,8 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "fmt.h"
+// #include "fmt.h"
+#include "lib/printf.h"
 #include "draw.h"
 #include "utils.h"
 #include "3ds/svc.h"
@@ -180,7 +181,8 @@ u32 Draw_DrawFormattedString(u32 posX, u32 posY, u32 color, const char *fmt, ...
     char buf[DRAW_MAX_FORMATTED_STRING_SIZE + 1];
     va_list args;
     va_start(args, fmt);
-    vsprintf(buf, fmt, args);
+    // vsprintf(buf, fmt, args);
+    vsnprintf_(buf, DRAW_MAX_FORMATTED_STRING_SIZE, fmt, args);
     va_end(args);
 
     return Draw_DrawString(posX, posY, color, buf);
@@ -191,7 +193,8 @@ u32 Draw_DrawFormattedStringTop(u32 posX, u32 posY, u32 color, const char *fmt, 
     char buf[DRAW_MAX_FORMATTED_STRING_SIZE + 1];
     va_list args;
     va_start(args, fmt);
-    vsprintf(buf, fmt, args);
+    // vsprintf(buf, fmt, args);
+    vsnprintf_(buf, DRAW_MAX_FORMATTED_STRING_SIZE, fmt, args);
     va_end(args);
 
     return Draw_DrawStringTop(posX, posY, color, buf);

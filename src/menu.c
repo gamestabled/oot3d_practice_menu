@@ -233,12 +233,9 @@ void ToggleMenuShow(ToggleMenu *menu) //displays a toggle menu, analogous to ros
 
         for (s32 i = 0; i < TOGGLE_MENU_MAX_SHOW && page * TOGGLE_MENU_MAX_SHOW + i < menu->nbItems; ++i)
         {
-            char buf[65] = { 0 };
             s32 j = page * TOGGLE_MENU_MAX_SHOW + i;
             const char* checkbox = (menu->items[j].on ? "(x) " : "( ) ");
-            sprintf(buf, "%s%s", checkbox, menu->items[j].title);
-
-            Draw_DrawString(30, 30 + i * SPACING_Y, COLOR_WHITE, buf);
+            Draw_DrawFormattedString(30, 30 + i * SPACING_Y, COLOR_WHITE, "%s%s", checkbox, menu->items[j].title);
             Draw_DrawCharacter(10, 30 + i * SPACING_Y, COLOR_TITLE, j == selected ? '>' : ' ');
         }
 
@@ -313,18 +310,10 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
 
         for (s32 i = 0; i < AMOUNT_MENU_MAX_SHOW && page * AMOUNT_MENU_MAX_SHOW + i < menu->nbItems; ++i)
         {
-            char buf[65] = { 0 };
             s32 j = page * AMOUNT_MENU_MAX_SHOW + i;
-            if (menu->items[j].hex)
-            {
-                sprintf(buf, "0x%04x", menu->items[j].amount);
-            }
-            else 
-            {
-                sprintf(buf, "  %05d", menu->items[j].amount);
-            }
             Draw_DrawString(70, 30 + i * SPACING_Y, COLOR_WHITE, menu->items[j].title);
-            Draw_DrawString(10, 30 + i * SPACING_Y, j == selected ? curColor : COLOR_TITLE, buf);
+            Draw_DrawFormattedString(10, 30 + i * SPACING_Y, j == selected ? curColor : COLOR_TITLE,
+                menu->items[j].hex ? "0x%04X" : "  %05d", menu->items[j].amount);
         }
 
         Draw_FlushFramebuffer();

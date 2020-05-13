@@ -921,10 +921,8 @@ void Inventory_HeartPiecesAmount(s32 selected){
     do
     {
         Draw_Lock();
-        char buf[65] = { 0 };
-        sprintf(buf, "%04d", curHearts);
         Draw_DrawString(10, 10, COLOR_TITLE, "Use the D-pad to edit, B to return.");
-        Draw_DrawString(30, 30, COLOR_WHITE, buf);
+        Draw_DrawFormattedString(30, 30, COLOR_WHITE, "%04d", curHearts);
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
@@ -967,10 +965,8 @@ void Inventory_GoldSkulltulaAmount(s32 selected){
     do
     {
         Draw_Lock();
-        char buf[65] = { 0 };
-        sprintf(buf, "%04d", gSaveContext.gsTokens);
         Draw_DrawString(10, 10, COLOR_TITLE, "Use the D-pad to edit, B to return.");
-        Draw_DrawString(30, 30, COLOR_WHITE, buf);
+        Draw_DrawFormattedString(30, 30, COLOR_WHITE, "%04d", gSaveContext.gsTokens);
         Draw_FlushFramebuffer();
         Draw_Unlock();
 

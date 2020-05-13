@@ -108,10 +108,7 @@ static void DebugActors_ShowActors(void) {
             Draw_ClearFramebuffer();
         }
         Draw_DrawFormattedString(10, 10, COLOR_TITLE, "Currently Loaded Actors");
-        
-        char typeBuf[65] = { 0 };
-        sprintf(typeBuf, "Filter by type (R/L to move): %s", ActorTypeNames[type]);
-        Draw_DrawString(30, 30, COLOR_RED, typeBuf);
+        Draw_DrawFormattedString(30, 30, COLOR_RED, "Filter by type (R/L to move): %s", ActorTypeNames[type]);
 
         for (s32 i = 0; i < ACTOR_LIST_MAX_SHOW && page * ACTOR_LIST_MAX_SHOW + i < listSize; ++i)
         {

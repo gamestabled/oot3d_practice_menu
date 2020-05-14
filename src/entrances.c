@@ -27,7 +27,7 @@ void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex, u32 chose
         gSaveContext.cutsceneIndex = 0;
     }
     else {
-        gSaveContext.cutsceneIndex = (cutsceneIndex += 0xFFF0);
+        gSaveContext.nextCutsceneIndex = (cutsceneIndex += 0xFFF0);
     }
     gGlobalContext->sceneLoadFlag = 0x14;
 }
@@ -70,10 +70,10 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
 
         if (cutsceneIndex < 0){
             cutsceneIndex = -1;
-            Draw_DrawString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, curColor, "Cutscene Number on Load (TODO): None");
+            Draw_DrawString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, curColor, "Cutscene Number on Load: None");
         }
         else {
-            Draw_DrawFormattedString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, curColor, "Cutscene Number on Load (TODO): %04d", cutsceneIndex);
+            Draw_DrawFormattedString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, curColor, "Cutscene Number on Load: %04d", cutsceneIndex);
         }
         Draw_DrawCharacter(10, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, COLOR_TITLE, selected == Entrance_Select_Menu_CsIdx ? '>' : ' ');
 

@@ -54,13 +54,11 @@ Below you may see the sorts of features which are already implemented, and an id
 ## 2 Menus
 
 ### 2.1 Warps
-The **Places** menu allows you to warp to any location. After choosing a scene, a new menu will prompt you to select Link's age upon spawning, the cutscene number upon spawning, and the desired entrance to the chosen scene. (NOTE: As of now, it is unsafe to set the cutscene number to anything except None. Any other option will frequently crash).
+The **Places** menu allows you to warp to any location. After choosing a scene, a new menu will prompt you to select Link's age, the time of day, the cutscene number, and the desired entrance to the chosen scene.
 
 The "Manually Enter Entrance Index" option is similar, but allows you to manually enter the desired entrance index.
 
-The Clear CS Pointer option sets the cutscene pointer to point to a null cutscene. In the N64 version, this prevents many wrong warps from crashing. In this version, its usefullness has not been well-tested, but it can be used to escape from many cutscenes.
-
-Please note that many combinations of entrance index and cutscene number will crash the game. This is intended behavior, as it reflects the reality of an unmodified version of the game. Please report any crashes or other behavior that do not seem to be intended or otherwise reflective of expected in-game behavior.
+The Clear CS Pointer option sets the cutscene pointer to point to a null cutscene. This option can be used to escape from many cutscenes.
 
 ### 2.2 Scene
 TODO
@@ -68,7 +66,7 @@ TODO
 ### 2.3 Cheats
 This menu provides a number of built in quick cheats. These cheats include:
 -   Refill Health, Magic, Items, Keys, Rupees
--   Change Quest Mode (Regular/Master Quest). Note: this only toggles the mirroring and double damage effects of Master Quest until reloading the save file. Double Note: This option will eventually move to the **File** menu.
+-   Change Quest Mode (Regular/Master Quest). Note: this only toggles the mirroring and double damage effects of Master Quest until reloading the save file. Double Note: This option will eventually move to the **File** menu, when it exists.
 -   Infinite Nayru's Love (TODO)
 -   Freeze time of day (TODO)
 -   No music (TODO)

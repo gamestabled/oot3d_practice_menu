@@ -261,11 +261,11 @@ void ManuallyEnterEntranceIndex(void){
 
         if (cutsceneIndex < 0){
             cutsceneIndex = -1;
-            Draw_DrawString(30, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, selected == 1 ? curColor : COLOR_WHITE, "Cutscene Number on Load (TODO): None");
+            Draw_DrawString(30, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, selected == 1 ? curColor : COLOR_WHITE, "Cutscene Number on Load: None");
         }
         else {
             Draw_DrawFormattedString(30, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, 
-                selected == Manual_Entrance_Menu_CsIdx ? curColor : COLOR_WHITE, "Cutscene Number on Load (TODO): %04d", cutsceneIndex);
+                selected == Manual_Entrance_Menu_CsIdx ? curColor : COLOR_WHITE, "Cutscene Number on Load: %04d", cutsceneIndex);
         }
         Draw_DrawCharacter(10, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, COLOR_TITLE, selected == Manual_Entrance_Menu_CsIdx ? '>' : ' ');
 

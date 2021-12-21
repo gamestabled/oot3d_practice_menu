@@ -11,31 +11,31 @@ static void Cheats_Magic(void){
 }
 
 static void Cheats_Sticks(void){
-    gSaveContext.ammo[ITEM_DEKU_STICK] = 10 * ((gSaveContext.upgrades >> 17) & 0x7);
+    gSaveContext.ammo[SLOT_STICK] = 10 * ((gSaveContext.upgrades >> 17) & 0x7);
 }
 
 static void Cheats_Nuts(void){
-    gSaveContext.ammo[ITEM_DEKU_NUT] = 10 + 10 * ((gSaveContext.upgrades >> 20) & 0x7);
+    gSaveContext.ammo[SLOT_NUT] = 10 + 10 * ((gSaveContext.upgrades >> 20) & 0x7);
 }
 
 static void Cheats_Bombs(void){
-    gSaveContext.ammo[ITEM_BOMB] = 10 + 10 * ((gSaveContext.upgrades >> 3) & 0x7);
+    gSaveContext.ammo[SLOT_BOMB] = 10 + 10 * ((gSaveContext.upgrades >> 3) & 0x7);
 }
 
 static void Cheats_Arrows(void){
-    gSaveContext.ammo[ITEM_FAIRY_BOW] = 20 + 10 * (gSaveContext.upgrades & 0x7);
+    gSaveContext.ammo[SLOT_BOW] = 20 + 10 * (gSaveContext.upgrades & 0x7);
 }
 
 static void Cheats_Slingshot(void){
-    gSaveContext.ammo[ITEM_FAIRY_SLINGSHOT] = 20 + 10 * ((gSaveContext.upgrades >> 14) & 0x7);
+    gSaveContext.ammo[SLOT_SLINGSHOT] = 20 + 10 * ((gSaveContext.upgrades >> 14) & 0x7);
 }
 
 static void Cheats_Bombchus(void){
-    gSaveContext.ammo[ItemSlots[ITEM_BOMBCHU]] = 50;
+    gSaveContext.ammo[SLOT_BOMBCHU] = 50;
 }
 
 static void Cheats_Beans(void){
-    gSaveContext.ammo[ItemSlots[ITEM_MAGIC_BEANS]] = 10;
+    gSaveContext.ammo[SLOT_BEAN] = 10;
 }
 
 static void Cheats_Rupees(void){

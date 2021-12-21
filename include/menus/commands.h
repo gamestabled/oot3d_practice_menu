@@ -28,6 +28,6 @@ typedef struct Command {
 void Commands_ShowCommands(void);
 void Command_UpdateCommands(u32 inputs);
 
-u32 pauseUnpause;
-u32 frameAdvance;
-u32 menuExitFlag;
+extern u32 pauseUnpause;
+extern u32 frameAdvance;
+extern u32 menuOpen;

@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "menus/debug.h"
 #include "draw.h"
+#include "input.h"
 #include "z3D/z3D.h"
 #include <stdio.h>
 
@@ -61,33 +62,36 @@ static void DebugActors_ShowMoreInfo(Actor* actor) {
         Draw_DrawFormattedString(30, 30, COLOR_WHITE, "ID:              %04X", actor->id);
         Draw_DrawFormattedString(30, 30 + SPACING_Y, COLOR_WHITE, "Type:            %s", ActorTypeNames[actor->type]);
         Draw_DrawFormattedString(30, 30 + 2 * SPACING_Y, COLOR_WHITE, "Params:          %04X", actor->params & 0xFFFF);
-        Draw_DrawFormattedString(30, 30 + 3 * SPACING_Y, COLOR_WHITE, "Pos:             x:%05.2f  y:%05.2f  z:%05.2f", actor->posRot.pos.x, actor->posRot.pos.y, actor->posRot.pos.z);
-        Draw_DrawFormattedString(30, 30 + 4 * SPACING_Y, COLOR_WHITE, "Rot:             x:%04X  y:%04X  z:%04X", actor->posRot.rot.x & 0xFFFF, actor->posRot.rot.y & 0xFFFF, actor->posRot.rot.z & 0xFFFF);
+        Draw_DrawFormattedString(30, 30 + 3 * SPACING_Y, COLOR_WHITE, "Pos:             x:%05.2f  y:%05.2f  z:%05.2f", actor->world.pos.x, actor->world.pos.y, actor->world.pos.z);
+        Draw_DrawFormattedString(30, 30 + 4 * SPACING_Y, COLOR_WHITE, "Rot:             x:%04X  y:%04X  z:%04X", actor->world.rot.x & 0xFFFF, actor->world.rot.y & 0xFFFF, actor->world.rot.z & 0xFFFF);
         Draw_DrawFormattedString(30, 30 + 5 * SPACING_Y, COLOR_WHITE, "Vel:             x:%05.2f  y:%05.2f  z:%05.2f", actor->velocity.x, actor->velocity.y, actor->velocity.z);
         Draw_DrawFormattedString(30, 30 + 6 * SPACING_Y, COLOR_WHITE, "Floor:           %08X", actor->floorPoly);
-        Draw_DrawFormattedString(30, 30 + 7 * SPACING_Y, COLOR_WHITE, "Dist. from Link: xz:%05.2f  y:%05.2f", actor->xzDistanceFromLink, actor->yDistanceFromLink);
+        Draw_DrawFormattedString(30, 30 + 7 * SPACING_Y, COLOR_WHITE, "Dist. from Link: xz:%05.2f  y:%05.2f", actor->xyzDistToPlayerSq, actor->xzDistToPlayer);
         Draw_DrawFormattedString(30, 30 + 8 * SPACING_Y, COLOR_WHITE, "Text ID:         %04X", actor->textId & 0xFFFF);
-        Draw_DrawFormattedString(30, 30 + 9 * SPACING_Y, COLOR_WHITE, "Held By:         %08X", actor->attachedA);
-        Draw_DrawFormattedString(30, 30 + 10 * SPACING_Y, COLOR_WHITE, "Holding:         %08X", actor->attachedB);
+        Draw_DrawFormattedString(30, 30 + 9 * SPACING_Y, COLOR_WHITE, "Held By:         %08X", actor->parent);
+        Draw_DrawFormattedString(30, 30 + 10 * SPACING_Y, COLOR_WHITE, "Holding:         %08X", actor->child);
 
         Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "Press START to bring actor to Link");
 
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if(pressed & BUTTON_B)
             break;
         else if(pressed & BUTTON_START)
         {
-            actor->posRot.pos = PLAYER->actor.posRot.pos;
-            actor->posRot.rot = PLAYER->actor.posRot.rot;
+            actor->world.pos = PLAYER->actor.world.pos;
+            actor->world.rot = PLAYER->actor.world.rot;
         }
 
     } while(true);
 }
 
 static void DebugActors_ShowActors(void) {
+    if(gSaveContext.gameMode == 2 || gSaveContext.gameMode == 4) {
+        return;
+    }
     static ShowActor_Info actorList[200];
     s32 selected = 0, page = 0, pagePrev = 0;
     s32 type = 0xC;
@@ -122,7 +126,7 @@ static void DebugActors_ShowActors(void) {
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if(pressed & BUTTON_B)
             break;
         if(pressed & BUTTON_A)

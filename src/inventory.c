@@ -1,7 +1,9 @@
 #include "menu.h"
 #include "menus/inventory.h"
 #include "draw.h"
+#include "input.h"
 #include "z3D/z3D.h"
+#include "z3D/z3Dequipment.h"
 #include <stdio.h>
 
 static u32 SelectedBottle;
@@ -233,34 +235,34 @@ static void DisableMenuToggles(ToggleMenu* menu) {
 }
 
 static void Inventory_ItemsMenuInit(void){
-    InventoryItemsMenu.items[ITEM_DEKU_STICK].on = (gSaveContext.items[ItemSlots[ITEM_DEKU_STICK]] == ITEM_DEKU_STICK);
-    InventoryItemsMenu.items[ITEM_DEKU_NUT].on = (gSaveContext.items[ItemSlots[ITEM_DEKU_NUT]] == ITEM_DEKU_NUT);
-    InventoryItemsMenu.items[ITEM_BOMB].on = (gSaveContext.items[ItemSlots[ITEM_BOMB]] == ITEM_BOMB);
-    InventoryItemsMenu.items[ITEM_FAIRY_BOW].on = (gSaveContext.items[ItemSlots[ITEM_FAIRY_BOW]] == ITEM_FAIRY_BOW);
-    InventoryItemsMenu.items[ITEM_FIRE_ARROW].on = (gSaveContext.items[ItemSlots[ITEM_FIRE_ARROW]] == ITEM_FIRE_ARROW);
-    InventoryItemsMenu.items[ITEM_DINS_FIRE].on = (gSaveContext.items[ItemSlots[ITEM_DINS_FIRE]] == ITEM_DINS_FIRE);
-    InventoryItemsMenu.items[ITEM_FAIRY_SLINGSHOT].on = (gSaveContext.items[ItemSlots[ITEM_FAIRY_SLINGSHOT]] == ITEM_FAIRY_SLINGSHOT);
-    InventoryItemsMenu.items[ITEM_FAIRY_OCARINA].on = (gSaveContext.items[ItemSlots[ITEM_FAIRY_OCARINA]] == ITEM_FAIRY_OCARINA);
-    InventoryItemsMenu.items[ITEM_OCARINA_OF_TIME].on = (gSaveContext.items[ItemSlots[ITEM_OCARINA_OF_TIME]] == ITEM_OCARINA_OF_TIME);
-    InventoryItemsMenu.items[ITEM_BOMBCHU].on = (gSaveContext.items[ItemSlots[ITEM_BOMBCHU]] == ITEM_BOMBCHU);
-    InventoryItemsMenu.items[ITEM_HOOKSHOT].on = (gSaveContext.items[ItemSlots[ITEM_HOOKSHOT]] == ITEM_HOOKSHOT);
-    InventoryItemsMenu.items[ITEM_LONGSHOT].on = (gSaveContext.items[ItemSlots[ITEM_LONGSHOT]] == ITEM_LONGSHOT);
-    InventoryItemsMenu.items[ITEM_ICE_ARROW].on = (gSaveContext.items[ItemSlots[ITEM_ICE_ARROW]] == ITEM_ICE_ARROW);
-    InventoryItemsMenu.items[ITEM_FARORES_WIND].on = (gSaveContext.items[ItemSlots[ITEM_FARORES_WIND]] == ITEM_FARORES_WIND);
-    InventoryItemsMenu.items[ITEM_BOOMERANG].on = (gSaveContext.items[ItemSlots[ITEM_BOOMERANG]] == ITEM_BOOMERANG);
-    InventoryItemsMenu.items[ITEM_LENS_OF_TRUTH].on = (gSaveContext.items[ItemSlots[ITEM_LENS_OF_TRUTH]] == ITEM_LENS_OF_TRUTH);
-    InventoryItemsMenu.items[ITEM_MAGIC_BEANS].on = (gSaveContext.items[ItemSlots[ITEM_MAGIC_BEANS]] == ITEM_MAGIC_BEANS);
-    InventoryItemsMenu.items[ITEM_MEGATON_HAMMER].on = (gSaveContext.items[ItemSlots[ITEM_MEGATON_HAMMER]] == ITEM_MEGATON_HAMMER);
-    InventoryItemsMenu.items[ITEM_LIGHT_ARROW].on = (gSaveContext.items[ItemSlots[ITEM_LIGHT_ARROW]] == ITEM_LIGHT_ARROW);
-    InventoryItemsMenu.items[ITEM_NAYRUS_LOVE].on = (gSaveContext.items[ItemSlots[ITEM_NAYRUS_LOVE]] == ITEM_NAYRUS_LOVE);
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE]] != ITEM_EMPTY);
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 1].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + 1] != ITEM_EMPTY);
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 2].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + 2] != ITEM_EMPTY);
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 3].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + 3] != ITEM_EMPTY);
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 4].on = (gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] != ITEM_EMPTY); //TODO: index on left
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 5].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] != ITEM_EMPTY); //TODO: index on left
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 6].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG] + 1] == ITEM_IRON_BOOTS); //TODO
-    InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + 7].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG] + 2] == ITEM_HOVER_BOOTS); //TODO
+    InventoryItemsMenu.items[ITEM_STICK].on = (gSaveContext.items[SLOT_STICK] == ITEM_STICK);
+    InventoryItemsMenu.items[ITEM_NUT].on = (gSaveContext.items[SLOT_NUT] == ITEM_NUT);
+    InventoryItemsMenu.items[ITEM_BOMB].on = (gSaveContext.items[SLOT_BOMB] == ITEM_BOMB);
+    InventoryItemsMenu.items[ITEM_BOW].on = (gSaveContext.items[SLOT_BOW] == ITEM_BOW);
+    InventoryItemsMenu.items[ITEM_ARROW_FIRE].on = (gSaveContext.items[SLOT_ARROW_FIRE] == ITEM_ARROW_FIRE);
+    InventoryItemsMenu.items[ITEM_DINS_FIRE].on = (gSaveContext.items[SLOT_DINS_FIRE] == ITEM_DINS_FIRE);
+    InventoryItemsMenu.items[ITEM_SLINGSHOT].on = (gSaveContext.items[SLOT_SLINGSHOT] == ITEM_SLINGSHOT);
+    InventoryItemsMenu.items[ITEM_OCARINA_FAIRY].on = (gSaveContext.items[SLOT_OCARINA] == ITEM_OCARINA_FAIRY);
+    InventoryItemsMenu.items[ITEM_OCARINA_TIME].on = (gSaveContext.items[SLOT_OCARINA] == ITEM_OCARINA_TIME);
+    InventoryItemsMenu.items[ITEM_BOMBCHU].on = (gSaveContext.items[SLOT_BOMBCHU] == ITEM_BOMBCHU);
+    InventoryItemsMenu.items[ITEM_HOOKSHOT].on = (gSaveContext.items[SLOT_HOOKSHOT] == ITEM_HOOKSHOT);
+    InventoryItemsMenu.items[ITEM_LONGSHOT].on = (gSaveContext.items[SLOT_HOOKSHOT] == ITEM_LONGSHOT);
+    InventoryItemsMenu.items[ITEM_ARROW_ICE].on = (gSaveContext.items[SLOT_ARROW_ICE] == ITEM_ARROW_ICE);
+    InventoryItemsMenu.items[ITEM_FARORES_WIND].on = (gSaveContext.items[SLOT_FARORES_WIND] == ITEM_FARORES_WIND);
+    InventoryItemsMenu.items[ITEM_BOOMERANG].on = (gSaveContext.items[SLOT_BOOMERANG] == ITEM_BOOMERANG);
+    InventoryItemsMenu.items[ITEM_LENS].on = (gSaveContext.items[SLOT_LENS] == ITEM_LENS);
+    InventoryItemsMenu.items[ITEM_BEAN].on = (gSaveContext.items[SLOT_BEAN] == ITEM_BEAN);
+    InventoryItemsMenu.items[ITEM_HAMMER].on = (gSaveContext.items[SLOT_HAMMER] == ITEM_HAMMER);
+    InventoryItemsMenu.items[ITEM_ARROW_LIGHT].on = (gSaveContext.items[SLOT_ARROW_LIGHT] == ITEM_ARROW_LIGHT);
+    InventoryItemsMenu.items[ITEM_NAYRUS_LOVE].on = (gSaveContext.items[SLOT_NAYRUS_LOVE] == ITEM_NAYRUS_LOVE);
+    InventoryItemsMenu.items[ITEM_BOTTLE].on = (gSaveContext.items[SLOT_BOTTLE_1] != ITEM_NONE);
+    InventoryItemsMenu.items[ITEM_BOTTLE + 1].on = (gSaveContext.items[SLOT_BOTTLE_2] != ITEM_NONE);
+    InventoryItemsMenu.items[ITEM_BOTTLE + 2].on = (gSaveContext.items[SLOT_BOTTLE_3] != ITEM_NONE);
+    InventoryItemsMenu.items[ITEM_BOTTLE + 3].on = (gSaveContext.items[SLOT_BOTTLE_4] != ITEM_NONE);
+    InventoryItemsMenu.items[ITEM_BOTTLE + 4].on = (gSaveContext.items[SLOT_TRADE_ADULT] != ITEM_NONE); //TODO: index on left
+    InventoryItemsMenu.items[ITEM_BOTTLE + 5].on = (gSaveContext.items[SLOT_TRADE_CHILD] != ITEM_NONE); //TODO: index on left
+    InventoryItemsMenu.items[ITEM_BOTTLE + 6].on = (gSaveContext.items[SLOT_IRON_BOOTS] == ITEM_BOOTS_IRON); //TODO
+    InventoryItemsMenu.items[ITEM_BOTTLE + 7].on = (gSaveContext.items[SLOT_HOVER_BOOTS] == ITEM_BOOTS_HOVER); //TODO
 }
 
 void Inventory_ItemsMenuFunc(void){
@@ -270,38 +272,38 @@ void Inventory_ItemsMenuFunc(void){
 
 void Inventory_ItemsToggle(s32 selected){
     switch(selected) {
-        case(ITEM_FAIRY_OCARINA):
-            if (gSaveContext.items[ItemSlots[ITEM_FAIRY_OCARINA]] != ITEM_FAIRY_OCARINA){
-                gSaveContext.items[ItemSlots[ITEM_FAIRY_OCARINA]] = ITEM_FAIRY_OCARINA;
-                InventoryItemsMenu.items[ITEM_FAIRY_OCARINA].on = 1;
-                InventoryItemsMenu.items[ITEM_OCARINA_OF_TIME].on = 0; //turn off Ocarina of Time in menu
+        case(ITEM_OCARINA_FAIRY):
+            if (gSaveContext.items[SLOT_OCARINA] != ITEM_OCARINA_FAIRY){
+                gSaveContext.items[SLOT_OCARINA] = ITEM_OCARINA_FAIRY;
+                InventoryItemsMenu.items[ITEM_OCARINA_FAIRY].on = 1;
+                InventoryItemsMenu.items[ITEM_OCARINA_TIME].on = 0; //turn off Ocarina of Time in menu
             }
             else {
-                gSaveContext.items[ItemSlots[ITEM_FAIRY_OCARINA]] = ITEM_EMPTY;
-                InventoryItemsMenu.items[ITEM_FAIRY_OCARINA].on = 0;
-                InventoryItemsMenu.items[ITEM_OCARINA_OF_TIME].on = 0;
+                gSaveContext.items[ItemSlots[ITEM_OCARINA_FAIRY]] = ITEM_NONE;
+                InventoryItemsMenu.items[ITEM_OCARINA_FAIRY].on = 0;
+                InventoryItemsMenu.items[ITEM_OCARINA_TIME].on = 0;
             }
             break;
-        case(ITEM_OCARINA_OF_TIME):
-            if (gSaveContext.items[ItemSlots[ITEM_OCARINA_OF_TIME]] != ITEM_OCARINA_OF_TIME){
-                gSaveContext.items[ItemSlots[ITEM_OCARINA_OF_TIME]] = ITEM_OCARINA_OF_TIME;
-                InventoryItemsMenu.items[ITEM_FAIRY_OCARINA].on = 0; //turn off Fairy Ocarina in menu
-                InventoryItemsMenu.items[ITEM_OCARINA_OF_TIME].on = 1; 
+        case(ITEM_OCARINA_TIME):
+            if (gSaveContext.items[ItemSlots[ITEM_OCARINA_TIME]] != ITEM_OCARINA_TIME){
+                gSaveContext.items[ItemSlots[ITEM_OCARINA_TIME]] = ITEM_OCARINA_TIME;
+                InventoryItemsMenu.items[ITEM_OCARINA_FAIRY].on = 0; //turn off Fairy Ocarina in menu
+                InventoryItemsMenu.items[ITEM_OCARINA_TIME].on = 1;
             }
             else {
-                gSaveContext.items[ItemSlots[ITEM_OCARINA_OF_TIME]] = ITEM_EMPTY;
-                InventoryItemsMenu.items[ITEM_FAIRY_OCARINA].on = 0;
-                InventoryItemsMenu.items[ITEM_OCARINA_OF_TIME].on = 0;
+                gSaveContext.items[ItemSlots[ITEM_OCARINA_TIME]] = ITEM_NONE;
+                InventoryItemsMenu.items[ITEM_OCARINA_FAIRY].on = 0;
+                InventoryItemsMenu.items[ITEM_OCARINA_TIME].on = 0;
             }
             break;
         case(ITEM_HOOKSHOT):
             if (gSaveContext.items[ItemSlots[ITEM_HOOKSHOT]] != ITEM_HOOKSHOT){
                 gSaveContext.items[ItemSlots[ITEM_HOOKSHOT]] = ITEM_HOOKSHOT;
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 1;
-                InventoryItemsMenu.items[ITEM_LONGSHOT].on = 0; //turn off Longshot in menu 
+                InventoryItemsMenu.items[ITEM_LONGSHOT].on = 0; //turn off Longshot in menu
             }
             else {
-                gSaveContext.items[ItemSlots[ITEM_HOOKSHOT]] = ITEM_EMPTY;
+                gSaveContext.items[ItemSlots[ITEM_HOOKSHOT]] = ITEM_NONE;
                 ResetSlotsIfMatchesID(ItemSlots[ITEM_HOOKSHOT]);
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 0;
                 InventoryItemsMenu.items[ITEM_LONGSHOT].on = 0;
@@ -311,10 +313,10 @@ void Inventory_ItemsToggle(s32 selected){
             if (gSaveContext.items[ItemSlots[ITEM_LONGSHOT]] != ITEM_LONGSHOT){
                 gSaveContext.items[ItemSlots[ITEM_LONGSHOT]] = ITEM_LONGSHOT;
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 0; //turn off Hookshot in menu
-                InventoryItemsMenu.items[ITEM_LONGSHOT].on = 1;  
+                InventoryItemsMenu.items[ITEM_LONGSHOT].on = 1;
             }
             else {
-                gSaveContext.items[ItemSlots[ITEM_LONGSHOT]] = ITEM_EMPTY;
+                gSaveContext.items[ItemSlots[ITEM_LONGSHOT]] = ITEM_NONE;
                 ResetSlotsIfMatchesID(ItemSlots[ITEM_LONGSHOT]);
                 InventoryItemsMenu.items[ITEM_HOOKSHOT].on = 0;
                 InventoryItemsMenu.items[ITEM_LONGSHOT].on = 0;
@@ -326,7 +328,7 @@ void Inventory_ItemsToggle(s32 selected){
                 InventoryItemsMenu.items[selected].on = 1;
             }
             else {
-                gSaveContext.items[ItemSlots[selected]] = ITEM_EMPTY;
+                gSaveContext.items[ItemSlots[selected]] = ITEM_NONE;
                 ResetSlotsIfMatchesID(ItemSlots[selected]);
                 InventoryItemsMenu.items[selected].on = 0;
             }
@@ -335,30 +337,30 @@ void Inventory_ItemsToggle(s32 selected){
 }
 
 static void Inventory_BottlesMenuInit(void){
-    for (u32 i = 0; i < ITEM_WEIRD_EGG - ITEM_EMPTY_BOTTLE; ++i){
-        InventoryBottlesMenu.items[i].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] == ITEM_EMPTY_BOTTLE + i);
+    for (u32 i = 0; i < ITEM_WEIRD_EGG - ITEM_BOTTLE; ++i){
+        InventoryBottlesMenu.items[i].on = (gSaveContext.items[ItemSlots[ITEM_BOTTLE] + SelectedBottle] == ITEM_BOTTLE + i);
     }
-    InventoryBottlesMenu.items[ITEM_WEIRD_EGG - ITEM_EMPTY_BOTTLE].on = (gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] == ITEM_EMPTY);
+    InventoryBottlesMenu.items[ITEM_WEIRD_EGG - ITEM_BOTTLE].on = (gSaveContext.items[ItemSlots[ITEM_BOTTLE] + SelectedBottle] == ITEM_NONE);
 }
 
 void Inventory_BottlesMenuFunc(s32 selected){
-    SelectedBottle = selected - ITEM_EMPTY_BOTTLE;
+    SelectedBottle = selected - ITEM_BOTTLE;
     Inventory_BottlesMenuInit();
     ToggleMenuShow(&InventoryBottlesMenu);
 }
 
 void Inventory_BottleSelect(s32 selected){
-    if (selected < ITEM_WEIRD_EGG - ITEM_EMPTY_BOTTLE){ //selected a bottled content
-        gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] = ITEM_EMPTY_BOTTLE + selected;
+    if (selected < ITEM_WEIRD_EGG - ITEM_BOTTLE){ //selected a bottled content
+        gSaveContext.items[ItemSlots[ITEM_BOTTLE] + SelectedBottle] = ITEM_BOTTLE + selected;
         SetMenuToggle(&InventoryBottlesMenu, selected);
-        InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + SelectedBottle].on = 1;
+        InventoryItemsMenu.items[ITEM_BOTTLE + SelectedBottle].on = 1;
     }
     else { //erase the bottle
-        gSaveContext.items[ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle] = ITEM_EMPTY;
-        ResetSlotsIfMatchesID(ItemSlots[ITEM_EMPTY_BOTTLE] + SelectedBottle);
+        gSaveContext.items[ItemSlots[ITEM_BOTTLE] + SelectedBottle] = ITEM_NONE;
+        ResetSlotsIfMatchesID(ItemSlots[ITEM_BOTTLE] + SelectedBottle);
         DisableMenuToggles(&InventoryBottlesMenu);
         InventoryBottlesMenu.items[InventoryBottlesMenu.nbItems - 1].on = 1;
-        InventoryItemsMenu.items[ITEM_EMPTY_BOTTLE + SelectedBottle].on = 0;
+        InventoryItemsMenu.items[ITEM_BOTTLE + SelectedBottle].on = 0;
     }
 }
 
@@ -366,7 +368,7 @@ static void Inventory_ChildTradeMenuInit(void){
     for (u32 i = 0; i < ITEM_POCKET_EGG - ITEM_WEIRD_EGG; ++i){
         InventoryChildTradeMenu.items[i].on = (gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] == ITEM_WEIRD_EGG + i);
     }
-    InventoryChildTradeMenu.items[ITEM_POCKET_EGG - ITEM_WEIRD_EGG].on = (gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] == ITEM_EMPTY);
+    InventoryChildTradeMenu.items[ITEM_POCKET_EGG - ITEM_WEIRD_EGG].on = (gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] == ITEM_NONE);
 }
 
 void Inventory_ChildTradeMenuFunc(s32 selected){
@@ -381,7 +383,7 @@ void Inventory_ChildTradeSelect(s32 selected){ //TODO: remove hardcoded indexes
         InventoryItemsMenu.items[24].on = 1;
     }
     else { //erase the child trade item
-        gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] = ITEM_EMPTY;
+        gSaveContext.items[ItemSlots[ITEM_WEIRD_EGG]] = ITEM_NONE;
         ResetSlotsIfMatchesID(ItemSlots[ITEM_WEIRD_EGG]);
         DisableMenuToggles(&InventoryChildTradeMenu);
         InventoryChildTradeMenu.items[InventoryChildTradeMenu.nbItems - 1].on = 1;
@@ -390,10 +392,10 @@ void Inventory_ChildTradeSelect(s32 selected){ //TODO: remove hardcoded indexes
 }
 
 static void Inventory_AdultTradeMenuInit(void){
-    for (u32 i = 0; i < ITEM_FAIRY_BOW_PLUS_FIRE_ARROW - ITEM_POCKET_EGG; ++i){
+    for (u32 i = 0; i < ITEM_BOW_ARROW_FIRE - ITEM_POCKET_EGG; ++i){
         InventoryAdultTradeMenu.items[i].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] == ITEM_POCKET_EGG + i);
     }
-    InventoryAdultTradeMenu.items[ITEM_FAIRY_BOW_PLUS_FIRE_ARROW - ITEM_POCKET_EGG].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] == ITEM_EMPTY);    
+    InventoryAdultTradeMenu.items[ITEM_BOW_ARROW_FIRE - ITEM_POCKET_EGG].on = (gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] == ITEM_NONE);
 }
 
 void Inventory_AdultTradeMenuFunc(s32 selected){
@@ -402,13 +404,13 @@ void Inventory_AdultTradeMenuFunc(s32 selected){
 }
 
 void Inventory_AdultTradeSelect(s32 selected){ //TODO: remove hardcoded indexes
-    if (selected < ITEM_FAIRY_BOW_PLUS_FIRE_ARROW - ITEM_POCKET_EGG){ //selected an adult trade item
+    if (selected < ITEM_BOW_ARROW_FIRE - ITEM_POCKET_EGG){ //selected an adult trade item
         gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] = ITEM_POCKET_EGG + selected;
         SetMenuToggle(&InventoryAdultTradeMenu, selected);
         InventoryItemsMenu.items[25].on = 1;
     }
     else { //erase the adult trade item
-        gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] = ITEM_EMPTY;
+        gSaveContext.items[ItemSlots[ITEM_POCKET_EGG]] = ITEM_NONE;
         ResetSlotsIfMatchesID(ItemSlots[ITEM_POCKET_EGG]);
         DisableMenuToggles(&InventoryAdultTradeMenu);
         InventoryAdultTradeMenu.items[InventoryAdultTradeMenu.nbItems - 1].on = 1;
@@ -420,26 +422,26 @@ void Inventory_BootsToggle(s32 selected){ //TODO: remove hardcoded values
     //put boots in their slots
     //set boots bits in gear
     if (selected == 26){ //Iron boots
-        if (gSaveContext.items[24] != ITEM_IRON_BOOTS){
-            gSaveContext.items[24] = ITEM_IRON_BOOTS;
+        if (gSaveContext.items[24] != ITEM_BOOTS_IRON){
+            gSaveContext.items[24] = ITEM_BOOTS_IRON;
             gSaveContext.equipment |= (1 << 13);
             InventoryItemsMenu.items[selected].on = 1;
         }
         else {
-            gSaveContext.items[24] = ITEM_EMPTY;
+            gSaveContext.items[24] = ITEM_NONE;
             gSaveContext.equipment &= ~(1 << 13);
             ResetSlotsIfMatchesID(24);
             InventoryItemsMenu.items[selected].on = 0;
         }
     }
     else { //Hover boots
-        if (gSaveContext.items[25] != ITEM_HOVER_BOOTS){
-            gSaveContext.items[25] = ITEM_HOVER_BOOTS;
+        if (gSaveContext.items[25] != ITEM_BOOTS_HOVER){
+            gSaveContext.items[25] = ITEM_BOOTS_HOVER;
             gSaveContext.equipment |= (1 << 14);
             InventoryItemsMenu.items[selected].on = 1;
         }
         else {
-            gSaveContext.items[25] = ITEM_EMPTY;
+            gSaveContext.items[25] = ITEM_NONE;
             gSaveContext.equipment &= ~(1 << 14);
             ResetSlotsIfMatchesID(25);
             InventoryItemsMenu.items[selected].on = 0;
@@ -493,7 +495,7 @@ void Inventory_RightGearToggle(s32 selected){
             gSaveContext.equipment ^= (1 << 1);
             InventoryRightGearMenu.items[Gear_Menu_Master_Sword].on = ((gSaveContext.equipment & (1 << 1)) != 0);
             break;
-        case(Gear_Menu_Giants_Knife): 
+        case(Gear_Menu_Giants_Knife):
             if ((gSaveContext.equipment & (1 << 2)) && !(gSaveContext.equipment & (1 << 3)) && !gSaveContext.bgsFlag){
                 gSaveContext.equipment &= ~(0x3 << 2);
                 gSaveContext.bgsFlag = 0;
@@ -676,7 +678,7 @@ void Inventory_RightGearToggle(s32 selected){
                 InventoryRightGearMenu.items[Gear_Menu_Bomb_Bag_40].on = 0;
             }
             break;
-        case(Gear_Menu_Bomb_Bag_30):    
+        case(Gear_Menu_Bomb_Bag_30):
             if (((gSaveContext.upgrades >> 3) & 0x7) != BOMB_BAG_30){
                 gSaveContext.upgrades &= ~(0x7 << 3);
                 gSaveContext.upgrades |= (BOMB_BAG_30 << 3);
@@ -926,7 +928,7 @@ void Inventory_HeartPiecesAmount(s32 selected){
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
 
         if (pressed & BUTTON_B){
             break;
@@ -970,7 +972,7 @@ void Inventory_GoldSkulltulaAmount(s32 selected){
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
 
         if (pressed & BUTTON_B){
             break;
@@ -1026,58 +1028,58 @@ void Inventory_SongsToggle(s32 selected){
         case(Songs_Menu_Eponas_Song):
             gSaveContext.questItems ^= (1 << 13);
             InventorySongsMenu.items[Songs_Menu_Eponas_Song].on = ((gSaveContext.questItems & (1 << 13)) != 0);
-            break;        
+            break;
         case(Songs_Menu_Sarias_Song):
             gSaveContext.questItems ^= (1 << 14);
             InventorySongsMenu.items[Songs_Menu_Sarias_Song].on = ((gSaveContext.questItems & (1 << 14)) != 0);
-            break;        
+            break;
         case(Songs_Menu_Suns_Song):
             gSaveContext.questItems ^= (1 << 15);
             InventorySongsMenu.items[Songs_Menu_Suns_Song].on = ((gSaveContext.questItems & (1 << 15)) != 0);
-            break;        
+            break;
         case(Songs_Menu_Song_of_Time):
             gSaveContext.questItems ^= (1 << 16);
             InventorySongsMenu.items[Songs_Menu_Song_of_Time].on = ((gSaveContext.questItems & (1 << 16)) != 0);
-            break;        
+            break;
         case(Songs_Menu_Song_of_Storms):
             gSaveContext.questItems ^= (1 << 17);
             InventorySongsMenu.items[Songs_Menu_Song_of_Storms].on = ((gSaveContext.questItems & (1 << 17)) != 0);
-            break;   
+            break;
         case(Songs_Menu_Minuet):
             gSaveContext.questItems ^= (1 << 6);
             InventorySongsMenu.items[Songs_Menu_Minuet].on = ((gSaveContext.questItems & (1 << 6)) != 0);
-            break;    
+            break;
         case(Songs_Menu_Bolero):
             gSaveContext.questItems ^= (1 << 7);
             InventorySongsMenu.items[Songs_Menu_Bolero].on = ((gSaveContext.questItems & (1 << 7)) != 0);
-            break;    
+            break;
         case(Songs_Menu_Serenade):
             gSaveContext.questItems ^= (1 << 8);
             InventorySongsMenu.items[Songs_Menu_Serenade].on = ((gSaveContext.questItems & (1 << 8)) != 0);
-            break;    
+            break;
         case(Songs_Menu_Requiem):
             gSaveContext.questItems ^= (1 << 9);
             InventorySongsMenu.items[Songs_Menu_Requiem].on = ((gSaveContext.questItems & (1 << 9)) != 0);
-            break;    
+            break;
         case(Songs_Menu_Nocturne):
             gSaveContext.questItems ^= (1 << 10);
             InventorySongsMenu.items[Songs_Menu_Nocturne].on = ((gSaveContext.questItems & (1 << 10)) != 0);
-            break;    
+            break;
         case(Songs_Menu_Prelude):
             gSaveContext.questItems ^= (1 << 11);
             InventorySongsMenu.items[Songs_Menu_Prelude].on = ((gSaveContext.questItems & (1 << 11)) != 0);
-            break;     
+            break;
     }
 }
 
 static void Inventory_AmountsMenuInit(void){
-    InventoryAmountsMenu.items[Amounts_Menu_Deku_Sticks].amount = gSaveContext.ammo[ItemSlots[ITEM_DEKU_STICK]];
-    InventoryAmountsMenu.items[Amounts_Menu_Deku_Nuts].amount = gSaveContext.ammo[ItemSlots[ITEM_DEKU_NUT]];
+    InventoryAmountsMenu.items[Amounts_Menu_Deku_Sticks].amount = gSaveContext.ammo[ItemSlots[ITEM_STICK]];
+    InventoryAmountsMenu.items[Amounts_Menu_Deku_Nuts].amount = gSaveContext.ammo[ItemSlots[ITEM_NUT]];
     InventoryAmountsMenu.items[Amounts_Menu_Bombs].amount = gSaveContext.ammo[ItemSlots[ITEM_BOMB]];
-    InventoryAmountsMenu.items[Amounts_Menu_Arrows].amount = gSaveContext.ammo[ItemSlots[ITEM_FAIRY_BOW]];
-    InventoryAmountsMenu.items[Amounts_Menu_Deku_Seeds].amount = gSaveContext.ammo[ItemSlots[ITEM_FAIRY_SLINGSHOT]];
+    InventoryAmountsMenu.items[Amounts_Menu_Arrows].amount = gSaveContext.ammo[ItemSlots[ITEM_BOW]];
+    InventoryAmountsMenu.items[Amounts_Menu_Deku_Seeds].amount = gSaveContext.ammo[ItemSlots[ITEM_SLINGSHOT]];
     InventoryAmountsMenu.items[Amounts_Menu_Bombchus].amount = gSaveContext.ammo[ItemSlots[ITEM_BOMBCHU]];
-    InventoryAmountsMenu.items[Amounts_Menu_Magic_Beans].amount = gSaveContext.ammo[ItemSlots[ITEM_MAGIC_BEANS]];
+    InventoryAmountsMenu.items[Amounts_Menu_Magic_Beans].amount = gSaveContext.ammo[ItemSlots[ITEM_BEAN]];
     InventoryAmountsMenu.items[Amounts_Menu_Rupees].amount = gSaveContext.rupees;
     InventoryAmountsMenu.items[Amounts_Menu_Giants_Knife_hits].amount = gSaveContext.bgsHitsLeft;
     InventoryAmountsMenu.items[Amounts_Menu_Double_Defense].amount = gSaveContext.doubleDefense;
@@ -1095,25 +1097,25 @@ void Inventory_AmountsMenuFunc(void){
 void Inventory_AmountsSelect(s32 selected){
     switch(selected){
         case(Amounts_Menu_Deku_Sticks):
-            gSaveContext.ammo[ItemSlots[ITEM_DEKU_STICK]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Sticks].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_STICK]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Sticks].amount;
             break;
         case(Amounts_Menu_Deku_Nuts):
-            gSaveContext.ammo[ItemSlots[ITEM_DEKU_NUT]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Nuts].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_NUT]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Nuts].amount;
             break;
         case(Amounts_Menu_Bombs):
             gSaveContext.ammo[ItemSlots[ITEM_BOMB]] = InventoryAmountsMenu.items[Amounts_Menu_Bombs].amount;
             break;
         case(Amounts_Menu_Arrows):
-            gSaveContext.ammo[ItemSlots[ITEM_FAIRY_BOW]] = InventoryAmountsMenu.items[Amounts_Menu_Arrows].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_BOW]] = InventoryAmountsMenu.items[Amounts_Menu_Arrows].amount;
             break;
         case(Amounts_Menu_Deku_Seeds):
-            gSaveContext.ammo[ItemSlots[ITEM_FAIRY_SLINGSHOT]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Seeds].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_SLINGSHOT]] = InventoryAmountsMenu.items[Amounts_Menu_Deku_Seeds].amount;
             break;
         case(Amounts_Menu_Bombchus):
             gSaveContext.ammo[ItemSlots[ITEM_BOMBCHU]] = InventoryAmountsMenu.items[Amounts_Menu_Bombchus].amount;
             break;
         case(Amounts_Menu_Magic_Beans):
-            gSaveContext.ammo[ItemSlots[ITEM_MAGIC_BEANS]] = InventoryAmountsMenu.items[Amounts_Menu_Magic_Beans].amount;
+            gSaveContext.ammo[ItemSlots[ITEM_BEAN]] = InventoryAmountsMenu.items[Amounts_Menu_Magic_Beans].amount;
             break;
         case(Amounts_Menu_Rupees):
             gSaveContext.rupees = InventoryAmountsMenu.items[Amounts_Menu_Rupees].amount;

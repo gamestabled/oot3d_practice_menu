@@ -29,94 +29,12 @@
 #include "menu.h"
 #include "draw.h"
 #include "menus.h"
+#include "z3D/z3D.h"
 #include "utils.h"
+#include "input.h"
+#include "menus/commands.h"
 #include <stdio.h>
 #include <string.h>
-
-u32 waitInputWithTimeout(u32 msec)
-{
-    bool pressedKey = false;
-    u32 key = 0;
-    u32 n = 0;
-
-    const bool isDPadPressed = (HID_PAD & BUTTON_UP) != 0 ||
-                               (HID_PAD & BUTTON_DOWN) != 0 ||
-                               (HID_PAD & BUTTON_LEFT) != 0 ||
-                               (HID_PAD & BUTTON_RIGHT) != 0;
-
-    // We special the D-Pad as we want to automatically scroll the cursor or
-    // allow amount editing at a reasonable pace as long as it's held down.
-    if (isDPadPressed)
-    {
-        // By default wait 75 milliseconds before moving the cursor so that
-        // we don't scroll the menu too fast.
-        svcSleepThread(75 * 1000 * 1000LL);
-    }
-    else
-    {
-        // Wait for no keys to be pressed in the event that up and down are not pressed.
-        while (HID_PAD && (msec == 0 || n <= msec))
-        {
-            svcSleepThread(1 * 1000 * 1000LL);
-            n++;
-        }
-    }
-
-    if(msec != 0 && n >= msec)
-        return 0;
-
-    do
-    {
-        //Wait for a key to be pressed
-        while(!HID_PAD && (msec == 0 || n < msec))
-        {
-            svcSleepThread(1 * 1000 * 1000LL);
-            n++;
-        }
-
-        if(msec != 0 && n >= msec)
-            return 0;
-
-        key = HID_PAD;
-
-        //Make sure it's pressed
-        for(u32 i = 0x26000; i > 0; i --)
-        {
-            if(key != HID_PAD) break;
-            if(i == 1) pressedKey = true;
-        }
-    }
-    while(!pressedKey);
-
-    return key;
-}
-
-u32 waitInput(void)
-{
-    return waitInputWithTimeout(0);
-}
-
-static MyThread menuThread;
-static u8 ALIGN(8) menuThreadStack[0x3000];
-
-MyThread *menuCreateThread(void)
-{
-    if(R_FAILED(MyThread_Create(&menuThread, menuThreadMain, menuThreadStack, 0x3000, 52, CORE_DEFAULT)))
-        svcBreak(USERBREAK_PANIC);
-    return &menuThread;
-}
-
-void menuThreadMain(void)
-{
-    menuEnter();
-    menuShow(&gz3DMenu);
-    svcSleepThread(1000 * 1000 * 300LL); //wait 300 milliseconds for users to buffer inputs
-}
-
-void menuEnter(void)
-{
-    Draw_ClearFramebuffer();
-}
 
 static void menuDraw(Menu *menu, u32 selected)
 {
@@ -134,10 +52,10 @@ static void menuDraw(Menu *menu, u32 selected)
     Draw_FlushFramebuffer();
 }
 
-void menuShow(Menu *root)
+void menuShow()
 {
     u32 selectedItem = 0;
-    Menu *currentMenu = root;
+    Menu *currentMenu = &gz3DMenu;
     u32 nbPreviousMenus = 0;
     Menu *previousMenus[0x80];
     u32 previousSelectedItems[0x80];
@@ -150,7 +68,7 @@ void menuShow(Menu *root)
 
     do
     {
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
 
         if(pressed & BUTTON_A)
         {
@@ -192,6 +110,7 @@ void menuShow(Menu *root)
             }
             else
             {
+                menuOpen = 0;
                 break;
             }
         }
@@ -210,7 +129,11 @@ void menuShow(Menu *root)
         menuDraw(currentMenu, selectedItem);
         Draw_Unlock();
     }
-    while(true);
+    while(menuOpen);
+
+    if(gGlobalContext->sceneLoadFlag != 0x14) {
+        svcSleepThread(1000 * 1000 * 300LL); //wait 300 milliseconds for users to buffer inputs
+    }
 }
 
 void ToggleMenuShow(ToggleMenu *menu) //displays a toggle menu, analogous to rosalina cheats page
@@ -242,7 +165,7 @@ void ToggleMenuShow(ToggleMenu *menu) //displays a toggle menu, analogous to ros
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if(pressed & BUTTON_B)
             break;
         if(pressed & BUTTON_A)
@@ -319,7 +242,7 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if(pressed & BUTTON_B && !chosen)
             break;
         else if(pressed & BUTTON_A && !chosen)
@@ -421,7 +344,7 @@ u32 KeyboardFill(char * buf, u32 len){
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if(pressed & BUTTON_B){
             idx--;
             if(idx < 0) idx = 0;
@@ -454,11 +377,11 @@ u32 KeyboardFill(char * buf, u32 len){
         }
         else if(pressed & BUTTON_START){
             break;
-        }    
+        }
 
         if (selected >= 40) selected = 0;
         if (selected < 0) selected = 39;
-    } while(true); 
+    } while(true);
 
     return idx;
 }

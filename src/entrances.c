@@ -1,6 +1,8 @@
 #include "z3D/entrances.h"
 #include "draw.h"
 #include "menu.h"
+#include "input.h"
+#include "menus/commands.h"
 #include "z3D/z3D.h"
 #include "utils.h"
 #include <stdio.h>
@@ -22,6 +24,7 @@ void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex, u32 chose
     }
     gSaveContext.entranceIndex = EntranceIndex;
     gGlobalContext->nextEntranceIndex = EntranceIndex;
+    gGlobalContext->fadeOutTransition = 2;
     gGlobalContext->linkAgeOnLoad = chosenAge;
     if (cutsceneIndex < 0){
         gSaveContext.cutsceneIndex = 0;
@@ -87,7 +90,7 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if((pressed & BUTTON_B) && !chosen)
             break;
         else if((pressed & BUTTON_B) && chosen)
@@ -110,8 +113,7 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
             }
             else if(selected >= Entrance_Select_Menu_Etcs){
                 EntranceWarp(entrances->items[selected - Entrance_Select_Menu_Etcs].entranceIndex, chosenAge, cutsceneIndex, chosenTime);
-                svcExitThread();
-                break;
+                menuOpen = 0;
             }
         }
         else if((pressed & BUTTON_A) && chosen) //should be guaranteed selected == 1
@@ -141,7 +143,7 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
 
         pagePrev = page;
         page = selected >= ENTRANCE_MENU_MAX_SHOW + Entrance_Select_Menu_Etcs ? 1 : 0;
-    } while(true);
+    } while(menuOpen);
 }
 
 void WarpsSceneMenuShow(const WarpsSceneMenu* menu){
@@ -171,7 +173,7 @@ void WarpsSceneMenuShow(const WarpsSceneMenu* menu){
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if(pressed & BUTTON_B)
             break;
         if(pressed & BUTTON_A)
@@ -213,7 +215,7 @@ void WarpsSceneMenuShow(const WarpsSceneMenu* menu){
 
         pagePrev = page;
         page = selected / SCENE_MENU_MAX_SHOW;
-    } while(true);
+    } while(menuOpen);
 }
 
 const EntrancesByScene Entrances_BackAlley = {

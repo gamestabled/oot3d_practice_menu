@@ -31,5 +31,9 @@ typedef struct {
     f32 data[3][4];
 } nn_math_MTX34;
 
+typedef struct {
+    f32 data[4][4];
+} nn_math_MTX44;
+
 
 #endif

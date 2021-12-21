@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "menus/watches.h"
 #include "draw.h"
+#include "input.h"
 #include "z3D/z3D.h"
 #include <stdio.h>
 #include <string.h>
@@ -70,7 +71,7 @@ static void WatchesEditWatch(s32 selected){
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
 
         if(chosen){
             if (pressed & (BUTTON_B | BUTTON_A))
@@ -114,8 +115,8 @@ static void WatchesEditWatch(s32 selected){
         if(watches[selected].type > F32) watches[selected].type = S8;
         if(watches[selected].type < S8) watches[selected].type = F32;
 
-    } while(true);    
-    
+    } while(true);
+
     watches[selected].addr = (u8*)((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | (bytes[3]));
     if (watches[selected].addr == NULL){
         watches[selected].display = 0;
@@ -142,7 +143,7 @@ void Watches_ToggleWatches(void){
 }
 
 void WatchesMenuFunc(void){
-    
+
     s32 selected = 0;
 
     Draw_Lock();
@@ -154,7 +155,7 @@ void WatchesMenuFunc(void){
     {
         Draw_Lock();
         Draw_DrawString(10, 10, COLOR_TITLE, "Watches");
-        
+
         for (u32 i = 0; i < WATCHES_MAX; ++i){
             Draw_DrawString(30, 30 + i * SPACING_Y, COLOR_WHITE, watches[i].addr == NULL ? "." : watches[i].name);
             Draw_DrawCharacter(10, 30 + i * SPACING_Y, COLOR_TITLE, selected == i ? '>' : ' ');
@@ -164,7 +165,7 @@ void WatchesMenuFunc(void){
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if(pressed & BUTTON_B)
             break;
         else if(pressed & BUTTON_A){

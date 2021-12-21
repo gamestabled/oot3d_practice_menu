@@ -1,6 +1,8 @@
 #include "menu.h"
 #include "menus/warps.h"
 #include "draw.h"
+#include "input.h"
+#include "menus/commands.h"
 #include "z3D/z3D.h"
 #include "z3D/entrances.h"
 #include <stdio.h>
@@ -193,7 +195,7 @@ void WarpsPlacesMenuShow(void){
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if(pressed & BUTTON_B)
             break;
         if(pressed & BUTTON_A)
@@ -223,7 +225,7 @@ void WarpsPlacesMenuShow(void){
             selected = WarpsPlacesMenuSize - 1;
         else if(selected >= WarpsPlacesMenuSize) selected = 0;
 
-    } while(true);
+    } while(menuOpen);
 }
 
 static const char* TimeNames[] = {
@@ -264,7 +266,7 @@ void ManuallyEnterEntranceIndex(void){
             Draw_DrawString(30, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, selected == 1 ? curColor : COLOR_WHITE, "Cutscene Number on Load: None");
         }
         else {
-            Draw_DrawFormattedString(30, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, 
+            Draw_DrawFormattedString(30, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx,
                 selected == Manual_Entrance_Menu_CsIdx ? curColor : COLOR_WHITE, "Cutscene Number on Load: %04d", cutsceneIndex);
         }
         Draw_DrawCharacter(10, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, COLOR_TITLE, selected == Manual_Entrance_Menu_CsIdx ? '>' : ' ');
@@ -279,7 +281,7 @@ void ManuallyEnterEntranceIndex(void){
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if(pressed & BUTTON_B && !chosen)
             break;
         else if(pressed & BUTTON_B && chosen)
@@ -302,8 +304,7 @@ void ManuallyEnterEntranceIndex(void){
             }
             else if(selected == Manual_Entrance_Menu_Go){
                 EntranceWarp(chosenIndex, chosenAge, cutsceneIndex, chosenTime);
-                svcExitThread();
-                break;
+                menuOpen = 0;
             }
         }
         else if(pressed & BUTTON_A && chosen)
@@ -349,7 +350,7 @@ void ManuallyEnterEntranceIndex(void){
             selected = Manual_Entrance_Menu_Go;
         else if(selected > Manual_Entrance_Menu_Go) selected = Manual_Entrance_Menu_Age;
 
-    } while(true);
+    } while(menuOpen);
 }
 
 void ClearCutscenePointer(void){

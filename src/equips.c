@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "menus/equips.h"
 #include "draw.h"
+#include "input.h"
 #include "z3D/z3D.h"
 
 static const char* const EquipButtonNames[] = {
@@ -28,7 +29,7 @@ static void Equips_ModifyButton(u32 button){
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if(pressed & (BUTTON_B | BUTTON_A)){
             break;
         }

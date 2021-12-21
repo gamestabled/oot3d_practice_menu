@@ -1,30 +1,24 @@
 OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
-ENTRY(main_patch)
+ENTRY(loader_patch)
 SECTIONS
 {
 	. = 0x100000;
-	.patch_loader : {
-		*(.patch_loader*)
+	.patch_loader 0x100000 : {
+		*(.patch_loader)
 	}
 
-	. = 0x2E32A8;
-    . = ALIGN(4);
-	.patch_load : {
-		*(.patch_load*)
+	.patch_load 0x2E32A8 : {
+		*(.patch_load)
 	}
 
-	. = 0x30FD6C;
-	. = ALIGN(4);
-	.patch_main : {
-		*(.patch_main*)
+	.patch_Gfx_Update 0x30FD6C : {
+		*(.patch_Gfx_Update)
 	}
 
-    . = 0x45240C;
-    . = ALIGN(4);
-    .patch_get_global_context : {
-        *(.patch_get_global_context*)
-    }
+	.patch_after_GlobalContext_Update 0x45240C : {
+		*(.patch_after_GlobalContext_Update)
+	}
 
 	. = 0x4C99A8;
 	. = ALIGN(4);

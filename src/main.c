@@ -3,9 +3,9 @@
  */
 
 #include "menu.h"
-#include "MyThread.h"
 #include "advance.h"
 #include "draw.h"
+#include "input.h"
 #include "menus/watches.h"
 #include "menus/commands.h"
 #include <string.h>
@@ -13,17 +13,9 @@
 #include "z3D/z3D.h"
 
 advance_ctx_t advance_ctx = {};
-advance_input_t inputs = {};
 uint8_t framebuffers_init = 0;
 
 GlobalContext* gGlobalContext;
-
-static void scan_inputs(void) {
-    inputs.cur.val = real_hid.pad.pads[real_hid.pad.index].curr.val;
-    inputs.pressed.val = (inputs.cur.val) & (~inputs.old.val);
-    inputs.up.val = (~inputs.cur.val) & (inputs.old.val);
-    inputs.old.val = inputs.cur.val;
-}
 
 static void toggle_advance(void) {
     if(pauseUnpause && advance_ctx.advance_state == NORMAL && !advance_ctx.latched){
@@ -58,7 +50,7 @@ static void drawWatches(void) {
 
         // Skip attempting to draw the address if it would otherwise be an invalid read.
         // Attempting to read these locations would crash the game.
-        const MemInfo address_info = query_memory_permissions(watches[i].addr);
+        const MemInfo address_info = query_memory_permissions((int)watches[i].addr);
         if (!is_valid_memory_read(&address_info)) {
             Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: Invalid address", watches[i].name);
             continue;
@@ -147,8 +139,12 @@ void advance_main(void) {
     }
 
     drawWatches();
-    scan_inputs();
-    Command_UpdateCommands(inputs.cur.val);
+    Input_Update();
+    Command_UpdateCommands(rInputCtx.cur.val);
+
+    if(menuOpen) {
+        menuShow();
+    }
 
     toggle_advance();
 
@@ -163,8 +159,12 @@ void advance_main(void) {
     frameAdvance = 0;
 
     while(advance_ctx.advance_state == PAUSED || advance_ctx.advance_state == LATCHED) {
-        scan_inputs();
-        Command_UpdateCommands(inputs.cur.val);
+        Input_Update();
+        Command_UpdateCommands(rInputCtx.cur.val);
+        if(menuOpen) {
+            menuShow();
+        }
+
         toggle_advance();
         if(advance_ctx.advance_state == LATCHED && !frameAdvance) {
             advance_ctx.advance_state = PAUSED;

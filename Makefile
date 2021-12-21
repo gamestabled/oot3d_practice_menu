@@ -32,6 +32,7 @@ BUILD		:=	build
 SOURCES		:=	src
 DATA		:=	data
 INCLUDES	:=	include
+INCLUDES    +=  assets
 #ROMFS		:=	romfs
 
 #---------------------------------------------------------------------------------
@@ -53,9 +54,9 @@ endif
 
 VERFLAGS := -D OOT3D=$(OOT3D) -D OOT3DJ=$(OOT3DJ) -D Z3D=$(Z3D)
 
-ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=softfp -mtp=soft
+ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=softfp -mtp=soft -mfpu=vfpv2
 
-CFLAGS	:=	-g -Wall -O2 -mword-relocations -D DEBUG \
+CFLAGS	:=	-g -Wall -mword-relocations -D DEBUG \
 			-fomit-frame-pointer -ffunction-sections \
 			$(ARCH)
 
@@ -66,7 +67,14 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS	+=	-g $(ARCH) $(VERFLAGS)
 LDFLAGS	=	-g $(ARCH) -Wl,-Map,$(notdir $*.map) -T $(TOPDIR)/$(LINK_SCRIPT) -nostdlib $(VERFLAGS) -lgcc
 
-LIBS	:= 
+LIBS	:=	-lgcc
+
+# Debug-specific flags
+debug ?= 0
+ifneq ($(debug), 0)
+	CFLAGS += -g -DENABLE_DEBUG
+	CXXFLAGS += -g -DENABLE_DEBUG
+endif
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -143,7 +151,12 @@ all: $(BUILD)
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-	@python3 patch.py $(OUTPUT).elf
+	@if python3 patch.py $(OUTPUT).elf; then \
+		echo "created basecode.ips" ; \
+	else \
+		python patch.py $(OUTPUT).elf; \
+		echo "created basecode.ips" ; \
+	fi
 
 #---------------------------------------------------------------------------------
 clean:

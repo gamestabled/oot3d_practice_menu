@@ -2,27 +2,25 @@
 #include "menus/commands.h"
 #include "menus/warps.h"
 #include "menus/watches.h"
-#include "MyThread.h"
+#include "input.h"
 #include "z3D/z3D.h"
 #include "draw.h"
 
 u32 pauseUnpause = 0; //tells main to pause/unpause
 u32 frameAdvance = 0; //tells main to frame advance
+u32 menuOpen = 0;
 
 static void Command_OpenMenu(void){
-    MyThread* menuThread = menuCreateThread();
-    MyThread_Join(menuThread, -1LL);
-    menuExitFlag = 1;
+    menuOpen = 1;
 }
 
 static void Command_Levitate(void){
     if (PLAYER) PLAYER->actor.velocity.y = 6.34375f;
 }
 
-static void Command_Fall(void){ //TODO: Doesn't work
+static void Command_Fall(void){
     if (PLAYER){
-        PLAYER->actor.posRot.pos.y = -4096.f;
-        PLAYER->actor.posRot2.pos.y = -4096.f;
+        PLAYER->actor.home.pos.y = -4096.f;
     }
 }
 
@@ -38,7 +36,7 @@ static void Command_ReloadScene(void){
     if(gGlobalContext->nextEntranceIndex != -1)
         EntranceWarp(gGlobalContext->nextEntranceIndex, gSaveContext.linkAge, -1, 0);
     else
-        EntranceWarp(gSaveContext.entranceIndex, gSaveContext.linkAge, -1, 0);    
+        EntranceWarp(gSaveContext.entranceIndex, gSaveContext.linkAge, -1, 0);
 }
 
 static void Command_VoidOut(void){
@@ -58,17 +56,17 @@ static void Command_ToggleAge(void){
 static PosRot storedPosRot;
 static void Command_StorePos(void){
     if (PLAYER){
-        storedPosRot.pos = PLAYER->actor.posRot.pos;
-        storedPosRot.rot = PLAYER->actor.posRot.rot;
+        storedPosRot.pos = PLAYER->actor.world.pos;
+        storedPosRot.rot = PLAYER->actor.world.rot;
     }
 }
 
 static void Command_LoadPos(void){
     if (PLAYER){
-        PLAYER->actor.initPosRot.pos = storedPosRot.pos;
-        PLAYER->actor.posRot.pos = storedPosRot.pos;
-        PLAYER->actor.posRot.rot = storedPosRot.rot;
-        PLAYER->actor.posRot2.rot = storedPosRot.rot;
+        PLAYER->actor.home.pos = storedPosRot.pos;
+        PLAYER->actor.world.pos = storedPosRot.pos;
+        PLAYER->actor.world.rot = storedPosRot.rot;
+        PLAYER->actor.focus.rot = storedPosRot.rot;
         PLAYER->actor.shape.rot = storedPosRot.rot;
     }
 }
@@ -98,7 +96,7 @@ static void Command_ToggleWatches(void){
 static Command commandList[] = {
     {"Open Menu", 0, 0, { 0 }, Command_OpenMenu, COMMAND_PRESS_ONCE_TYPE, 0, 0},
     {"Levitate", 0, 0, { 0 }, Command_Levitate, COMMAND_HOLD_TYPE, 0, 0},
-    {"Fall (TODO)", 0, 0, { 0 }, Command_Fall, COMMAND_HOLD_TYPE, 0, 0},
+    {"Fall", 0, 0, { 0 }, Command_Fall, COMMAND_HOLD_TYPE, 0, 0},
     {"Run Fast", 0, 0, { 0 }, Command_RunFast, COMMAND_HOLD_TYPE, 0, 0},
     {"Reset", 0, 0, { 0 }, Command_Reset, COMMAND_PRESS_ONCE_TYPE, 0, 0},
     {"Reload Scene", 0, 0, { 0 }, Command_ReloadScene, COMMAND_PRESS_ONCE_TYPE, 0, 0},
@@ -116,8 +114,8 @@ static Command commandList[] = {
 
 static void Commands_ListInitDefaults(void){
     commandList[0].comboLen = 3; //Open Menu
-    commandList[0].inputs[0] = BUTTON_L1; 
-    commandList[0].inputs[1] = (BUTTON_L1 | BUTTON_R1); 
+    commandList[0].inputs[0] = BUTTON_L1;
+    commandList[0].inputs[1] = (BUTTON_L1 | BUTTON_R1);
     commandList[0].inputs[2] = (BUTTON_L1 | BUTTON_R1 | BUTTON_SELECT);
     commandList[0].strict = 0;
 
@@ -130,7 +128,7 @@ static void Commands_ListInitDefaults(void){
     commandList[3].strict = 0;
 
     commandList[8].comboLen = 2; //Store Pos
-    commandList[8].inputs[0] = BUTTON_L1; 
+    commandList[8].inputs[0] = BUTTON_L1;
     commandList[8].inputs[1] = BUTTON_LEFT;
     commandList[8].strict = 0;
 
@@ -163,9 +161,9 @@ void Command_UpdateCommands(u32 curInputs){ //curInputs should be all the held a
 
     for (int i = 0; i < COMMAND_NUM_COMMANDS; i++){
         if (commandList[i].comboLen == 0) continue;
-        if ((commandList[i].strict && curInputs == commandList[i].inputs[commandList[i].curIdx]) || 
+        if ((commandList[i].strict && curInputs == commandList[i].inputs[commandList[i].curIdx]) ||
             (!commandList[i].strict && (curInputs & commandList[i].inputs[commandList[i].curIdx]) == commandList[i].inputs[commandList[i].curIdx])){ //case where we hit the new button
-            
+
             commandList[i].curIdx++;
             if(commandList[i].curIdx == commandList[i].comboLen){ //time to execute the command
                 if (commandList[i].type == COMMAND_HOLD_TYPE){
@@ -185,9 +183,9 @@ void Command_UpdateCommands(u32 curInputs){ //curInputs should be all the held a
                 }
             }
         }
-        else if(commandList[i].curIdx > 0 && ((commandList[i].strict && curInputs == commandList[i].inputs[commandList[i].curIdx - 1]) || 
+        else if(commandList[i].curIdx > 0 && ((commandList[i].strict && curInputs == commandList[i].inputs[commandList[i].curIdx - 1]) ||
                 (!commandList[i].strict && (curInputs & commandList[i].inputs[commandList[i].curIdx - 1]) == commandList[i].inputs[commandList[i].curIdx - 1]))){ //case where inputs still held
-            
+
             commandList[i].waiting = 0;
         }
         else { //case where command resets
@@ -199,7 +197,7 @@ void Command_UpdateCommands(u32 curInputs){ //curInputs should be all the held a
 
 static void Commands_ComboToString(char* buf, u32 commandIdx){
     u32 prevInput = 0;
-    
+
     for (u32 i = 0; i < commandList[commandIdx].comboLen; ++i){
         u32 newInput = commandList[commandIdx].inputs[i] & ~prevInput;
         switch(newInput){
@@ -261,10 +259,10 @@ static void Commands_EditCommand(u32 commandIndex){
         Draw_DrawFormattedString(10, 10, COLOR_TITLE, "Edit Command: %s", commandList[commandIndex].title);
 
         Commands_ComboToString(comboString, commandIndex);
-        Draw_DrawFormattedString(30, 30, curColor, "Combo: %c  %c  %c  %c", 
-            commandList[commandIndex].comboLen >= 1 ? comboString[0] : ' ', 
-            commandList[commandIndex].comboLen >= 2 ? comboString[1] : ' ', 
-            commandList[commandIndex].comboLen >= 3 ? comboString[2] : ' ', 
+        Draw_DrawFormattedString(30, 30, curColor, "Combo: %c  %c  %c  %c",
+            commandList[commandIndex].comboLen >= 1 ? comboString[0] : ' ',
+            commandList[commandIndex].comboLen >= 2 ? comboString[1] : ' ',
+            commandList[commandIndex].comboLen >= 3 ? comboString[2] : ' ',
             commandList[commandIndex].comboLen >= 4 ? comboString[3] : ' ');
         Draw_DrawCharacter(10, 30, COLOR_TITLE, selected == 0 ? '>' : ' ');
 
@@ -281,7 +279,7 @@ static void Commands_EditCommand(u32 commandIndex){
             Draw_DrawCharacter(300, 10, COLOR_WHITE, ' ');
             Draw_FlushFramebuffer();
             Draw_Unlock();
-            u32 pressed = waitInputWithTimeout(1000);
+            u32 pressed = Input_WaitWithTimeout(1000);
             if (pressed & BUTTON_A){
                 if (selected == 1){
                     commandList[commandIndex].strict = !commandList[commandIndex].strict;
@@ -309,7 +307,7 @@ static void Commands_EditCommand(u32 commandIndex){
                 Draw_FlushFramebuffer();
                 Draw_Unlock();
 
-                u32 pressed = waitInputWithTimeout(1000);
+                u32 pressed = Input_WaitWithTimeout(1000);
                 if (!pressed){
                     editing = (secs > 1);
                     curColor = (editing ? COLOR_RED : COLOR_WHITE);
@@ -322,7 +320,7 @@ static void Commands_EditCommand(u32 commandIndex){
                     commandList[commandIndex].inputs[0] = pressed;
                 }
                 commandList[commandIndex].comboLen++;
-                
+
                 if (commandList[commandIndex].comboLen >= COMMAND_COMBO_MAX){
                     editing = 0;
                     curColor = COLOR_WHITE;
@@ -331,7 +329,7 @@ static void Commands_EditCommand(u32 commandIndex){
             }
         }
 
-    } while(true);   
+    } while(true);
 }
 
 void Commands_ShowCommands(void){
@@ -356,11 +354,11 @@ void Commands_ShowCommands(void){
             char comboString[COMMAND_COMBO_MAX + 1];
             s32 j = page * COMMAND_MENU_MAX_SHOW + i;
             Commands_ComboToString(comboString, j);
-            Draw_DrawFormattedString(30, 30 + i * SPACING_Y, COLOR_WHITE, "%s: %c  %c  %c  %c", 
+            Draw_DrawFormattedString(30, 30 + i * SPACING_Y, COLOR_WHITE, "%s: %c  %c  %c  %c",
                 commandList[j].title,
-                commandList[j].comboLen >= 1 ? comboString[0] : ' ', 
-                commandList[j].comboLen >= 2 ? comboString[1] : ' ', 
-                commandList[j].comboLen >= 3 ? comboString[2] : ' ', 
+                commandList[j].comboLen >= 1 ? comboString[0] : ' ',
+                commandList[j].comboLen >= 2 ? comboString[1] : ' ',
+                commandList[j].comboLen >= 3 ? comboString[2] : ' ',
                 commandList[j].comboLen >= 4 ? comboString[3] : ' ');
             Draw_DrawString(200, 30 + i * SPACING_Y, COLOR_WHITE, commandList[j].strict ? "Strict " : "Relaxed");
             Draw_DrawCharacter(10, 30 + i * SPACING_Y, COLOR_TITLE, j == selected ? '>' : ' ');
@@ -369,7 +367,7 @@ void Commands_ShowCommands(void){
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
-        u32 pressed = waitInputWithTimeout(1000);
+        u32 pressed = Input_WaitWithTimeout(1000);
         if(pressed & BUTTON_B)
             break;
         if(pressed & BUTTON_A)

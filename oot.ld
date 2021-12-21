@@ -1,29 +1,27 @@
 OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
-ENTRY(main_patch)
+ENTRY(loader_patch)
 SECTIONS
 {
 	. = 0x100000;
-	.patch_loader : {
-		*(.patch_loader*)
+	.patch_loader 0x100000 : {
+		*(.patch_loader)
 	}
 
-    . = 0x2E3790;
-	. = ALIGN(4);
-    .patch_load : {
-        *(.patch_load*)
-    }
-
-	. = 0x310254;
-	. = ALIGN(4);
-	.patch_main : {
-		*(.patch_main*)
+	.patch_load 0x2E3790 : {
+		*(.patch_load)
 	}
 
-	. = 0x452434;
-	. = ALIGN(4);
-	.patch_get_global_context : {
-		*(.patch_get_global_context*)
+	.patch_Gfx_Update 0x310254 : {
+		*(.patch_Gfx_Update)
+	}
+
+	.patch_before_GlobalContext_Update 0x452390 : {
+		*(.patch_before_GlobalContext_Update)
+	}
+
+	.patch_after_GlobalContext_Update 0x452434 : {
+		*(.patch_after_GlobalContext_Update)
 	}
 
 	. = 0x4C99A8;
@@ -33,14 +31,14 @@ SECTIONS
 	}
 
 	. = 0x005C7000;
-    .text : {
-        __text_start = . ;
-        *(.text)
-        *(.text.*)
-        *(.rodata)
-        *(.data)
-        *(.bss)
-        *(COMMON)
-        __text_end  = . ;
-    }
+	.text : {
+		__text_start = . ;
+		*(.text)
+		*(.text.*)
+		*(.rodata)
+		*(.data)
+		*(.bss)
+		*(COMMON)
+		__text_end  = . ;
+	}
 }

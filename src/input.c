@@ -60,27 +60,18 @@ u32 Input_WaitWithTimeout(u32 msec) {
     }
     else
     {
-        // Wait for no keys to be pressed in the event that up and down are not pressed.
-        while (HID_PAD && (msec == 0 || n <= msec))
+        rInputCtx.cur.val = HID_PAD;
+        // Wait for a new key to be pressed in the event that up and down are not pressed.
+        while (HID_PAD <= rInputCtx.cur.val && (msec == 0 || n <= msec))
         {
             scrollDelay = 1;
+            rInputCtx.cur.val = HID_PAD;
             svcSleepThread(1 * 1000 * 1000LL);
             n++;
         }
-    }
-
-    if (msec != 0 && n >= msec) {
-        return 0;
     }
 
     do {
-        // Wait for a key to be pressed
-        while (!HID_PAD && (msec == 0 || n < msec)) {
-            scrollDelay = 1;
-            svcSleepThread(1 * 1000 * 1000LL);
-            n++;
-        }
-
         if (msec != 0 && n >= msec) {
             return 0;
         }
@@ -91,6 +82,7 @@ u32 Input_WaitWithTimeout(u32 msec) {
         pressedKey = buttonCheck(key);
     } while (!pressedKey);
 
+    rInputCtx.cur.val = key;
     return key;
 }
 

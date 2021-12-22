@@ -6,6 +6,8 @@
 #include "advance.h"
 #include "draw.h"
 #include "input.h"
+#include "common.h"
+#include "menus/cheats.h"
 #include "menus/watches.h"
 #include "menus/commands.h"
 #include <string.h>
@@ -29,17 +31,6 @@ static void toggle_advance(void) {
     } else if(!pauseUnpause) {
         advance_ctx.latched = 0;
     }
-}
-
-static MemInfo query_memory_permissions(u32 address) {
-    MemInfo memory_info = {};
-    PageInfo page_info = {};
-    svcQueryMemory(&memory_info, &page_info, address);
-    return memory_info;
-}
-
-static bool is_valid_memory_read(const MemInfo* info) {
-    return (info->perm & MEMPERM_READ) != 0;
 }
 
 static void drawWatches(void) {
@@ -145,6 +136,7 @@ void advance_main(void) {
     if(menuOpen) {
         menuShow();
     }
+    applyCheats();
 
     toggle_advance();
 
@@ -164,7 +156,7 @@ void advance_main(void) {
         if(menuOpen) {
             menuShow();
         }
-
+        applyCheats();
         toggle_advance();
         if(advance_ctx.advance_state == LATCHED && !frameAdvance) {
             advance_ctx.advance_state = PAUSED;
@@ -176,7 +168,6 @@ void advance_main(void) {
         frameAdvance = 0;
         svcSleepThread(16E6);
     }
-
 }
 
 void setGlobalContext(GlobalContext* globalContext){

@@ -47,7 +47,7 @@ Menu gz3DMenu = {
     {
         { "Warps", MENU, .menu = &WarpsMenu },
         { "Scene", MENU, .menu = &SceneMenu },
-        { "Cheats", MENU, .menu = &CheatsMenu },
+        { "Cheats", METHOD, .method = Cheats_ShowCheatsMenu },
         { "Inventory", MENU, .menu = &InventoryMenu },
         { "Equips", MENU, .menu = &EquipsMenu },
         // { "File", MENU, .menu = &FileMenu },

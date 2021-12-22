@@ -74,6 +74,11 @@ ifeq ($(Z3D), $(OOT3DJ))
 	CFLAGS += -g -DVersion_JP
 endif
 
+citra ?= 0
+ifneq ($(citra), 0)
+	CFLAGS += -g -DCITRA
+endif
+
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib

@@ -223,14 +223,18 @@ void Draw_SetupFramebuffer(void)
 
 void Draw_FlushFramebuffer(void)
 {
+    #ifndef CITRA
     svcFlushProcessDataCache(CUR_PROCESS_HANDLE, FRAMEBUFFER[0], FB_BOTTOM_SIZE);
     svcFlushProcessDataCache(CUR_PROCESS_HANDLE, FRAMEBUFFER[1], FB_BOTTOM_SIZE);
+    #endif
 }
 
 void Draw_FlushFramebufferTop(void)
 {
+    #ifndef CITRA
     svcFlushProcessDataCache(CUR_PROCESS_HANDLE, FRAMEBUFFER[2], FB_TOP_SIZE);
     svcFlushProcessDataCache(CUR_PROCESS_HANDLE, FRAMEBUFFER[3], FB_TOP_SIZE);
     svcFlushProcessDataCache(CUR_PROCESS_HANDLE, FRAMEBUFFER[4], FB_TOP_SIZE);
     svcFlushProcessDataCache(CUR_PROCESS_HANDLE, FRAMEBUFFER[5], FB_TOP_SIZE);
+    #endif
 }

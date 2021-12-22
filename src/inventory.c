@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "menus/inventory.h"
 #include "draw.h"
+#include "menus/cheats.h"
 #include "input.h"
 #include "z3D/z3D.h"
 #include "z3D/z3Dequipment.h"
@@ -1140,4 +1141,6 @@ void Inventory_AmountsSelect(s32 selected){
             gSaveContext.magic = InventoryAmountsMenu.items[Amounts_Menu_Current_Magic].amount;
             break;
     }
+    applyCheats();
+    Inventory_AmountsMenuInit();
 }

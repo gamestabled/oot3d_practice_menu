@@ -9,9 +9,16 @@ u32 GetCurrentPadState(void) {
     u32 hid_shared_mem = *(u32*)(0x005AEC5C);
     return *(volatile u32*)(hid_shared_mem + 0x1C);
 }
-#define HID_PAD (GetCurrentPadState())
+#ifdef Version_JP
+    #define HID_PAD (REG32(0x10146000) ^ 0xFFF) //doesn't work on Citra
+#else
+    #define HID_PAD (GetCurrentPadState())
+#endif
+
+#define dpadButtons  (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT)
 
 InputContext rInputCtx;
+u8 scrollDelay = 1;
 
 void Input_Update(void) {
     rInputCtx.cur.val = real_hid.pad.pads[real_hid.pad.index].curr.val;
@@ -33,14 +40,19 @@ u32 Input_WaitWithTimeout(u32 msec) {
     u32 key = 0;
     u32 n = 0;
 
-    const bool isDPadPressed = (HID_PAD & BUTTON_UP) != 0 ||
-                               (HID_PAD & BUTTON_DOWN) != 0 ||
-                               (HID_PAD & BUTTON_LEFT) != 0 ||
-                               (HID_PAD & BUTTON_RIGHT) != 0;
+    const bool isDPadPressed = (HID_PAD & dpadButtons) != 0;
 
     // We special the D-Pad as we want to automatically scroll the cursor or
     // allow amount editing at a reasonable pace as long as it's held down.
-    if (isDPadPressed)
+    if (isDPadPressed && scrollDelay)
+    {
+        // Wait 250 ms the first time, as long as the button isn't released
+        for(u32 i = 0; HID_PAD && i < 250; i+=10) {
+            svcSleepThread(10 * 1000 * 1000LL);
+        }
+        scrollDelay = 0;
+    }
+    else if (isDPadPressed)
     {
         // By default wait 75 milliseconds before moving the cursor so that
         // we don't scroll the menu too fast.
@@ -51,6 +63,7 @@ u32 Input_WaitWithTimeout(u32 msec) {
         // Wait for no keys to be pressed in the event that up and down are not pressed.
         while (HID_PAD && (msec == 0 || n <= msec))
         {
+            scrollDelay = 1;
             svcSleepThread(1 * 1000 * 1000LL);
             n++;
         }
@@ -63,6 +76,7 @@ u32 Input_WaitWithTimeout(u32 msec) {
     do {
         // Wait for a key to be pressed
         while (!HID_PAD && (msec == 0 || n < msec)) {
+            scrollDelay = 1;
             svcSleepThread(1 * 1000 * 1000LL);
             n++;
         }

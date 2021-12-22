@@ -69,11 +69,9 @@ LDFLAGS	=	-g $(ARCH) -Wl,-Map,$(notdir $*.map) -T $(TOPDIR)/$(LINK_SCRIPT) -nost
 
 LIBS	:=	-lgcc
 
-# Debug-specific flags
-debug ?= 0
-ifneq ($(debug), 0)
-	CFLAGS += -g -DENABLE_DEBUG
-	CXXFLAGS += -g -DENABLE_DEBUG
+# Define version for the C code
+ifeq ($(Z3D), $(OOT3DJ))
+	CFLAGS += -g -DVersion_JP
 endif
 
 #---------------------------------------------------------------------------------

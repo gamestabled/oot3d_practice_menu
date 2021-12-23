@@ -79,3 +79,8 @@ ItemUsability_patch:
 .global ItemUsabilityShield_patch
 ItemUsabilityShield_patch:
     b hook_ItemUsability_Shield
+
+.section .patch_SleepQueryCallback
+.global SleepQueryCallback_patch
+SleepQueryCallback_patch:
+    b hook_Gfx_SleepQueryCallback

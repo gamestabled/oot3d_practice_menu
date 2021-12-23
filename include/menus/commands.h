@@ -31,4 +31,3 @@ void Commands_ComboToString(char* buf, u32 commandIdx);
 
 extern u32 pauseUnpause;
 extern u32 frameAdvance;
-extern u32 menuOpen;

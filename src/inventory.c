@@ -952,7 +952,7 @@ void Inventory_HeartPiecesAmount(s32 selected){
 
         curHearts %= 16;
 
-    } while(true);
+    } while(menuOpen);
 
     gSaveContext.questItems &= 0xFFFFFF;
     gSaveContext.questItems |= (curHearts << 28);
@@ -994,7 +994,7 @@ void Inventory_GoldSkulltulaAmount(s32 selected){
             gSaveContext.gsTokens--;
         }
 
-    } while(true);
+    } while(menuOpen);
 
     gSaveContext.questItems &= ~(1 << 22);
     gSaveContext.questItems |= ((gSaveContext.gsTokens != 0) << 22);

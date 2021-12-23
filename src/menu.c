@@ -210,7 +210,7 @@ void ToggleMenuShow(ToggleMenu *menu) //displays a toggle menu, analogous to ros
 
         pagePrev = page;
         page = selected / TOGGLE_MENU_MAX_SHOW;
-    } while(true);
+    } while(menuOpen);
 }
 
 void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems messed up
@@ -313,7 +313,7 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
 
         pagePrev = page;
         page = selected / AMOUNT_MENU_MAX_SHOW;
-    } while(true);
+    } while(menuOpen);
 }
 
 u32 KeyboardFill(char * buf, u32 len){
@@ -394,7 +394,7 @@ u32 KeyboardFill(char * buf, u32 len){
 
         if (selected >= 40) selected = 0;
         if (selected < 0) selected = 39;
-    } while(true);
+    } while(menuOpen);
 
     return idx;
 }

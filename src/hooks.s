@@ -168,3 +168,11 @@ hook_ItemUsability_Shield:
     bne 0x42E3DC
     cmp r0,#0x0
     b 0x42E2F4
+
+.global hook_Gfx_SleepQueryCallback
+hook_Gfx_SleepQueryCallback:
+    push {r0-r12, lr}
+    bl Gfx_SleepQueryCallback
+    pop {r0-r12, lr}
+    add r0,r0,#0x9C
+    b 0x3FD6C8

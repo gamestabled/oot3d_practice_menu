@@ -44,6 +44,10 @@ SECTIONS
 		*(.patch_SetBGMEvent)
 	}
 
+	.patch_SleepQueryCallback 0x3FD6C4 : {
+		*(.patch_SleepQueryCallback)
+	}
+
 	.patch_ItemUsability_Shield 0x42E2F0 : {
 		*(.patch_ItemUsability_Shield)
 	}

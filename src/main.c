@@ -16,6 +16,7 @@
 
 advance_ctx_t advance_ctx = {};
 uint8_t framebuffers_init = 0;
+static bool isAsleep = false;
 
 GlobalContext* gGlobalContext;
 
@@ -160,7 +161,7 @@ void advance_main(void) {
     pauseUnpause = 0;
     frameAdvance = 0;
 
-    while(advance_ctx.advance_state == PAUSED || advance_ctx.advance_state == LATCHED) {
+    while(!isAsleep &&(advance_ctx.advance_state == PAUSED || advance_ctx.advance_state == LATCHED)) {
         pauseDisplay();
         Input_Update();
         Command_UpdateCommands(rInputCtx.cur.val);
@@ -179,10 +180,16 @@ void advance_main(void) {
         frameAdvance = 0;
         svcSleepThread(16E6);
     }
+    isAsleep = false;
 }
 
 void setGlobalContext(GlobalContext* globalContext){
     gGlobalContext = globalContext;
+}
+
+void Gfx_SleepQueryCallback(void) {
+    menuOpen = false;
+    isAsleep = true;
 }
 
 void area_load_main(void){}

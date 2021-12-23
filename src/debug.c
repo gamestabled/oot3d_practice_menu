@@ -86,7 +86,7 @@ static void DebugActors_ShowMoreInfo(Actor* actor) {
             actor->world.rot = PLAYER->actor.world.rot;
         }
 
-    } while(true);
+    } while(menuOpen);
 }
 
 static void DebugActors_ShowActors(void) {
@@ -199,7 +199,7 @@ static void DebugActors_ShowActors(void) {
         pagePrev = page;
         page = selected / ACTOR_LIST_MAX_SHOW;
 
-    } while(true);
+    } while(menuOpen);
 }
 
 Menu DebugMenu = {

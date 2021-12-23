@@ -9,7 +9,7 @@
 
 u32 pauseUnpause = 0; //tells main to pause/unpause
 u32 frameAdvance = 0; //tells main to frame advance
-u32 menuOpen = 0;     //tells main to open menu
+bool menuOpen = 0;    //tells main to open menu
 
 static void Command_OpenMenu(void){
     menuOpen = 1;
@@ -342,7 +342,7 @@ static void Commands_EditCommand(u32 commandIndex){
             }
         }
 
-    } while(true);
+    } while(menuOpen);
 }
 
 void Commands_ShowCommands(void){
@@ -416,5 +416,5 @@ void Commands_ShowCommands(void){
 
         pagePrev = page;
         page = selected / COMMAND_MENU_MAX_SHOW;
-    } while(true);
+    } while(menuOpen);
 }

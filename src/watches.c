@@ -115,7 +115,7 @@ static void WatchesEditWatch(s32 selected){
         if(watches[selected].type > F32) watches[selected].type = S8;
         if(watches[selected].type < S8) watches[selected].type = F32;
 
-    } while(true);
+    } while(menuOpen);
 
     watches[selected].addr = (u8*)((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | (bytes[3]));
     if (watches[selected].addr == NULL){
@@ -192,5 +192,5 @@ void WatchesMenuFunc(void){
         if(selected >= WATCHES_MAX) selected = 0;
         if(selected < 0) selected = WATCHES_MAX - 1;
 
-    } while(true);
+    } while(menuOpen);
 }

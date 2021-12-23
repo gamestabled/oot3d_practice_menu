@@ -17,6 +17,12 @@ void Equips_EquipsMenuInit(void){
 
     EquipsMenu.items[EQUIP_TEMP_B].amount = gSaveContext.buttonStatus[0];
 
+    if(gSaveContext.infTable[29] &= 0x1) {
+        EquipsMenu.items[EQUIP_SWORD].title = "Sword (0-3) - Swordless Flag ON ";
+    } else {
+        EquipsMenu.items[EQUIP_SWORD].title = "Sword (0-3) - Swordless Flag OFF";
+    }
+
     #ifdef Version_JP
     EquipsMenu.items[EQUIP_SHIELD].title = "Shield (0-3, applies on reload)";
     EquipsMenu.items[EQUIP_TUNIC].title = "Tunic (0-3, applies on reload)";

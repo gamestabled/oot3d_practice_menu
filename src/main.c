@@ -117,6 +117,16 @@ static void drawWatches(void) {
 static void titleScreenDisplay(void){
     Draw_DrawFormattedStringTop(150, 20, COLOR_WHITE, "OoT3D Practice Patch");
     Draw_FlushFramebufferTop();
+
+    char menuComboString[COMMAND_COMBO_MAX + 1] = {0};
+    Commands_ComboToString(menuComboString, 0);
+    Draw_DrawFormattedString(150, 0, COLOR_WHITE, menuComboString);
+    Draw_FlushFramebuffer();
+}
+
+static void pauseDisplay(void) {
+    Draw_DrawFormattedStringTop(20, 20, COLOR_WHITE, "Paused");
+    Draw_FlushFramebufferTop();
 }
 
 void advance_main(void) {
@@ -125,7 +135,7 @@ void advance_main(void) {
         framebuffers_init = 1;
     }
 
-    if(gSaveContext.entranceIndex == 0x0629 && gSaveContext.cutsceneIndex == 0xFFF3){
+    if(gSaveContext.entranceIndex == 0x0629 && gSaveContext.cutsceneIndex == 0xFFF3 && isInGame()){
         titleScreenDisplay();
     }
 
@@ -151,6 +161,7 @@ void advance_main(void) {
     frameAdvance = 0;
 
     while(advance_ctx.advance_state == PAUSED || advance_ctx.advance_state == LATCHED) {
+        pauseDisplay();
         Input_Update();
         Command_UpdateCommands(rInputCtx.cur.val);
         if(menuOpen) {

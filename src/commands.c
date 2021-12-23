@@ -3,47 +3,52 @@
 #include "menus/warps.h"
 #include "menus/watches.h"
 #include "input.h"
+#include "common.h"
 #include "z3D/z3D.h"
 #include "draw.h"
 
 u32 pauseUnpause = 0; //tells main to pause/unpause
 u32 frameAdvance = 0; //tells main to frame advance
-u32 menuOpen = 0;
+u32 menuOpen = 0;     //tells main to open menu
 
 static void Command_OpenMenu(void){
     menuOpen = 1;
 }
 
 static void Command_Levitate(void){
-    if (PLAYER) PLAYER->actor.velocity.y = 6.34375f;
+    if (isInGame()) PLAYER->actor.velocity.y = 6.34375f;
 }
 
 static void Command_Fall(void){
-    if (PLAYER){
+    if (isInGame()){
         PLAYER->actor.home.pos.y = -4096.f;
     }
 }
 
 static void Command_RunFast(void){
-    if (PLAYER) PLAYER->xzSpeed = 27.f;
+    if (isInGame()) PLAYER->xzSpeed = 27.f;
 }
 
 static void Command_Reset(void){
-    EntranceWarp(0xFFFF, gSaveContext.linkAge, -1, 0);
+    if (isInGame()) EntranceWarp(0xFFFF, gSaveContext.linkAge, -1, 0);
 }
 
 static void Command_ReloadScene(void){
-    if(gGlobalContext->nextEntranceIndex != -1)
-        EntranceWarp(gGlobalContext->nextEntranceIndex, gSaveContext.linkAge, -1, 0);
-    else
-        EntranceWarp(gSaveContext.entranceIndex, gSaveContext.linkAge, -1, 0);
+    if (isInGame()) {
+        if(gGlobalContext->nextEntranceIndex != -1)
+            EntranceWarp(gGlobalContext->nextEntranceIndex, gSaveContext.linkAge, -1, 0);
+        else
+            EntranceWarp(gSaveContext.entranceIndex, gSaveContext.linkAge, -1, 0);
+    }
 }
 
 static void Command_VoidOut(void){
-    gSaveContext.respawn[RESPAWN_MODE_DOWN].tempSwchFlags = gGlobalContext->actorCtx.flags.tempSwch;
-    gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags = gGlobalContext->actorCtx.flags.tempCollect;
-    gSaveContext.respawnFlag = 1;
-    EntranceWarp(gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex, gSaveContext.linkAge, -1, 0);
+    if (isInGame()) {
+        gSaveContext.respawn[RESPAWN_MODE_DOWN].tempSwchFlags = gGlobalContext->actorCtx.flags.tempSwch;
+        gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags = gGlobalContext->actorCtx.flags.tempCollect;
+        gSaveContext.respawnFlag = 1;
+        EntranceWarp(gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex, gSaveContext.linkAge, -1, 0);
+    }
 }
 
 static void Command_ToggleAge(void){
@@ -55,14 +60,14 @@ static void Command_ToggleAge(void){
 
 static PosRot storedPosRot;
 static void Command_StorePos(void){
-    if (PLAYER){
+    if (isInGame()){
         storedPosRot.pos = PLAYER->actor.world.pos;
         storedPosRot.rot = PLAYER->actor.world.rot;
     }
 }
 
 static void Command_LoadPos(void){
-    if (PLAYER){
+    if (isInGame()){
         PLAYER->actor.home.pos = storedPosRot.pos;
         PLAYER->actor.world.pos = storedPosRot.pos;
         PLAYER->actor.world.rot = storedPosRot.rot;
@@ -159,6 +164,14 @@ void Command_UpdateCommands(u32 curInputs){ //curInputs should be all the held a
         commandInit = 1;
     }
 
+    if (commandList[0].comboLen == 0) {
+        commandList[0].comboLen = 3; //Open Menu
+        commandList[0].inputs[0] = BUTTON_L1;
+        commandList[0].inputs[1] = (BUTTON_L1 | BUTTON_R1);
+        commandList[0].inputs[2] = (BUTTON_L1 | BUTTON_R1 | BUTTON_SELECT);
+        commandList[0].strict = 0;
+    }
+
     for (int i = 0; i < COMMAND_NUM_COMMANDS; i++){
         if (commandList[i].comboLen == 0) continue;
         if ((commandList[i].strict && curInputs == commandList[i].inputs[commandList[i].curIdx]) ||
@@ -195,7 +208,7 @@ void Command_UpdateCommands(u32 curInputs){ //curInputs should be all the held a
     }
 }
 
-static void Commands_ComboToString(char* buf, u32 commandIdx){
+void Commands_ComboToString(char* buf, u32 commandIdx){
     u32 prevInput = 0;
 
     for (u32 i = 0; i < commandList[commandIdx].comboLen; ++i){

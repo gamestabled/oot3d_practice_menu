@@ -27,6 +27,7 @@ typedef struct Command {
 
 void Commands_ShowCommands(void);
 void Command_UpdateCommands(u32 inputs);
+void Commands_ComboToString(char* buf, u32 commandIdx);
 
 extern u32 pauseUnpause;
 extern u32 frameAdvance;

@@ -2,6 +2,7 @@
 #include "menus/debug.h"
 #include "draw.h"
 #include "input.h"
+#include "common.h"
 #include "z3D/z3D.h"
 #include <stdio.h>
 
@@ -89,7 +90,7 @@ static void DebugActors_ShowMoreInfo(Actor* actor) {
 }
 
 static void DebugActors_ShowActors(void) {
-    if(gSaveContext.gameMode == 2 || gSaveContext.gameMode == 4) {
+    if(!isInGame()) {
         return;
     }
     static ShowActor_Info actorList[200];

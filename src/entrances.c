@@ -44,7 +44,7 @@ static const char* TimeNames[] = {
 };
 
 void EntranceSelectMenuShow(const EntrancesByScene* entrances){
-    s32 selected = 0, page = 0, pagePrev = 0;
+    s32 selected = 3, page = 0, pagePrev = 0;
     s32 chosenAge = gSaveContext.linkAge;
     u32 chosenTime = 0;
     u32 curColor = COLOR_WHITE;

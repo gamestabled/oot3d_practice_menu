@@ -74,3 +74,8 @@ InstantTextRemoveOff_patch:
 .global ItemUsability_patch
 ItemUsability_patch:
     bl hook_ItemUsability
+
+.section .patch_ItemUsability_Shield
+.global ItemUsabilityShield_patch
+ItemUsabilityShield_patch:
+    b hook_ItemUsability_Shield

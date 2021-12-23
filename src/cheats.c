@@ -31,16 +31,12 @@ void Cheats_Toggle(s32 selected){
             gSaveContext.masterQuestFlag = cheats[CHEATS_MQ]; // done here once instead of in applyCheats
             break;
         case (CHEATS_USABLE_ITEMS):
-            if (rInputCtx.cur.r) {
+            if (ADDITIONAL_FLAG_BUTTON) {
                 forcedUsableItems = 1;
-                CheatsMenu.items[0xF] = (ToggleMenuItem){CheatsMenu.items[0xF].on,
-                                        "Unrestricted Items - Forced mode ON",
-                                        CheatsMenu.items[0xF].method};
+                CheatsMenu.items[CHEATS_USABLE_ITEMS].title = "Unrestricted Items - Forced mode ON";
             } else {
                 forcedUsableItems = 0;
-                CheatsMenu.items[0xF] = (ToggleMenuItem){CheatsMenu.items[0xF].on,
-                                        "Unrestricted Items - Forced mode OFF",
-                                        CheatsMenu.items[0xF].method};
+                CheatsMenu.items[CHEATS_USABLE_ITEMS].title = "Unrestricted Items - Forced mode OFF";
             }
             break;
         case (CHEATS_FREEZE_TIME):
@@ -66,7 +62,6 @@ ToggleMenu CheatsMenu = {
         {0, "Infinite Beans", .method = Cheats_Toggle},
         {0, "Infinite Keys", .method = Cheats_Toggle},
         {0, "Infinite Rupees", .method = Cheats_Toggle},
-        {0, "Master Quest", .method = Cheats_Toggle},
         {0, "Infinite Nayru's Love", .method = Cheats_Toggle},
         #ifdef Version_JP
         {0, "Freeze time of day (TODO)", .method = NULL},
@@ -81,6 +76,7 @@ ToggleMenu CheatsMenu = {
         {0, "ISG", .method = Cheats_Toggle},
         {0, "Turbo Text", .method = Cheats_Toggle},
         #endif
+        {0, "Master Quest", .method = Cheats_Toggle},
     }
 };
 
@@ -144,6 +140,8 @@ void applyCheats() {
             *sword_active = 1;
         }
     };
+    // we could put Cheats_UsableItems here for JP, until the
+    // proper address for the patch is found (it doesn't work great though)
 }
 
 u32 Cheats_RemoveBGM(u32 original) {
@@ -175,4 +173,8 @@ void Cheats_UsableItems() {
     for (int i = 1; i < 5; i++) {
         gSaveContext.buttonStatus[i] = BTN_ENABLED;
     }
+}
+
+u32 Cheats_areItemsForcedUsable() {
+    return cheats[CHEATS_USABLE_ITEMS] && forcedUsableItems;
 }

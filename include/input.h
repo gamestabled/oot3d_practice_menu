@@ -1,6 +1,8 @@
 #include "z3D/z3D.h"
 #include "hid.h"
 
+#define ADDITIONAL_FLAG_BUTTON rInputCtx.cur.r
+
 typedef struct {
     btn_t cur;
     btn_t up;

@@ -44,6 +44,10 @@ SECTIONS
 		*(.patch_SetBGMEvent)
 	}
 
+	.patch_ItemUsability_Shield 0x42E2F0 : {
+		*(.patch_ItemUsability_Shield)
+	}
+
 	.patch_before_GlobalContext_Update 0x452390 : {
 		*(.patch_before_GlobalContext_Update)
 	}

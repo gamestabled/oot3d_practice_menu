@@ -2,6 +2,7 @@
 *   This file is a modified part of Luma3DS
 *   Copyright (C) 2016-2019 Aurora Wright, TuxSH
 *   Modified 2020 Gamestabled
+*   Modified 2021 HylianFreddy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -236,7 +237,7 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
             s32 j = page * AMOUNT_MENU_MAX_SHOW + i;
             Draw_DrawString(70, 30 + i * SPACING_Y, COLOR_WHITE, menu->items[j].title);
             Draw_DrawFormattedString(10, 30 + i * SPACING_Y, j == selected ? curColor : COLOR_TITLE,
-                menu->items[j].hex ? "0x%04X" : "  %05d", menu->items[j].amount);
+                menu->items[j].hex ? " 0x%04X" : "  %05d", menu->items[j].amount);
         }
 
         Draw_FlushFramebuffer();
@@ -294,6 +295,18 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         {
             menu->items[selected].amount -= (menu->items[selected].hex ? 16 : 10);
         }
+
+        while(chosen && (menu->items[selected].max != 0) && (menu->items[selected].amount > menu->items[selected].max)) {
+            u16 overDiff = menu->items[selected].amount - menu->items[selected].max;
+            u16 underDiff = 0xFFFF - menu->items[selected].amount;
+            if(overDiff < underDiff) {
+                menu->items[selected].amount = overDiff - 1;
+            }
+            else {
+                menu->items[selected].amount = menu->items[selected].max - underDiff;
+            }
+        }
+
         if(selected < 0)
             selected = menu->nbItems - 1;
         else if(selected >= menu->nbItems) selected = 0;

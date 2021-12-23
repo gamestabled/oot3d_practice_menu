@@ -194,20 +194,20 @@ AmountMenu InventoryAmountsMenu = {
     "Edit Amounts",
     .nbItems = 14,
     {
-        {0, 0, "Deku Sticks", .method = Inventory_AmountsSelect},
-        {0, 0, "Deku Nuts", .method = Inventory_AmountsSelect},
-        {0, 0, "Bombs", .method = Inventory_AmountsSelect},
-        {0, 0, "Arrows", .method = Inventory_AmountsSelect},
-        {0, 0, "Deku Seeds", .method = Inventory_AmountsSelect},
-        {0, 0, "Bombchus", .method = Inventory_AmountsSelect},
-        {0, 0, "Magic Beans", .method = Inventory_AmountsSelect},
-        {0, 0, "Rupees", .method = Inventory_AmountsSelect},
-        {0, 0, "Giant's Knife hits remaining", .method = Inventory_AmountsSelect},
-        {0, 0, "Double Defense (1 for on, 0 for off)", .method = Inventory_AmountsSelect},
-        {0, 0, "Magic meter size (1 for normal, 2 for double)", .method = Inventory_AmountsSelect},
-        {0, 1, "Heart Containers (0x10 per container)", .method = Inventory_AmountsSelect},
-        {0, 1, "Current Health (0x10 per container)", .method = Inventory_AmountsSelect},
-        {0, 1, "Current Magic (0x30 for normal, 0x60 for double)", .method = Inventory_AmountsSelect},
+        {0, 0,   255, "Deku Sticks", .method = Inventory_AmountsSelect},
+        {0, 0,   255, "Deku Nuts", .method = Inventory_AmountsSelect},
+        {0, 0,   255, "Bombs", .method = Inventory_AmountsSelect},
+        {0, 0,   255, "Arrows", .method = Inventory_AmountsSelect},
+        {0, 0,   255, "Deku Seeds", .method = Inventory_AmountsSelect},
+        {0, 0,   255, "Bombchus", .method = Inventory_AmountsSelect},
+        {0, 0,   255, "Magic Beans", .method = Inventory_AmountsSelect},
+        {0, 0,     0, "Rupees", .method = Inventory_AmountsSelect},
+        {0, 0,     0, "Giant's Knife hits remaining", .method = Inventory_AmountsSelect},
+        {0, 0,     1, "Double Defense (1 for on, 0 for off)", .method = Inventory_AmountsSelect},
+        {0, 0,     2, "Magic meter size (1 = normal, 2 = double)", .method = Inventory_AmountsSelect},
+        {0, 1,   0x0, "Heart Containers (0x10 per container)", .method = Inventory_AmountsSelect},
+        {0, 1, 0x140, "Current Health (0x10 per container)", .method = Inventory_AmountsSelect},
+        {0, 1,  0x7F, "Current Magic (0x30 for normal, 0x60 for double)", .method = Inventory_AmountsSelect},
     }
 };
 
@@ -950,7 +950,7 @@ void Inventory_HeartPiecesAmount(s32 selected){
             curHearts--;
         }
 
-        curHearts %= 4;
+        curHearts %= 16;
 
     } while(true);
 

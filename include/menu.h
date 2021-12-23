@@ -2,6 +2,7 @@
 *   This file is a modified part of Luma3DS
 *   Copyright (C) 2016-2019 Aurora Wright, TuxSH
 *   Modified 2020 Gamestabled
+*   Modified 2021 HylianFreddy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -61,7 +62,7 @@ typedef struct Menu {
 
 typedef struct ToggleMenuItem {
     u8 on;
-    const char *title;
+    char *title;
     void (*method)(s32);
 } ToggleMenuItem;
 
@@ -75,7 +76,8 @@ typedef struct ToggleMenu {
 typedef struct AmountMenuItem {
     u16 amount; //current amount
     u16 hex;    //display in hex or decimal
-    const char *title;
+    u16 max;    //max amount, 0 = no limit
+    char *title;
     void (*method)(s32);
 } AmountMenuItem;
 

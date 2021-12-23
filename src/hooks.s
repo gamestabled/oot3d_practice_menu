@@ -158,3 +158,13 @@ hook_ItemUsability:
     pop {r0-r12, lr}
     add sp,sp,#0x14
     bx lr
+
+.global hook_ItemUsability_Shield
+hook_ItemUsability_Shield:
+    push {r0-r12, lr}
+    bl Cheats_areItemsForcedUsable
+    cmp r0,#0x0
+    pop {r0-r12, lr}
+    bne 0x42E3DC
+    cmp r0,#0x0
+    b 0x42E2F4

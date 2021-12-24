@@ -17,6 +17,8 @@
 advance_ctx_t advance_ctx = {};
 uint8_t framebuffers_init = 0;
 static bool isAsleep = false;
+u32 alertFrames = 0;
+char* alertMessage;
 
 GlobalContext* gGlobalContext;
 
@@ -115,6 +117,14 @@ static void drawWatches(void) {
     Draw_FlushFramebuffer();
 }
 
+void drawAlert() {
+    if (alertFrames > 0) {
+        Draw_DrawFormattedStringTop(280, 220, COLOR_WHITE, alertMessage);
+        Draw_FlushFramebufferTop();
+        alertFrames--;
+    }
+}
+
 static void titleScreenDisplay(void){
     Draw_DrawFormattedStringTop(150, 20, COLOR_WHITE, "OoT3D Practice Patch");
     Draw_FlushFramebufferTop();
@@ -136,11 +146,12 @@ void advance_main(void) {
         framebuffers_init = 1;
     }
 
-    if(gSaveContext.entranceIndex == 0x0629 && gSaveContext.cutsceneIndex == 0xFFF3 && isInGame()){
+    if(gSaveContext.entranceIndex == 0x0629 && gSaveContext.cutsceneIndex == 0xFFF3 && gSaveContext.gameMode != 2){
         titleScreenDisplay();
     }
 
     drawWatches();
+    drawAlert();
     Input_Update();
     Command_UpdateCommands(rInputCtx.cur.val);
 
@@ -163,6 +174,7 @@ void advance_main(void) {
 
     while(!isAsleep &&(advance_ctx.advance_state == PAUSED || advance_ctx.advance_state == LATCHED)) {
         pauseDisplay();
+        drawAlert();
         Input_Update();
         Command_UpdateCommands(rInputCtx.cur.val);
         if(menuOpen) {

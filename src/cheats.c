@@ -134,10 +134,8 @@ void applyCheats() {
         gSaveContext.dayTime = frozenTime;
     }
     if(cheats[CHEATS_ISG]) {
-        u8* sword_active = &(((Player*)gGlobalContext->actorCtx.actorList[ACTORTYPE_PLAYER].first)->isg);
-        const MemInfo address_info = query_memory_permissions((int)sword_active);
-        if (is_valid_memory_read(&address_info)) { //loading a new area with the cheat active could crash
-            *sword_active = 1;
+        if (isInGame()) { //loading a new area with the cheat active could crash
+            PLAYER->isg = 1;
         }
     };
     // we could put Cheats_UsableItems here for JP, until the

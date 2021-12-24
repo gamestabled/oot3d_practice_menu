@@ -12,7 +12,8 @@ bool is_valid_memory_read(const MemInfo* info) {
     return (info->perm & MEMPERM_READ) != 0;
 }
 
-bool isInGame() { // TODO: recognize other states like Visions
-    // these are file select and boss challenge menu
-    return gSaveContext.gameMode != 2 && gSaveContext.gameMode != 4;
+bool isInGame() {
+    // this is to make sure the player actor exists
+    const MemInfo address_info = query_memory_permissions((int)&(PLAYER->isg));
+    return is_valid_memory_read(&address_info);
 }

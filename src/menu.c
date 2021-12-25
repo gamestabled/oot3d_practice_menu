@@ -254,7 +254,7 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         else if(pressed & (BUTTON_A | BUTTON_B) & chosen)
         {
             if(menu->items[selected].method != NULL) {
-                menu->items[selected].method(selected); //the method will handle changing amount
+                menu->items[selected].method(selected);
             }
             curColor = COLOR_GREEN;
             chosen = 0;
@@ -279,7 +279,7 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         {
             selected -= AMOUNT_MENU_MAX_SHOW;
         }
-        else if(pressed & BUTTON_LEFT && chosen)
+        else if(pressed & BUTTON_RIGHT && chosen)
         {
             menu->items[selected].amount += (menu->items[selected].hex ? 16 : 10);
         }
@@ -291,7 +291,7 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
                 selected %= AMOUNT_MENU_MAX_SHOW;
             else selected = menu->nbItems - 1;
         }
-        else if(pressed & BUTTON_RIGHT && chosen)
+        else if(pressed & BUTTON_LEFT && chosen)
         {
             menu->items[selected].amount -= (menu->items[selected].hex ? 16 : 10);
         }

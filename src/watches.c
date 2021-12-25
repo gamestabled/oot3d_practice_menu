@@ -76,9 +76,9 @@ static void WatchesEditWatch(s32 selected){
         if(chosen){
             if (pressed & (BUTTON_B | BUTTON_A))
                 chosen = 0;
-            else if(pressed & BUTTON_RIGHT)
-                bytes[selectedByte] -= 0x10;
             else if(pressed & BUTTON_LEFT)
+                bytes[selectedByte] -= 0x10;
+            else if(pressed & BUTTON_RIGHT)
                 bytes[selectedByte] += 0x10;
             else if(pressed & BUTTON_UP)
                 bytes[selectedByte]++;

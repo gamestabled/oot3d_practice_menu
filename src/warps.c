@@ -7,13 +7,25 @@
 #include "z3D/entrances.h"
 #include <stdio.h>
 
+static u8 sceneSetupOverrideActive = 0;
+
 Menu WarpsMenu = {
     "Warps",
-    .nbItems = 3,
+    .nbItems = 4,
     {
         {"Places", METHOD, .method = WarpsPlacesMenuShow},
         {"Manually Enter Entrance Index", METHOD, .method = ManuallyEnterEntranceIndex},
         {"Clear CS Pointer", METHOD, .method = ClearCutscenePointer},
+        {"Override Game Mode & Scene Setup", METHOD, .method = WarpsOverridesMenuShow},
+    }
+};
+
+AmountMenu WarpsOverridesMenu = {
+    "Warps Overrides",
+    .nbItems = 2,
+    {
+        {0, 0,  6, "Game Mode", .method = Warps_OverrideGameMode},
+        {0, 0, 14, "Scene Setup Index - Override OFF", .method = Warps_OverrideSceneSetupIndex},
     }
 };
 
@@ -33,7 +45,7 @@ WarpsSceneMenu WarpsPlacesDungeonsMenu = {
         {"9: Ice Cavern", &Entrances_IceCavern},
         {"10: Ganon's Tower", &Entrances_GanonsTower},
         {"11: Gerudo Training Ground", &Entrances_GerudoTrainingGround},
-        {"12: Thieve's Hideout", &Entrances_ThievesHideout},
+        {"12: Thieves' Hideout", &Entrances_ThievesHideout},
         {"13: Inside Ganon's Castle", &Entrances_InsideGanonsCastle},
         {"14: Ganon's Tower (Collapsing)", &Entrances_GanonsTowerCollapsing},
         {"15: Inside Ganon's Castle (Collapsing)", &Entrances_InsideGanonsCastleCollapsing},
@@ -45,16 +57,16 @@ WarpsSceneMenu WarpsPlacesBossesMenu = {
     "Bosses",
     .nbItems = 10,
     {
-        {"17: Gohma's Lair", &Entrances_GohmasLair},
-        {"18: King Dodongo's Lair", &Entrances_KingDodongosLair},
-        {"19: Barinade's Lair", &Entrances_BarinadesLair},
-        {"20: Phantom Ganon's Lair", &Entrances_PhantomGanonsLair},
-        {"21: Volvagia's Lair", &Entrances_VolvagiasLair},
-        {"22: Morpha's Lair", &Entrances_MorphasLair},
-        {"23: Twinrova's Lair & Nabooru's Mini-Boss Room", &Entrances_TwinrovasLair},
-        {"24: Bongo Bongo's Lair", &Entrances_BongoBongosLair},
-        {"25: Ganondorf's Lair", &Entrances_GanondorfsLair},
-        {"79: Ganon's Tower Collapse & Battle Arena", &Entrances_GanonsBattleArena},
+        {"17: Gohma", &Entrances_GohmasLair},
+        {"18: King Dodongo", &Entrances_KingDodongosLair},
+        {"19: Barinade", &Entrances_BarinadesLair},
+        {"20: Phantom Ganon", &Entrances_PhantomGanonsLair},
+        {"21: Volvagia", &Entrances_VolvagiasLair},
+        {"22: Morpha", &Entrances_MorphasLair},
+        {"23: Twinrova", &Entrances_TwinrovasLair},
+        {"24: Bongo Bongo", &Entrances_BongoBongosLair},
+        {"25: Ganondorf", &Entrances_GanondorfsLair},
+        {"79: Ganon", &Entrances_GanonsBattleArena},
     }
 };
 
@@ -86,13 +98,13 @@ WarpsSceneMenu WarpsPlacesHousesMenu = {
         {"41: Saria's House", &Entrances_SariasHouse},
         {"42: Carpenter Boss's House", &Entrances_CarpenterBosssHouse},
         {"43: Back Alley House (Man in Green)", &Entrances_BackAlleyHouseManInGreen},
-        {"53: Back Alley House (Dog Lady)", &Entrances_BackAlleyHouseDogLady},
+        {"53: Richard's House", &Entrances_BackAlleyHouseDogLady},
         {"54: Stable", &Entrances_Stable},
         {"55: Impa's House", &Entrances_ImpasHouse},
         {"57: Carpenters' Tent", &Entrances_CarpentersTent},
         {"58: Gravekeeper's Hut", &Entrances_GravekeepersHut},
-        {"76: Ranch House & Silo", &Entrances_RanchHouse},
-        {"77: Guard House", &Entrances_GuardHouse},
+        {"76: Ranch Buildings", &Entrances_RanchHouse},
+        {"77: Guard House / Ghost Shop", &Entrances_GuardHouse},
         {"80: House of Skulltula", &Entrances_HouseOfSkulltula},
     }
 };
@@ -112,7 +124,7 @@ WarpsSceneMenu WarpsPlacesShopsMenu = {
         {"66: Shooting Gallery", &Entrances_ShootingGallery},
         {"75: Bombchu Bowling Alley", &Entrances_BombchuBowlingAlley},
         {"78: Granny's Potion Shop", &Entrances_GrannysPotionShop},
-        {"16: Treasure Box Shop", &Entrances_TreasureBoxShop},
+        {"16: Treasure Chest Shop", &Entrances_TreasureBoxShop},
     }
 };
 
@@ -121,8 +133,8 @@ WarpsSceneMenu WarpsPlacesMiscMenu = {
     .nbItems = 14,
     {
         {"67: Temple of Time", &Entrances_TempleOfTime},
-        {"74: Castle Courtyard", &Entrances_CastleCourtyard},
-        {"72: Dampe's Grace & Windmill", &Entrances_Windmill},
+        {"74: Zelda's Courtyard", &Entrances_CastleCourtyard},
+        {"72: Dampe's Grave / Windmill", &Entrances_Windmill},
         {"69: Castle Hedge Maze", &Entrances_CastleHeadgeMaze},
         {"56: Lakeside Laboratory", &Entrances_LakesideLaboratory},
         {"59: Great Fairy's Fountain (Upgrades)", &Entrances_GreatFairysFountainUpgrades},
@@ -228,132 +240,40 @@ void WarpsPlacesMenuShow(void){
     } while(menuOpen);
 }
 
-static const char* TimeNames[] = {
-    "Current ",
-    "Midnight",
-    "6 AM    ",
-    "Noon    ",
-    "6 PM    ",
-};
-
 void ManuallyEnterEntranceIndex(void){
-    s32 selected = 0;
-    s32 chosenAge = gSaveContext.linkAge;
-    u32 chosenTime = 0;
-    u16 chosenIndex = 0x0000;
-    u32 curColor = COLOR_WHITE;
-    s32 cutsceneIndex = -1;
-    u32 chosen = 0;
-
-    Draw_Lock();
-    Draw_ClearFramebuffer();
-    Draw_FlushFramebuffer();
-    Draw_Unlock();
-
-    do
-    {
-        Draw_Lock();
-        Draw_DrawFormattedString(10, 10, COLOR_TITLE, "Manually Enter Entrance Index");
-
-        Draw_DrawFormattedString(30, 30, COLOR_WHITE, "Age on Load: %s", chosenAge ? "Child" : "Adult");
-        Draw_DrawCharacter(10, 30, COLOR_TITLE, selected == Manual_Entrance_Menu_Age ? '>' : ' ');
-
-        Draw_DrawFormattedString(30, 30 + SPACING_Y * Manual_Entrance_Menu_Time, COLOR_WHITE, "Time of Day: %s", TimeNames[chosenTime]);
-        Draw_DrawCharacter(10, 30 + SPACING_Y * Manual_Entrance_Menu_Time, COLOR_TITLE, selected == Manual_Entrance_Menu_Time ? '>' : ' ');
-
-        if (cutsceneIndex < 0){
-            cutsceneIndex = -1;
-            Draw_DrawString(30, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, selected == 1 ? curColor : COLOR_WHITE, "Cutscene Number on Load: None");
-        }
-        else {
-            Draw_DrawFormattedString(30, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx,
-                selected == Manual_Entrance_Menu_CsIdx ? curColor : COLOR_WHITE, "Cutscene Number on Load: %04d", cutsceneIndex);
-        }
-        Draw_DrawCharacter(10, 30 + SPACING_Y * Manual_Entrance_Menu_CsIdx, COLOR_TITLE, selected == Manual_Entrance_Menu_CsIdx ? '>' : ' ');
-
-        Draw_DrawFormattedString(30, 30 + SPACING_Y * Manual_Entrance_Menu_EtcIdx, selected == Manual_Entrance_Menu_EtcIdx ? curColor : COLOR_WHITE,
-            "Entrance Index: 0x%04X", chosenIndex);
-        Draw_DrawCharacter(10, 30 + SPACING_Y * Manual_Entrance_Menu_EtcIdx, COLOR_TITLE, selected == Manual_Entrance_Menu_EtcIdx ? '>' : ' ');
-
-        Draw_DrawString(30, 30 + SPACING_Y * Manual_Entrance_Menu_Go, COLOR_WHITE, "Go");
-        Draw_DrawCharacter(10, 30 + SPACING_Y * Manual_Entrance_Menu_Go, COLOR_TITLE, selected == Manual_Entrance_Menu_Go ? '>' : ' ');
-
-        Draw_FlushFramebuffer();
-        Draw_Unlock();
-
-        u32 pressed = Input_WaitWithTimeout(1000);
-        if(pressed & BUTTON_B && !chosen)
-            break;
-        else if(pressed & BUTTON_B && chosen)
-        {
-            curColor = COLOR_WHITE;
-            chosen = 0;
-        }
-        else if(pressed & BUTTON_A && !chosen)
-        {
-            if(selected == Manual_Entrance_Menu_CsIdx || selected == Manual_Entrance_Menu_EtcIdx){
-                chosen = 1;
-                curColor = COLOR_RED;
-            }
-            else if(selected == Manual_Entrance_Menu_Age){
-                chosenAge = 1 - chosenAge;
-            }
-            else if(selected == Manual_Entrance_Menu_Time){
-                chosenTime++;
-                chosenTime %= 5;
-            }
-            else if(selected == Manual_Entrance_Menu_Go){
-                EntranceWarp(chosenIndex, chosenAge, cutsceneIndex, chosenTime);
-                menuOpen = 0;
-            }
-        }
-        else if(pressed & BUTTON_A && chosen)
-        {
-            curColor = COLOR_WHITE;
-            chosen = 0;
-        }
-        else if(pressed & BUTTON_DOWN && !chosen)
-        {
-            selected++;
-        }
-        else if(pressed & BUTTON_DOWN && chosen && selected == Manual_Entrance_Menu_CsIdx)
-        {
-            cutsceneIndex--;
-        }
-        else if(pressed & BUTTON_DOWN && chosen && selected == Manual_Entrance_Menu_EtcIdx){
-            chosenIndex--;
-        }
-        else if(pressed & BUTTON_UP && !chosen)
-        {
-            selected--;
-        }
-        else if(pressed & BUTTON_UP && chosen && selected == Manual_Entrance_Menu_CsIdx)
-        {
-            cutsceneIndex++;
-        }
-        else if(pressed & BUTTON_UP && chosen && selected == Manual_Entrance_Menu_EtcIdx){
-            chosenIndex++;
-        }
-        else if(pressed & BUTTON_LEFT && chosen && selected == Manual_Entrance_Menu_CsIdx){
-            cutsceneIndex -= 10;
-        }
-        else if(pressed & BUTTON_LEFT && chosen && selected == Manual_Entrance_Menu_EtcIdx){
-            chosenIndex -= 16;
-        }
-        else if(pressed & BUTTON_RIGHT && chosen && selected == Manual_Entrance_Menu_CsIdx){
-            cutsceneIndex += 10;
-        }
-        else if(pressed & BUTTON_RIGHT && chosen && selected == Manual_Entrance_Menu_EtcIdx){
-            chosenIndex += 16;
-        }
-        if(selected < 0)
-            selected = Manual_Entrance_Menu_Go;
-        else if(selected > Manual_Entrance_Menu_Go) selected = Manual_Entrance_Menu_Age;
-
-    } while(menuOpen);
+    EntranceSelectMenuShow(&Entrances_Empty, 1);
 }
 
 void ClearCutscenePointer(void){
     static u32 nullCS[] = { 0, 0 };
     gGlobalContext->csCtx.segment = &nullCS;
+}
+
+void Warps_OverridesMenuInit(void){
+    WarpsOverridesMenu.items[WARPS_GAME_MODE].amount = gSaveContext.gameMode;
+}
+
+void WarpsOverridesMenuShow(void){
+    Warps_OverridesMenuInit();
+    AmountMenuShow(&WarpsOverridesMenu);
+}
+
+void Warps_OverrideGameMode(s32 selected){
+    gSaveContext.gameMode = WarpsOverridesMenu.items[WARPS_GAME_MODE].amount;
+}
+
+void Warps_OverrideSceneSetupIndex(s32 selected) {
+    if (ADDITIONAL_FLAG_BUTTON) {
+        sceneSetupOverrideActive = 1;
+        WarpsOverridesMenu.items[WARPS_SCENE_SETUP_INDEX].title = "Scene Setup Index - Override ON ";
+    } else {
+        sceneSetupOverrideActive = 0;
+        WarpsOverridesMenu.items[WARPS_SCENE_SETUP_INDEX].title = "Scene Setup Index - Override OFF";
+    }
+}
+
+void Warps_OverrideSceneSetup(void){
+    if(sceneSetupOverrideActive) {
+        gSaveContext.sceneSetupIndex = WarpsOverridesMenu.items[WARPS_SCENE_SETUP_INDEX].amount;
+    }
 }

@@ -84,3 +84,8 @@ ItemUsabilityShield_patch:
 .global SleepQueryCallback_patch
 SleepQueryCallback_patch:
     b hook_Gfx_SleepQueryCallback
+
+.section .patch_OverrideSceneSetup
+.global OverrideSceneSetup_patch
+OverrideSceneSetup_patch:
+    bl hook_OverrideSceneSetup

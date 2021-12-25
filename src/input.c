@@ -54,9 +54,9 @@ u32 Input_WaitWithTimeout(u32 msec) {
     }
     else if (isDPadPressed)
     {
-        // By default wait 75 milliseconds before moving the cursor so that
+        // By default wait 50 milliseconds before moving the cursor so that
         // we don't scroll the menu too fast.
-        svcSleepThread(75 * 1000 * 1000LL);
+        svcSleepThread(50 * 1000 * 1000LL);
     }
     else
     {

@@ -1130,6 +1130,7 @@ void Inventory_AmountsSelect(s32 selected){
         case(Amounts_Menu_Magic_meter_size):
             gSaveContext.magicAcquired = (InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount != 0);
             gSaveContext.doubleMagic = (InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount == 2);
+            gSaveContext.magicLevel = InventoryAmountsMenu.items[Amounts_Menu_Magic_meter_size].amount;
             break;
         case(Amounts_Menu_Heart_Containers):
             gSaveContext.healthCapacity = InventoryAmountsMenu.items[Amounts_Menu_Heart_Containers].amount;

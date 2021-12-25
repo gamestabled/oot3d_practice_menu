@@ -176,3 +176,11 @@ hook_Gfx_SleepQueryCallback:
     pop {r0-r12, lr}
     add r0,r0,#0x9C
     b 0x3FD6C8
+
+.global hook_OverrideSceneSetup
+hook_OverrideSceneSetup:
+    push {r0-r12, lr}
+    bl Warps_OverrideSceneSetup
+    pop {r0-r12, lr}
+    mov r0,#0x2
+    bx lr

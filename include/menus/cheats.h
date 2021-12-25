@@ -6,6 +6,7 @@ extern ToggleMenu CheatsMenu;
 
 void Cheats_ShowCheatsMenu();
 void applyCheats();
+void Cheats_UsableItems();
 
 typedef enum {
     /* 0x00*/ CHEATS_HEALTH = 0,

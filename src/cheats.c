@@ -138,8 +138,7 @@ void applyCheats() {
             PLAYER->isg = 1;
         }
     };
-    // we could put Cheats_UsableItems here for JP, until the
-    // proper address for the patch is found (it doesn't work great though)
+    Cheats_UsableItems();
 }
 
 u32 Cheats_RemoveBGM(u32 original) {
@@ -171,6 +170,7 @@ void Cheats_UsableItems() {
     for (int i = 1; i < 5; i++) {
         gSaveContext.buttonStatus[i] = BTN_ENABLED;
     }
+    gSaveContext.ocarinaButtonStatus = BTN_ENABLED;
 }
 
 u32 Cheats_areItemsForcedUsable() {

@@ -24,9 +24,9 @@ static void Command_Break(void){
         if (z64_game.event_flag != -1)
             z64_game.event_flag = 0x0000;
         */
-        if (gGlobalContext->csCtx.state != 0x00) {
-            gGlobalContext->csCtx.state = 0x03;
-        }
+
+        gGlobalContext->csCtx.state = 0x03;
+
         /*if (gGlobalContext->msgMode != 0x00) {
             gGlobalContext->msgMode = 0x36; // doesn't work to close text boxes
             //z64_game.message_state_2 = 0x00;

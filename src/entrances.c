@@ -18,6 +18,20 @@ static const u16 EntranceTimes[] = {
     0xC001,
 };
 
+static const char* TimeNames[] = {
+    "Current ",
+    "Midnight",
+    "6 AM    ",
+    "Noon    ",
+    "6 PM    ",
+};
+
+static const char* AgeNames[] = {
+    "Adult  ",
+    "Child  ",
+    "Current",
+};
+
 void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex, u32 chosenTimeIndex){
     if (chosenTimeIndex != 0){
         gSaveContext.dayTime = EntranceTimes[chosenTimeIndex];
@@ -35,18 +49,11 @@ void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex, u32 chose
     gGlobalContext->sceneLoadFlag = 0x14;
 }
 
-static const char* TimeNames[] = {
-    "Current ",
-    "Midnight",
-    "6 AM    ",
-    "Noon    ",
-    "6 PM    ",
-};
-
-void EntranceSelectMenuShow(const EntrancesByScene* entrances){
+void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSelection){
     s32 selected = 3, page = 0, pagePrev = 0;
-    s32 chosenAge = gSaveContext.linkAge;
+    s32 chosenAge = 2;
     u32 chosenTime = 0;
+    u16 chosenEntranceIndex = 0x0000;
     u32 curColor = COLOR_WHITE;
     s32 cutsceneIndex = -1;
     u32 chosen = 0;
@@ -65,7 +72,7 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
         }
         Draw_DrawFormattedString(10, 10, COLOR_TITLE, entrances->title);
 
-        Draw_DrawFormattedString(30, 30, COLOR_WHITE, "Age on Load: %s", chosenAge ? "Child" : "Adult");
+        Draw_DrawFormattedString(30, 30, COLOR_WHITE, "Age on Load: %s", AgeNames[chosenAge]);
         Draw_DrawCharacter(10, 30, COLOR_TITLE, selected == Entrance_Select_Menu_Age ? '>' : ' ');
 
         Draw_DrawFormattedString(30, 30 + SPACING_Y * Entrance_Select_Menu_Time, COLOR_WHITE, "Time of Day: %s", TimeNames[chosenTime]);
@@ -73,10 +80,12 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
 
         if (cutsceneIndex < 0){
             cutsceneIndex = -1;
-            Draw_DrawString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, curColor, "Cutscene Number on Load: None");
+            Draw_DrawString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx,
+                (selected == Entrance_Select_Menu_CsIdx) ? curColor : COLOR_WHITE, "Cutscene Number on Load: None");
         }
         else {
-            Draw_DrawFormattedString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, curColor, "Cutscene Number on Load: %04d", cutsceneIndex);
+            Draw_DrawFormattedString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx,
+                (selected == Entrance_Select_Menu_CsIdx) ? curColor : COLOR_WHITE, "Cutscene Number on Load: %02d  ", cutsceneIndex);
         }
         Draw_DrawCharacter(10, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, COLOR_TITLE, selected == Entrance_Select_Menu_CsIdx ? '>' : ' ');
 
@@ -87,60 +96,95 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances){
             Draw_DrawCharacter(10, 30 + (Entrance_Select_Menu_Etcs + i) * SPACING_Y, COLOR_TITLE, selected == (Entrance_Select_Menu_Etcs + j) ? '>' : ' ');
         }
 
+        if (manualSelection) {
+            Draw_DrawFormattedString(30, 30 + SPACING_Y * Entrance_Select_Menu_Etcs, selected == Entrance_Select_Menu_Etcs ? curColor : COLOR_WHITE,
+                "Entrance Index: 0x%04X", chosenEntranceIndex);
+            Draw_DrawCharacter(10, 30 + SPACING_Y * Entrance_Select_Menu_Etcs, COLOR_TITLE, selected == Entrance_Select_Menu_Etcs ? '>' : ' ');
+
+            Draw_DrawString(30, 30 + SPACING_Y * Entrance_Select_Menu_Go, COLOR_WHITE, "Go");
+            Draw_DrawCharacter(10, 30 + SPACING_Y * Entrance_Select_Menu_Go, COLOR_TITLE, selected == Entrance_Select_Menu_Go ? '>' : ' ');
+        }
+
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
         u32 pressed = Input_WaitWithTimeout(1000);
-        if((pressed & BUTTON_B) && !chosen)
-            break;
-        else if((pressed & BUTTON_B) && chosen)
-        {
-            curColor = COLOR_WHITE;
-            chosen = 0;
-        }
-        else if((pressed & BUTTON_A) && !chosen)
-        {
-            if(selected == Entrance_Select_Menu_CsIdx){
-                chosen = 1;
-                curColor = COLOR_RED;
+        if (chosen) {
+            if(pressed & (BUTTON_B | BUTTON_A)) // unselect option
+            {
+                curColor = COLOR_WHITE;
+                chosen = 0;
             }
-            else if(selected == Entrance_Select_Menu_Age){
-                chosenAge = 1 - chosenAge;
+            else if (pressed & (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT | BUTTON_X | BUTTON_Y)) // change selected value
+            {
+                s16 increment = 0;
+                switch (pressed & (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT | BUTTON_X | BUTTON_Y))
+                {
+                    case (BUTTON_UP): increment = 1; break;
+                    case (BUTTON_DOWN): increment = -1; break;
+                    case (BUTTON_RIGHT): increment = 16; break;
+                    case (BUTTON_LEFT): increment = -16; break;
+                    case (BUTTON_X): increment = 256; break;
+                    case (BUTTON_Y): increment = -256; break;
+                }
+                if (selected == Entrance_Select_Menu_CsIdx)
+                    cutsceneIndex += increment;
+                else if (selected == Entrance_Select_Menu_Etcs)
+                    chosenEntranceIndex += increment;
             }
-            else if(selected == Entrance_Select_Menu_Time){
-                chosenTime++;
-                chosenTime %= 5;
+        } else { // not chosen
+            if(pressed & BUTTON_B) // close entrances menu
+            {
+                break;
             }
-            else if(selected >= Entrance_Select_Menu_Etcs){
-                EntranceWarp(entrances->items[selected - Entrance_Select_Menu_Etcs].entranceIndex, chosenAge, cutsceneIndex, chosenTime);
-                menuOpen = 0;
+            if(pressed & BUTTON_A) // select option
+            {
+                if(selected == Entrance_Select_Menu_CsIdx || (manualSelection && selected == Entrance_Select_Menu_Etcs)){
+                    chosen = 1;
+                    curColor = COLOR_RED;
+                }
+                else if(selected == Entrance_Select_Menu_Age){
+                    chosenAge++;
+                    chosenAge %= 3;
+                }
+                else if(selected == Entrance_Select_Menu_Time){
+                    chosenTime++;
+                    chosenTime %= 5;
+                }
+                else if(selected >= Entrance_Select_Menu_Etcs){
+                    s32 age;
+                    switch(chosenAge) {
+                        case 2: age = gSaveContext.linkAge; break;
+                        default: age = chosenAge; break;
+                    }
+                    u16 entranceIndex = manualSelection ? chosenEntranceIndex : entrances->items[selected - Entrance_Select_Menu_Etcs].entranceIndex;
+                    EntranceWarp(entranceIndex, age, cutsceneIndex, chosenTime);
+                    menuOpen = 0;
+                }
+            }
+            else if(pressed & BUTTON_DOWN)
+            {
+                selected++;
+            }
+            else if(pressed & BUTTON_UP)
+            {
+                selected--;
             }
         }
-        else if((pressed & BUTTON_A) && chosen) //should be guaranteed selected == 1
-        {
-            curColor = COLOR_WHITE;
-            chosen = 0;
-        }
-        else if((pressed & BUTTON_DOWN) && !chosen)
-        {
-            selected++;
-        }
-        else if((pressed & BUTTON_DOWN) && chosen)
-        {
-            cutsceneIndex--;
-        }
-        else if((pressed & BUTTON_UP) && !chosen)
-        {
-            selected--;
-        }
-        else if((pressed & BUTTON_UP) && chosen)
-        {
-            cutsceneIndex++;
-        }
-        if(selected < 0)
-            selected = Entrance_Select_Menu_Etcs + entrances->nbItems - 1;
-        else if(selected >= Entrance_Select_Menu_Etcs + entrances->nbItems) selected = Entrance_Select_Menu_Age;
 
+        if(cutsceneIndex > 15){
+            cutsceneIndex = -1;
+        }
+        if(cutsceneIndex < -1) {
+            cutsceneIndex = 15;
+        }
+
+        if(selected < 0) {
+            selected = (manualSelection ? Entrance_Select_Menu_Go : (Entrance_Select_Menu_Etcs + entrances->nbItems - 1));
+        }
+        else if(selected > (manualSelection ? Entrance_Select_Menu_Go : (Entrance_Select_Menu_Etcs + entrances->nbItems - 1))) {
+            selected = Entrance_Select_Menu_Age;
+        }
         pagePrev = page;
         page = selected >= ENTRANCE_MENU_MAX_SHOW + Entrance_Select_Menu_Etcs ? 1 : 0;
     } while(menuOpen);
@@ -183,7 +227,7 @@ void WarpsSceneMenuShow(const WarpsSceneMenu* menu){
             Draw_FlushFramebuffer();
             Draw_Unlock();
 
-            EntranceSelectMenuShow(menu->scenes[selected].entrances);
+            EntranceSelectMenuShow(menu->scenes[selected].entrances, 0);
 
             Draw_Lock();
             Draw_ClearFramebuffer();
@@ -218,20 +262,27 @@ void WarpsSceneMenuShow(const WarpsSceneMenu* menu){
     } while(menuOpen);
 }
 
+const EntrancesByScene Entrances_Empty = {
+    "Manually Enter Entrance Index",
+    .nbItems = 0,
+    {
+    }
+};
+
 const EntrancesByScene Entrances_BackAlley = {
     "Back Alley",
     .nbItems = 5,
     {
-        {0x0067, "From Man in Green"},
-        {0x038C, "From Dog Lady"},
-        {0x0398, "From Bombchu Shop"},
-        {0x029A, "From Market (Left Side)"},
         {0x00AD, "From Market (Right Side)"},
+        {0x029A, "From Market (Left Side)"},
+        {0x03C1, "From Bombchu Shop"},
+        {0x0067, "From Man in Green"},
+        {0x038C, "From Richard's House"},
     }
 };
 
 const EntrancesByScene Entrances_BackAlleyHouseDogLady = {
-    "Back Alley House (Dog Lady)",
+    "Richard's House",
     .nbItems = 1,
     {
         {0x0398, "From Back Alley"},
@@ -275,8 +326,8 @@ const EntrancesByScene Entrances_BombchuShop = {
     "Bombchu Shop",
     .nbItems = 2,
     {
-        {0x0390, "[Unused]"},
         {0x0528, "From Back Alley"},
+        {0x0390, "Unused: normal entrance"},
     }
 };
 
@@ -293,7 +344,7 @@ const EntrancesByScene Entrances_BottomOfTheWell = {
     .nbItems = 2,
     {
         {0x0098, "From Kakariko Village"},
-        {0x05CC, "[Unused]"},
+        {0x05CC, "Unused: normal entrance"},
     }
 };
 
@@ -314,7 +365,7 @@ const EntrancesByScene Entrances_CarpentersTent = {
 };
 
 const EntrancesByScene Entrances_CastleCourtyard = {
-    "Castle Courtyard",
+    "Zelda's Courtyard",
     .nbItems = 2,
     {
         {0x0400, "From Castle Hedge Maze"},
@@ -324,11 +375,10 @@ const EntrancesByScene Entrances_CastleCourtyard = {
 
 const EntrancesByScene Entrances_CastleHeadgeMaze = {
     "Castle Hedge Maze",
-    .nbItems = 3,
+    .nbItems = 2,
     {
         {0x007A, "From Hyrule Castle"},
         {0x0296, "From Castle Courtyard"},
-        {0x0076, "[Unused]"},
     }
 };
 
@@ -336,8 +386,8 @@ const EntrancesByScene Entrances_ChamberOfTheSages = {
     "Chamber of the Sages",
     .nbItems = 2,
     {
-        {0x006B, "From Temple of Time"},
-        {0x02CE, "[?]"},
+        {0x006B, "Default"},
+        {0x02CE, "Unused: crashes"},
     }
 };
 
@@ -345,8 +395,8 @@ const EntrancesByScene Entrances_CutsceneMap = {
     "Cutscene Map",
     .nbItems = 2,
     {
-        {0x00A0, "[?]"},
-        {0x02EF, "[?]"},
+        {0x00A0, "Default"},
+        {0x02EF, "Unused: single copy, reversed rain?"},
     }
 };
 
@@ -358,8 +408,8 @@ const EntrancesByScene Entrances_DeathMountainCrater = {
         {0x0246, "From Goron City"},
         {0x024A, "From Fire Temple"},
         {0x0482, "From Great Fairy's Fountain"},
-        {0x0564, "From Volvagia's Lair: Blue Warp"},
         {0x0476, "From Warp Song: Bolero of Fire"},
+        {0x0564, "From Blue Warp"},
     }
 };
 
@@ -381,14 +431,14 @@ const EntrancesByScene Entrances_DesertColossus = {
     .nbItems = 9,
     {
         {0x0123, "From Haunted Wasteland"},
-        {0x01ED, "From Requiem of Spirit Cutscene"},
-        {0x057C, "From Great Fairy's Fountain"},
-        {0x0610, "From Twinrova's Lair: Blue Warp"},
         {0x01E1, "From Spirit Temple (Main Entrance)"},
         {0x01E5, "From Spirit Temple (Statue's Left Hand)"},
         {0x01E9, "From Spirit Temple (Statue's Right Hand)"},
-        {0x01F5, "From Silver Gauntlets Cutscene"},
+        {0x01ED, "From Requiem of Spirit Cutscene"},
         {0x01F1, "From Warp Song: Requiem of Spirit"},
+        {0x01F5, "From Silver Gauntlets Cutscene"},
+        {0x057C, "From Great Fairy's Fountain"},
+        {0x0610, "From Blue Warp"},
     }
 };
 
@@ -432,7 +482,7 @@ const EntrancesByScene Entrances_ForestTemple = {
     {
         {0x0169, "From Sacred Forest Meadow"},
         {0x024E, "From Phantom Ganon's Lair"},
-        {0x0584, "[?]"},
+        {0x0584, "Unused: ceiling crush room"},
     }
 };
 
@@ -442,7 +492,7 @@ const EntrancesByScene Entrances_GanonsTower = {
     {
         {0x041B, "From Inside Ganon's Castle"},
         {0x0427, "From Ganondorf's Lair"},
-        {0x042B, "Below Ganondorf's Lair"},
+        {0x042B, "Unused: Below Ganondorf's Lair"},
     }
 };
 
@@ -473,7 +523,7 @@ const EntrancesByScene Entrances_GanonsTowerExterior = {
     "Ganon's Tower Exterior (Collapsing)",
     .nbItems = 8,
     {
-        {0x043F, "[?]"},
+        {0x043F, "From Ganondorf"},
         {0x0524, "Stairs A (Bottom)"},
         {0x051C, "Stairs A (Top)"},
         {0x01C9, "Stairs B (Bottom)"},
@@ -608,8 +658,8 @@ const EntrancesByScene Entrances_Graveyard = {
         {0x035D, "From Grave (Fairy's Fountain)"},
         {0x0361, "From Grave (Redead)"},
         {0x050B, "From Royal Family's Tomb"},
-        {0x0580, "From Bongo Bongo's Lair: Blue Warp"},
-        {0x0568, "From Warp Song: Nocturne of Show"},
+        {0x0580, "From Blue Warp"},
+        {0x0568, "From Warp Song: Nocturne of Shadow"},
     }
 };
 
@@ -627,10 +677,10 @@ const EntrancesByScene Entrances_GreatFairysFountainUpgrades = {
     "Great Fairy's Fountain (Upgrades)",
     .nbItems = 4,
     {
-        {0x04C2, "From Ganon's Castle Exterior"},
-        {0x04BE, "From Death Mountain Crater"},
-        {0x04F2, "From Death Mountain Crater (Kakariko Village)"},
         {0x0315, "From Death Mountain Trail"},
+        {0x04BE, "From Death Mountain Crater"},
+        {0x04C2, "From Ganon's Castle Exterior"},
+        {0x04F2, "From Death Mountain Crater (Kakariko Village)"},
     }
 };
 
@@ -638,6 +688,7 @@ const EntrancesByScene Entrances_Grottos = {
     "Grottos",
     .nbItems = 14,
     {
+        {0x003F, "Default"},
         {0x0598, "Big Skulltula"},
         {0x05B8, "Bombable Walls"},
         {0x059C, "Business Scrub (Piece of Heart)"},
@@ -648,7 +699,6 @@ const EntrancesByScene Entrances_Grottos = {
         {0x05C4, "Forest Stage"},
         {0x05AC, "Octorok"},
         {0x05A0, "Redead"},
-        {0x003F, "Small Rupee Chest"},
         {0x05C0, "Tektite"},
         {0x05A8, "Webs"},
         {0x05B4, "Wolfos"},
@@ -677,7 +727,7 @@ const EntrancesByScene Entrances_HauntedWasteland = {
     {
         {0x0130, "Gerudo's Fortress & Void Respawn"},
         {0x0365, "From Desert Colossus"},
-        {0x0369, "[?]"},
+        {0x0369, "Unused: OoB spawn without Link"},
     }
 };
 
@@ -702,10 +752,10 @@ const EntrancesByScene Entrances_HyruleCastleGanonsCastleExterior = {
     .nbItems = 5,
     {
         {0x0138, "From Market"},
+        {0x023D, "From Castle Hedge Maze / Ganon's Castle Interior"},
         {0x0340, "From Great Fairy's Fountain"},
         {0x047E, "From Caught By Castle Guard"},
         {0x04FA, "From Caught By Hedge Maze Guard"},
-        {0x023D, "From Castle Hedge Maze / Ganon's Castle Interior"},
     }
 };
 
@@ -715,22 +765,22 @@ const EntrancesByScene Entrances_HyruleField = {
     {
         {0x00CD, "From Zelda's Escape Cutscene"},
         {0x017D, "From Kakariko Village"},
+        {0x0181, "From Zora's River (Land)"},
         {0x0185, "From Lost Woods"},
         {0x0189, "From Lake Hylia"},
         {0x018D, "From Gerudo Valley"},
         {0x01F9, "From Lon Lon Ranch (Main Entrance)"},
         {0x01FD, "From Market Entrance"},
-        {0x027A, "From Lake Hylia"},
+        {0x027A, "Near Lake Hylia"},
         {0x027E, "From Lake Hylia Owl Ride"},
         {0x0282, "[Unused]"},
         {0x028A, "From Lon Lon Ranch (South Fence)"},
         {0x028E, "From Lon Lon Ranch (West Fence)"},
         {0x0292, "From Lon Lon Ranch (East Fence)"},
+        {0x0311, "From Zora's River (Water)"},
         {0x0476, "[?]"},
         {0x050F, "[?]"},
-        {0x0594, "From Impa's Escort"},
-        {0x0181, "From Zora's River (Land)"},
-        {0x0311, "From Zora's River (Water)"},
+        {0x0594, "From Impa's Cutscene"},
     }
 };
 
@@ -747,17 +797,16 @@ const EntrancesByScene Entrances_ImpasHouse = {
     "Impa's House",
     .nbItems = 2,
     {
-        {0x05C8, "Cage"},
         {0x039C, "Main Entrance"},
+        {0x05C8, "Cage"},
     }
 };
 
 const EntrancesByScene Entrances_InsideGanonsCastle = {
     "Inside Ganon's Castle",
-    .nbItems = 9,
+    .nbItems = 8,
     {
         {0x0467, "From Ganon's Castle Exterior"},
-        {0x046B, "From Ganon's Castle Exterior"},
         {0x0534, "From Ganon's Tower"},
         {0x0538, "Forest Trial Clear"},
         {0x053C, "Water Trial Clear"},
@@ -800,7 +849,7 @@ const EntrancesByScene Entrances_KakarikoPotionShop = {
     {
         {0x03EC, "Back Door"},
         {0x0384, "Front Door"},
-        {0x03E8, "Front Door"},
+        {0x03E8, "Unused: Front Door"},
     }
 };
 
@@ -822,7 +871,7 @@ const EntrancesByScene Entrances_KakarikoVillage = {
         {0x04EE, "From House of Skulltula"},
         {0x04FF, "From Kakariko Potion Shop (Back Door)"},
         {0x0513, "From Nocturne of Shadow Cutscene"},
-        {0x0554, "From Death Mountain Trial Owl Ride"},
+        {0x0554, "From Death Mountain Trail Owl Ride"},
         {0x05DC, "From Impa's House (Cage)"},
     }
 };
@@ -847,19 +896,19 @@ const EntrancesByScene Entrances_KokiriForest = {
     "Kokiri Forest",
     .nbItems = 13,
     {
-        {0x00EE, "From Forest Medallion Cutscene"},
+        {0x00EE, "Main Cutscene Entrance"},
         {0x0209, "From Inside the Deku Tree"},
+        {0x020D, "From Lost Woods (Forest Bridge)"},
         {0x0211, "From Link's House"},
         {0x0266, "From Kokiri Shop"},
         {0x026A, "From Know-It-All Brothers' House"},
-        {0x0286, "From Lost Woods (Zone Out)"},
+        {0x0286, "From Lost Woods (high entrance)"},
         {0x033C, "From House of Twins"},
         {0x0443, "From Mido's House"},
         {0x0447, "From Saria's House"},
         {0x0457, "From Deku Tree Death Cutscene"},
         {0x05E8, "From Deku Sprout Cutscene"},
-        {0x020D, "From Lost Woods (Forest Bridge)"},
-        {0x0338, "[Unused]"},
+        {0x0338, "Unused: top of Link's House"},
     }
 };
 
@@ -876,15 +925,15 @@ const EntrancesByScene Entrances_LakeHylia = {
     .nbItems = 10,
     {
         {0x0102, "From Hyrule Field"},
+        {0x0219, "From Gerudo Valley"},
         {0x021D, "From Water Temple"},
         {0x0309, "From Fishing Pond"},
         {0x03CC, "From Lakeside Laboratory"},
         {0x0560, "From Zora's Domain"},
-        {0x060C, "From Morpha's Lair: Blue Warp"},
-        {0x03C8, "[Unused]"},
-        {0x0219, "From Gerudo Valley"},
+        {0x03C8, "Unused: main entrance"},
         {0x04E6, "From Water Rising Cutscene"},
         {0x0604, "From Warp Song: Serenade of Water"},
+        {0x060C, "From Blue Warp"},
     }
 };
 
@@ -893,7 +942,7 @@ const EntrancesByScene Entrances_LakesideLaboratory = {
     .nbItems = 2,
     {
         {0x0043, "From Lake Hylia"},
-        {0x01C5, "[?]"},
+        {0x01C5, "Unused: eyedrops timeout"},
     }
 };
 
@@ -928,14 +977,14 @@ const EntrancesByScene Entrances_LostWoods = {
     "Lost Woods",
     .nbItems = 10,
     {
-        {0x04D2, "Boulder and Grass Square"},
-        {0x04DE, "From Hyrule Field"},
-        {0x05E0, "From Kokiri Forest (Forest Bridge)"},
-        {0x04D6, "From Goron City"},
         {0x011E, "From Kokiri Forest (High Entrance)"},
         {0x01A9, "From Sacred Forest Meadow"},
+        {0x01AD, "Mushroom Timeout"},
+        {0x04D6, "From Goron City"},
         {0x04DA, "From Zora's River"},
-        {0x01AD, "[?]"},
+        {0x04DE, "From Hyrule Field"},
+        {0x05E0, "From Kokiri Forest (Forest Bridge)"},
+        {0x04D2, "Unused: Boulder and Grass Square"},
         {0x01B1, "[?]"},
         {0x04C6, "[?]"},
     }
@@ -946,13 +995,13 @@ const EntrancesByScene Entrances_Market = {
     .nbItems = 11,
     {
         {0x00B1, "From Market Entrance"},
-        {0x01CD, "From Market Shooting Gallery"},
-        {0x01D1, "From Happy Mask Shop"},
-        {0x01D5, "From Treasure Box Shop"},
-        {0x025A, "From Hyrule Castle"},
+        {0x025A, "From Castle"},
         {0x025E, "From Temple of Time"},
         {0x0262, "From Back Alley: Right Side"},
         {0x029E, "From Back Alley: Left Side"},
+        {0x01CD, "From Market Shooting Gallery"},
+        {0x01D1, "From Happy Mask Shop"},
+        {0x01D5, "From Treasure Chest Shop"},
         {0x02A2, "From Market Potion Shop"},
         {0x03B8, "From Market Bazaar"},
         {0x03BC, "From Bombchu Bowling Alley"},
@@ -993,14 +1042,6 @@ const EntrancesByScene Entrances_MorphasLair = {
     }
 };
 
-const EntrancesByScene Entrances_NaboorusMiniBossRoom = {
-    "Nabooru's Mini-Boss Room",
-    .nbItems = 1,
-    {
-        {0x008D, "From Spirit Temple"},
-    }
-};
-
 const EntrancesByScene Entrances_PhantomGanonsLair = {
     "Phantom Ganon's Lair",
     .nbItems = 1,
@@ -1015,7 +1056,7 @@ const EntrancesByScene Entrances_RanchHouse = {
     {
         {0x004F, "From Lon Lon Ranch (Ranch House)"},
         {0x05D0, "From Lon Lon Ranch (Silo)"},
-        {0x05E4, "[?]"},
+        {0x05E4, "After Cuccos game"},
 
     }
 };
@@ -1035,9 +1076,9 @@ const EntrancesByScene Entrances_SacredForestMeadow = {
     {
         {0x00FC, "From Lost Woods"},
         {0x0215, "From Forest Temple"},
-        {0x02EE, "[?]"},
-        {0x0608, "From Phantom Ganon's Lair: Blue Warp"},
+        {0x02EE, "Unused: single copy, spawn 0"},
         {0x0600, "From Warp Song: Minuet of Forest"},
+        {0x0608, "From Blue Warp"},
     }
 };
 
@@ -1054,9 +1095,9 @@ const EntrancesByScene Entrances_ShadowTemple = {
     .nbItems = 4,
     {
         {0x0037, "From Graveyard"},
-        {0x02B2, "From Bongo Bongo's Lair"},
-        {0x02B6, "From Graveyard (Wrong Room)"},
-        {0x04EA, "[?]"},
+        {0x02B2, "Unused: Outside Boss Door"},
+        {0x02B6, "From Bongo Bongo's Lair"},
+        {0x04EA, "[?] crashes"},
     }
 };
 
@@ -1066,7 +1107,7 @@ const EntrancesByScene Entrances_ShootingGallery = {
     {
         {0x016D, "From Market"},
         {0x003B, "From Kakariko Village"},
-        {0x02F0, "From Kakariko Village"},
+        {0x02F0, "Unused: From Kakariko Village"},
     }
 };
 
@@ -1074,11 +1115,11 @@ const EntrancesByScene Entrances_SpiritTemple = {
     "Spirit Temple",
     .nbItems = 5,
     {
-        {0x02F5, "From Nabooru's Mini-Boss Room"},
-        {0x03F8, "[?]"},
+        {0x0082, "From Desert Colossus: Entrance"},
         {0x03F4, "From Desert Colossus: Statue's Left Hand"},
         {0x03F0, "From Desert Colossus: Statue's Right Hand"},
-        {0x0082, "From Desert Colossus: Entrance"},
+        {0x02F5, "From Twinrova's Lair"},
+        {0x03F8, "Unused: from left hand, room #00"},
     }
 };
 
@@ -1096,10 +1137,10 @@ const EntrancesByScene Entrances_TempleOfTime = {
     {
         {0x0053, "From Temple of Time Exterior"},
         {0x02CA, "From Event: Pull & Place Master Sword"},
-        {0x0320, "[?]"},
+        {0x0320, "Unused: near stones"},
         {0x0324, "Cutscene: Meeting Sheik"},
         {0x058C, "Cutscene: Light Arrows"},
-        {0x0590, "[?]"},
+        {0x0590, "Unused: LACS"},
         {0x05F4, "From Warp Song: Prelude of Light"},
     }
 };
@@ -1134,7 +1175,7 @@ const EntrancesByScene Entrances_ThievesHideout = {
 };
 
 const EntrancesByScene Entrances_TreasureBoxShop = {
-    "Treasure Box Shop",
+    "Treasure Chest Shop",
     .nbItems = 1,
     {
         {0x0063, "From Market"},
@@ -1143,9 +1184,10 @@ const EntrancesByScene Entrances_TreasureBoxShop = {
 
 const EntrancesByScene Entrances_TwinrovasLair = {
     "Twinrova's Lair",
-    .nbItems = 1,
+    .nbItems = 2,
     {
-        {0x05EC, "[Unused]"},
+        {0x008D, "From Spirit Temple"},
+        {0x05EC, "Unused: boss arena"},
     }
 };
 
@@ -1193,7 +1235,7 @@ const EntrancesByScene Entrances_ZorasDomain = {
         {0x01A1, "From Zora's Fountain"},
         {0x0328, "From Lake Hylia"},
         {0x03C4, "From Zora Shop"},
-        {0x0153, "[?] (Throne Room)"},
+        {0x0153, "Frog Timeout"},
     }
 };
 
@@ -1201,12 +1243,12 @@ const EntrancesByScene Entrances_ZorasFountain = {
     "Zora's Fountain",
     .nbItems = 6,
     {
-        {0x010E, "Cutscene: Zora's Saphhire"},
+        {0x010E, "Cutscene: Zora's Sapphire"},
         {0x0221, "From Inside Jabu Jabu's Belly"},
         {0x0225, "From Zora's Domain"},
-        {0x0394, "From Great Fairy's Fountain (Spells): Farore's Wind"},
         {0x03D4, "From Ice Cavern"},
-        {0x03D8, "From Bottom Left Corner [Unused]"},
+        {0x0394, "From Great Fairy's Fountain"},
+        {0x03D8, "Unused: near bottom left corner"},
     }
 };
 
@@ -1214,10 +1256,10 @@ const EntrancesByScene Entrances_ZorasRiver = {
     "Zora's River",
     .nbItems = 5,
     {
-        {0x0199, "From Zora's Fountain"},
-        {0x019D, "From Zora's Domain"},
-        {0x01DD, "From Lost Woods: Zora's River Square"},
         {0x00EA, "From Hyrule Field (Land Transition)"},
+        {0x0199, "Unused: From Zora's Fountain"},
+        {0x019D, "From Zora's Domain"},
         {0X01D9, "From Hyrule Field (Water Transition)"},
+        {0x01DD, "From Lost Woods"},
     }
 };

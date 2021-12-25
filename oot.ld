@@ -52,6 +52,10 @@ SECTIONS
 		*(.patch_ItemUsability_Shield)
 	}
 
+	.patch_OverrideSceneSetup 0x4487B8 : {
+		*(.patch_OverrideSceneSetup)
+	}
+
 	.patch_before_GlobalContext_Update 0x452390 : {
 		*(.patch_before_GlobalContext_Update)
 	}

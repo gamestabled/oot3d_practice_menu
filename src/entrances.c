@@ -2,6 +2,7 @@
 #include "draw.h"
 #include "menu.h"
 #include "input.h"
+#include "common.h"
 #include "menus/commands.h"
 #include "z3D/z3D.h"
 #include "utils.h"
@@ -36,16 +37,15 @@ void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex, u32 chose
     if (chosenTimeIndex != 0){
         gSaveContext.dayTime = EntranceTimes[chosenTimeIndex];
     }
-    gSaveContext.entranceIndex = EntranceIndex;
     gGlobalContext->nextEntranceIndex = EntranceIndex;
     gGlobalContext->fadeOutTransition = 2;
     gGlobalContext->linkAgeOnLoad = chosenAge;
-    if (cutsceneIndex < 0){
+    if (cutsceneIndex == -1){ //this prevents crashes because warping with CS 0xFFEF ("None") would keep the previous CS number
         gSaveContext.cutsceneIndex = 0;
     }
-    else {
-        gSaveContext.nextCutsceneIndex = (cutsceneIndex += 0xFFF0);
-    }
+
+    gSaveContext.nextCutsceneIndex = (cutsceneIndex == -2) ? 0 : (cutsceneIndex + 0xFFF0);
+
     gGlobalContext->sceneLoadFlag = 0x14;
 }
 
@@ -78,14 +78,18 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSe
         Draw_DrawFormattedString(30, 30 + SPACING_Y * Entrance_Select_Menu_Time, COLOR_WHITE, "Time of Day: %s", TimeNames[chosenTime]);
         Draw_DrawCharacter(10, 30 + SPACING_Y * Entrance_Select_Menu_Time, COLOR_TITLE, selected == Entrance_Select_Menu_Time ? '>' : ' ');
 
-        if (cutsceneIndex < 0){
-            cutsceneIndex = -1;
+        if (cutsceneIndex < -1){
+            cutsceneIndex = -2;
             Draw_DrawString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx,
-                (selected == Entrance_Select_Menu_CsIdx) ? curColor : COLOR_WHITE, "Cutscene Number on Load: None");
+                (selected == Entrance_Select_Menu_CsIdx) ? curColor : COLOR_WHITE, "Cutscene Number on Load: Forced Cleared (BiT)");
+        }
+        else if (cutsceneIndex == -1){
+            Draw_DrawString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx,
+                (selected == Entrance_Select_Menu_CsIdx) ? curColor : COLOR_WHITE, "Cutscene Number on Load: None                ");
         }
         else {
             Draw_DrawFormattedString(30, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx,
-                (selected == Entrance_Select_Menu_CsIdx) ? curColor : COLOR_WHITE, "Cutscene Number on Load: %02d  ", cutsceneIndex);
+                (selected == Entrance_Select_Menu_CsIdx) ? curColor : COLOR_WHITE, "Cutscene Number on Load: %02d                  ", cutsceneIndex);
         }
         Draw_DrawCharacter(10, 30 + SPACING_Y * Entrance_Select_Menu_CsIdx, COLOR_TITLE, selected == Entrance_Select_Menu_CsIdx ? '>' : ' ');
 
@@ -114,6 +118,12 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSe
             {
                 curColor = COLOR_WHITE;
                 chosen = 0;
+                if (ADDITIONAL_FLAG_BUTTON && selected == Entrance_Select_Menu_CsIdx) {
+                    gSaveContext.nextCutsceneIndex = (cutsceneIndex == -2) ? 0 : (cutsceneIndex + 0xFFF0);
+                }
+                else if (ADDITIONAL_FLAG_BUTTON && selected == Entrance_Select_Menu_Etcs) {
+                    gGlobalContext->nextEntranceIndex = chosenEntranceIndex;
+                }
             }
             else if (pressed & (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT | BUTTON_X | BUTTON_Y)) // change selected value
             {
@@ -127,10 +137,18 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSe
                     case (BUTTON_X): increment = 256; break;
                     case (BUTTON_Y): increment = -256; break;
                 }
-                if (selected == Entrance_Select_Menu_CsIdx)
-                    cutsceneIndex += increment;
-                else if (selected == Entrance_Select_Menu_Etcs)
+                if (selected == Entrance_Select_Menu_Etcs)
                     chosenEntranceIndex += increment;
+                else if (selected == Entrance_Select_Menu_CsIdx) {
+                    cutsceneIndex += increment;
+                    // keep cutsceneIndex within the correct values
+                    if(cutsceneIndex > 15){
+                        cutsceneIndex = (ADDITIONAL_FLAG_BUTTON ? -2 : -1);
+                    }
+                    if(cutsceneIndex < (ADDITIONAL_FLAG_BUTTON ? -2 : -1)) {
+                        cutsceneIndex = 15;
+                    }
+                }
             }
         } else { // not chosen
             if(pressed & BUTTON_B) // close entrances menu
@@ -154,7 +172,7 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSe
                 else if(selected >= Entrance_Select_Menu_Etcs){
                     s32 age;
                     switch(chosenAge) {
-                        case 2: age = gSaveContext.linkAge; break;
+                        case 2: age = gGlobalContext->linkAgeOnLoad; break;
                         default: age = chosenAge; break;
                     }
                     u16 entranceIndex = manualSelection ? chosenEntranceIndex : entrances->items[selected - Entrance_Select_Menu_Etcs].entranceIndex;
@@ -172,13 +190,6 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSe
             }
         }
 
-        if(cutsceneIndex > 15){
-            cutsceneIndex = -1;
-        }
-        if(cutsceneIndex < -1) {
-            cutsceneIndex = 15;
-        }
-
         if(selected < 0) {
             selected = (manualSelection ? Entrance_Select_Menu_Go : (Entrance_Select_Menu_Etcs + entrances->nbItems - 1));
         }
@@ -187,6 +198,24 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSe
         }
         pagePrev = page;
         page = selected >= ENTRANCE_MENU_MAX_SHOW + Entrance_Select_Menu_Etcs ? 1 : 0;
+
+        if(ADDITIONAL_FLAG_BUTTON) {
+            Draw_DrawFormattedStringTop(60, 190, COLOR_WHITE, "Current Entrance: %04X", (u16)gSaveContext.entranceIndex);
+            Draw_DrawFormattedStringTop(60, 200, COLOR_WHITE, "Current Cutscene: %04X", (u16)gSaveContext.cutsceneIndex);
+            Draw_DrawFormattedStringTop(60, 210, COLOR_WHITE, "Next Entrance:    %04X", (u16)gGlobalContext->nextEntranceIndex);
+            Draw_DrawFormattedStringTop(60, 220, COLOR_WHITE, "Next Cutscene:    %04X", (u16)gSaveContext.nextCutsceneIndex);
+
+            // this would print the cutscene number formatted like in the options, but I think the hex value is better
+            /*if (gSaveContext.nextCutsceneIndex >= 0xFFF0) {
+                Draw_DrawFormattedStringTop(60, 220, COLOR_WHITE, "Next Cutscene: %02d                  ", gSaveContext.nextCutsceneIndex - 0xFFF0);
+            }
+            else if (gSaveContext.nextCutsceneIndex == 0) {
+                Draw_DrawStringTop(60, 220, COLOR_WHITE, "Next Cutscene: Forced Cleared (BiT)");
+            }
+            else { // 0xFFEF, default
+                Draw_DrawStringTop(60, 220, COLOR_WHITE, "Next Cutscene: None                ");
+            }*/
+        }
     } while(menuOpen);
 }
 

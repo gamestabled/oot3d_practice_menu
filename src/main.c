@@ -18,7 +18,7 @@ advance_ctx_t advance_ctx = {};
 uint8_t framebuffers_init = 0;
 static bool isAsleep = false;
 u32 alertFrames = 0;
-char* alertMessage;
+char* alertMessage = "";
 
 GlobalContext* gGlobalContext;
 
@@ -135,7 +135,7 @@ static void titleScreenDisplay(void){
     Draw_FlushFramebuffer();
 }
 
-static void pauseDisplay(void) {
+void pauseDisplay(void) {
     Draw_DrawFormattedStringTop(20, 20, COLOR_WHITE, "Paused");
     Draw_FlushFramebufferTop();
 }
@@ -157,6 +157,10 @@ void advance_main(void) {
 
     if(menuOpen) {
         menuShow();
+        Draw_Lock();
+        Draw_ClearFramebuffer();
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
     }
     applyCheats();
 
@@ -179,6 +183,10 @@ void advance_main(void) {
         Command_UpdateCommands(rInputCtx.cur.val);
         if(menuOpen) {
             menuShow();
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
         }
         applyCheats();
         toggle_advance();

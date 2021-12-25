@@ -6,6 +6,7 @@
 #include "common.h"
 #include "z3D/z3D.h"
 #include "draw.h"
+#include "advance.h"
 
 u32 pauseUnpause = 0; //tells main to pause/unpause
 u32 frameAdvance = 0; //tells main to frame advance
@@ -41,6 +42,8 @@ static void Command_Break(void){
 
         PLAYER->stateFlags1 = 0x0;
         PLAYER->stateFlags2 = 0x0;
+        alertMessage = "Break";
+        alertFrames = 20;
     }
 }
 
@@ -65,9 +68,9 @@ static void Command_Reset(void){
 static void Command_ReloadScene(void){
     if (isInGame()) {
         if(gGlobalContext->nextEntranceIndex != -1)
-            EntranceWarp(gGlobalContext->nextEntranceIndex, gSaveContext.linkAge, -1, 0);
+            EntranceWarp(gGlobalContext->nextEntranceIndex, gGlobalContext->linkAgeOnLoad, -1, 0);
         else
-            EntranceWarp(gSaveContext.entranceIndex, gSaveContext.linkAge, -1, 0);
+            EntranceWarp(gSaveContext.entranceIndex, gGlobalContext->linkAgeOnLoad, -1, 0);
     }
 }
 
@@ -77,13 +80,15 @@ static void Command_VoidOut(void){
         gSaveContext.respawn[RESPAWN_MODE_DOWN].tempCollectFlags = gGlobalContext->actorCtx.flags.tempCollect;
         gSaveContext.respawnFlag = 1;
         if (gGlobalContext->sceneLoadFlag == 0 || gGlobalContext->sceneLoadFlag == -20) {
-            EntranceWarp(gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex, gSaveContext.linkAge, -1, 0);
+            EntranceWarp(gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex, gGlobalContext->linkAgeOnLoad, -1, 0);
         }
     }
 }
 
 static void Command_ToggleAge(void){
-    gGlobalContext->linkAgeOnLoad = 1 - gSaveContext.linkAge;
+    gGlobalContext->linkAgeOnLoad = 1 - gGlobalContext->linkAgeOnLoad;
+    alertMessage = gGlobalContext->linkAgeOnLoad ? "Child on next load" : "Adult on next load";
+    alertFrames = menuOpen ? 10 : 75;
 }
 
 // static void Command_SaveState(void);
@@ -96,7 +101,7 @@ static void Command_StorePos(void){
 
         alertMessage = "Stored position X";
         alertMessage[16] = storedPosIndex + 48; //ASCII digit
-        alertFrames = 90;
+        alertFrames = menuOpen ? 10 : 90;
     }
 }
 
@@ -110,15 +115,14 @@ static void Command_LoadPos(void){
 
         alertMessage = "Loaded position X";
         alertMessage[16] = storedPosIndex + 48; //ASCII digit
-        alertFrames = 90;
+        alertFrames = menuOpen ? 10 : 90;
     }
 }
-
 
 static void AlertPosIndex(void) {
     alertMessage = "Position X";
     alertMessage[9] = storedPosIndex + 48; //ASCII digit
-    alertFrames = 75;
+    alertFrames = menuOpen ? 10 : 75;
 }
 
 static void Command_PreviousPos(void) {
@@ -132,10 +136,16 @@ static void Command_NextPos(void) {
 
 static void Command_PauseUnpause(void){
     pauseUnpause = 1;
+    if (advance_ctx.advance_state == NORMAL) {
+        pauseDisplay(); // appear when triggered from menu
+    }
 }
 
 static void Command_FrameAdvance(void){
     frameAdvance = 1;
+    if (advance_ctx.advance_state == NORMAL) {
+        pauseDisplay(); // appear when triggered from menu
+    }
 }
 
 // static void Command_RecordMacro(void);
@@ -157,7 +167,7 @@ static Command commandList[] = {
     {"Reset", 0, 0, { 0 }, Command_Reset, COMMAND_PRESS_ONCE_TYPE, 0, 0},
     {"Reload Scene", 0, 0, { 0 }, Command_ReloadScene, COMMAND_PRESS_ONCE_TYPE, 0, 0},
     {"Void Out", 0, 0, { 0 }, Command_VoidOut, COMMAND_PRESS_ONCE_TYPE, 0, 0},
-    {"Toggle Age", 0, 0, { 0 }, Command_ToggleAge, COMMAND_PRESS_ONCE_TYPE, 0, 0},
+    {"Toggle Age", 0, 0, { 0 }, Command_ToggleAge, COMMAND_PRESS_TYPE, 0, 0},
     {"Store Position", 0, 0, { 0 }, Command_StorePos, COMMAND_HOLD_TYPE, 0, 0},
     {"Load Position", 0, 0, { 0 }, Command_LoadPos, COMMAND_HOLD_TYPE, 0, 0},
     {"Previous Position", 0, 0, { 0 }, Command_PreviousPos, COMMAND_PRESS_TYPE, 0, 0},

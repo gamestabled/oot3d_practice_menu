@@ -4,6 +4,7 @@
 #include "input.h"
 #include "common.h"
 #include "menus/commands.h"
+#include "menus/scene.h"
 #include "z3D/z3D.h"
 #include "utils.h"
 #include <stdio.h>
@@ -47,6 +48,10 @@ void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex, u32 chose
     gSaveContext.nextCutsceneIndex = (cutsceneIndex == -2) ? 0 : (cutsceneIndex + 0xFFF0);
 
     gGlobalContext->sceneLoadFlag = 0x14;
+
+    if(noClip) {
+        Scene_NoClipToggle();
+    }
 }
 
 void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSelection){

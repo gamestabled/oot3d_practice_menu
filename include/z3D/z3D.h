@@ -234,7 +234,12 @@ typedef struct {
 } SaveContext; // size = 0x15C4
 
 typedef struct GraphicsContext GraphicsContext; //TODO
-typedef struct Camera Camera; //TODO
+typedef struct Camera {
+    /*0x0000*/ char  unk_000[0x17C];
+    /*0x017C*/ Vec3s inputDir;
+    /*0x0182*/ Vec3s camDir;
+    /*0x0188*/ char  unk_188[0x34];
+} Camera; // size = 0x1BC
 
 typedef struct {
     /* 0x00 */ void* colHeader; //TODO: CollisionHeader* struct
@@ -384,6 +389,13 @@ typedef struct GameState {
     //TODO
 } GameState;
 
+typedef struct {
+    /* 0x000 */ s8   currentRoomNumber;
+    /* 0x001 */ char unk_01[0x7BF];
+    /* 0x7C0 */ u16  unk_7C0;
+    /* 0x7C2 */ char unk_7C2[0x796];
+} RoomContext; // size 0xF58
+
 // Global Context (ram start: 0871E840)
 typedef struct GlobalContext {
     // /* 0x0000 */ GameState state;
@@ -391,7 +403,9 @@ typedef struct GlobalContext {
     /* 0x0104 */ s16                   sceneNum;
     /* 0x0106 */ char                  unk_106[0x0012];
     /* 0x0118 */ SubGlobalContext_118  sub118;
-    /* 0x017C */ char                  unk_17C[0x08D8];
+    /* 0x017C */ char                  unk_17C[0x01E8];
+    /* 0x0364 */ Camera                mainCamera;
+    /* 0x0520 */ Camera                subCameras[3];
     /* 0x0A54 */ Camera*               cameraPtrs[4];
     /* 0x0A64 */ s16                   activeCamera;
     /* 0x0A66 */ char                  unk_A66[0x0032];
@@ -407,7 +421,9 @@ typedef struct GlobalContext {
     /* 0x3230 */ u32                   lightSettingsList_addr;
     /* 0x3234 */ char                  unk_3234[0x0824];
     /* 0x3A58 */ ObjectContext         objectCtx;
-    /* 0x43DC */ char                  unk_43DC[0x1824];
+    /* 0x43DC */ char                  unk_43DC[0x0854];
+    /* 0x4C30 */ RoomContext           roomCtx;
+    /* 0x5B88 */ char                  unk_5B88[0x0078];
     /* 0x5C00 */ u8                    linkAgeOnLoad;
     /* 0x5C01 */ char                  unk_5C01[0x001B];
     /* 0x5C1C */ s16*                  setupExitList;

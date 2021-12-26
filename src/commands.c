@@ -2,6 +2,7 @@
 #include "menus/commands.h"
 #include "menus/warps.h"
 #include "menus/watches.h"
+#include "menus/scene.h"
 #include "input.h"
 #include "common.h"
 #include "z3D/z3D.h"
@@ -180,41 +181,42 @@ static Command commandList[] = {
 };
 
 static void Commands_ListInitDefaults(void){
+    // storing all previous buttons for every index is needed to make the strict commands work
     commandList[COMMAND_OPEN_MENU].comboLen = 3;
     commandList[COMMAND_OPEN_MENU].inputs[0] = BUTTON_L1;
-    commandList[COMMAND_OPEN_MENU].inputs[1] = BUTTON_R1;
-    commandList[COMMAND_OPEN_MENU].inputs[2] = BUTTON_SELECT;
+    commandList[COMMAND_OPEN_MENU].inputs[1] = BUTTON_R1 | BUTTON_L1;
+    commandList[COMMAND_OPEN_MENU].inputs[2] = BUTTON_SELECT | BUTTON_R1 | BUTTON_L1;
     commandList[COMMAND_OPEN_MENU].strict = 0;
 
     commandList[COMMAND_LEVITATE].comboLen = 2;
     commandList[COMMAND_LEVITATE].inputs[0] = BUTTON_R1;
-    commandList[COMMAND_LEVITATE].inputs[1] = BUTTON_X;
+    commandList[COMMAND_LEVITATE].inputs[1] = BUTTON_X | BUTTON_R1;
     commandList[COMMAND_LEVITATE].strict = 0;
 
     commandList[COMMAND_FALL].comboLen = 2;
     commandList[COMMAND_FALL].inputs[0] = BUTTON_R1;
-    commandList[COMMAND_FALL].inputs[1] = BUTTON_RIGHT;
+    commandList[COMMAND_FALL].inputs[1] = BUTTON_RIGHT | BUTTON_R1;
     commandList[COMMAND_FALL].strict = 0;
 
     commandList[COMMAND_RUN_FAST].comboLen = 2;
     commandList[COMMAND_RUN_FAST].inputs[0] = BUTTON_R1;
-    commandList[COMMAND_RUN_FAST].inputs[1] = BUTTON_Y;
+    commandList[COMMAND_RUN_FAST].inputs[1] = BUTTON_Y | BUTTON_R1;
     commandList[COMMAND_RUN_FAST].strict = 0;
 
     commandList[COMMAND_VOID_OUT].comboLen = 3;
     commandList[COMMAND_VOID_OUT].inputs[0] = BUTTON_A;
-    commandList[COMMAND_VOID_OUT].inputs[1] = BUTTON_X;
-    commandList[COMMAND_VOID_OUT].inputs[2] = BUTTON_SELECT;
+    commandList[COMMAND_VOID_OUT].inputs[1] = BUTTON_B | BUTTON_A;
+    commandList[COMMAND_VOID_OUT].inputs[2] = BUTTON_SELECT | BUTTON_B | BUTTON_A;
     commandList[COMMAND_VOID_OUT].strict = 0;
 
     commandList[COMMAND_STORE_POS].comboLen = 2;
     commandList[COMMAND_STORE_POS].inputs[0] = BUTTON_L1;
-    commandList[COMMAND_STORE_POS].inputs[1] = BUTTON_LEFT;
+    commandList[COMMAND_STORE_POS].inputs[1] = BUTTON_LEFT | BUTTON_L1;
     commandList[COMMAND_STORE_POS].strict = 0;
 
     commandList[COMMAND_LOAD_POS].comboLen = 2;
     commandList[COMMAND_LOAD_POS].inputs[0] = BUTTON_L1;
-    commandList[COMMAND_LOAD_POS].inputs[1] = BUTTON_RIGHT;
+    commandList[COMMAND_LOAD_POS].inputs[1] = BUTTON_RIGHT | BUTTON_L1;
     commandList[COMMAND_LOAD_POS].strict = 0;
 
     commandList[COMMAND_PREVIOUS_POS].comboLen = 1;
@@ -233,10 +235,17 @@ static void Commands_ListInitDefaults(void){
     commandList[COMMAND_FRAME_ADVANCE].inputs[0] = BUTTON_UP;
     commandList[COMMAND_FRAME_ADVANCE].strict = 0;
 
+    commandList[COMMAND_BREAK].comboLen = 4;
+    commandList[COMMAND_BREAK].inputs[0] = BUTTON_A;
+    commandList[COMMAND_BREAK].inputs[1] = BUTTON_B | BUTTON_A;
+    commandList[COMMAND_BREAK].inputs[2] = BUTTON_X | BUTTON_B | BUTTON_A;
+    commandList[COMMAND_BREAK].inputs[3] = BUTTON_Y | BUTTON_X | BUTTON_B | BUTTON_A;
+    commandList[COMMAND_BREAK].strict = 0;
+
     // reset the other commands for when default settings are restored
     for(u32 i = 0; i < COMMAND_NUM_COMMANDS; ++i){
         if ((i > COMMAND_RUN_FAST) && i != COMMAND_VOID_OUT &&
-            (i < COMMAND_STORE_POS || i > COMMAND_FRAME_ADVANCE)){
+            (i < COMMAND_STORE_POS || i > COMMAND_FRAME_ADVANCE) && i != COMMAND_BREAK){
             commandList[i].comboLen = 0;
             commandList[i].strict = 0;
         }
@@ -291,6 +300,8 @@ void Command_UpdateCommands(u32 curInputs){ //curInputs should be all the held a
             commandList[i].curIdx = 0;
             commandList[i].waiting = 0;
         }
+
+        if (noClip) break; // only the "open menu" command should work during noclip mode
     }
 }
 
@@ -364,10 +375,10 @@ static void Commands_EditCommand(u32 commandIndex){
             commandList[commandIndex].comboLen >= 2 ? comboString[1] : ' ',
             commandList[commandIndex].comboLen >= 3 ? comboString[2] : ' ',
             commandList[commandIndex].comboLen >= 4 ? comboString[3] : ' ');
-        Draw_DrawCharacter(10, 30, COLOR_TITLE, selected == 0 ? '>' : ' ');
+        Draw_DrawCharacter(10, 30, COLOR_TITLE, selected == COMMAND_EDIT_COMBO ? '>' : ' ');
 
         Draw_DrawFormattedString(30, 30 + SPACING_Y, COLOR_WHITE, "Type: %s", commandList[commandIndex].strict ? "Strict " : "Relaxed");
-        Draw_DrawCharacter(10, 30 + SPACING_Y, COLOR_TITLE, selected == 1 ? '>' : ' ');
+        Draw_DrawCharacter(10, 30 + SPACING_Y, COLOR_TITLE, selected == COMMAND_EDIT_STRICT ? '>' : ' ');
 
         Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "Use X to clear the command");
 
@@ -384,10 +395,12 @@ static void Commands_EditCommand(u32 commandIndex){
             }
             u32 pressed = Input_WaitWithTimeout(1000);
             if (pressed & BUTTON_A){
-                if (selected == 1){
+                if (selected == COMMAND_EDIT_STRICT){
                     commandList[commandIndex].strict = !commandList[commandIndex].strict;
+                    commandList[commandIndex].curIdx = 0;
+                    commandList[commandIndex].waiting = 0;
                 }
-                else if (selected == 0){
+                else if (selected == COMMAND_EDIT_COMBO){
                     editing = 1;
                     curColor = COLOR_RED;
                     commandList[commandIndex].comboLen = 0;
@@ -417,12 +430,14 @@ static void Commands_EditCommand(u32 commandIndex){
                     continue;
                 }
 
+                // buttons have to be pressed one at a time, ignore multiple button inputs
                 u32 pressedCopy = pressed;
                 u8 bitCount = 0;
                 for (bitCount = 0; pressedCopy; pressedCopy >>= 1){
                     bitCount += pressedCopy & 1;
                 }
                 if(bitCount > 1) break;
+                // when receiving a repeated input, ignore it and save the combo
                 for(u8 i = 0; i < COMMAND_COMBO_MAX; i++) {
                     if(pressed == prevInput[i]){
                         editing = 0;

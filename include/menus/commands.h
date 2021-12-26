@@ -34,6 +34,11 @@ typedef enum {
     COMMAND_BREAK,
 } commandNames;
 
+typedef enum {
+    COMMAND_EDIT_COMBO,
+    COMMAND_EDIT_STRICT,
+} commandOptionsNames;
+
 typedef struct Command {
     const char* title;
 

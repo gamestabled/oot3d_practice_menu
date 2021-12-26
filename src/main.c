@@ -10,6 +10,7 @@
 #include "menus/cheats.h"
 #include "menus/watches.h"
 #include "menus/commands.h"
+#include "menus/scene.h"
 #include <string.h>
 
 #include "z3D/z3D.h"
@@ -157,10 +158,12 @@ void advance_main(void) {
 
     if(menuOpen) {
         menuShow();
+
         Draw_Lock();
         Draw_ClearFramebuffer();
         Draw_FlushFramebuffer();
         Draw_Unlock();
+        rInputCtx.cur.val = 0;
     }
     applyCheats();
 
@@ -201,6 +204,49 @@ void advance_main(void) {
         svcSleepThread(16E6);
     }
     isAsleep = false;
+
+    if(noClip) { // TODO manage camera, redirect inputs accordingly or change the camera angle.
+        u32 in = rInputCtx.cur.val;
+        f32 amount = (in & BUTTON_R1) ? 10 : 2;
+        if(in & BUTTON_L1) {
+            if(in & (BUTTON_DOWN)) {
+                PLAYER->actor.world.pos.y -= amount;
+            }
+            if(in & (BUTTON_UP)) {
+                PLAYER->actor.world.pos.y += amount;
+            }
+        }
+        else {
+            if(in & (BUTTON_DOWN)) {
+                PLAYER->actor.world.pos.z += amount;
+            }
+            if(in & (BUTTON_UP)) {
+                PLAYER->actor.world.pos.z -= amount;
+            }
+            if(in & (BUTTON_LEFT)) {
+                PLAYER->actor.world.pos.x -= amount;
+            }
+            if(in & (BUTTON_RIGHT)) {
+                PLAYER->actor.world.pos.x += amount;
+            }
+        }
+
+        if(in & BUTTON_X) {
+            PLAYER->stateFlags2 |= 0x08000000; //freeze actors (ocarina state)
+        }
+        else if(in & BUTTON_Y) {
+            PLAYER->stateFlags2 &= ~0x08000000; //unfreeze actors
+        }
+
+        if(in & BUTTON_A) { //confirm new position
+            PLAYER->actor.home.pos = PLAYER->actor.world.pos;
+            Scene_NoClipToggle();
+        }
+        else if(in & BUTTON_B) { //cancel movement
+            PLAYER->actor.world.pos = PLAYER->actor.home.pos;
+            Scene_NoClipToggle();
+        }
+    }
 }
 
 void setGlobalContext(GlobalContext* globalContext){

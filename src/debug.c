@@ -1,5 +1,7 @@
 #include "menu.h"
 #include "menus/debug.h"
+#include "menus/commands.h"
+#include "menus/watches.h"
 #include "draw.h"
 #include "input.h"
 #include "common.h"
@@ -23,7 +25,7 @@ static const char* const ActorTypeNames[] = {
     "NPC",
     "ENEMY",
     "PROP",
-    "ITEMACTION",
+    "ITEM/ACTION",
     "MISC",
     "BOSS",
     "DOOR",
@@ -72,7 +74,8 @@ static void DebugActors_ShowMoreInfo(Actor* actor) {
         Draw_DrawFormattedString(30, 30 + 9 * SPACING_Y, COLOR_WHITE, "Held By:         %08X", actor->parent);
         Draw_DrawFormattedString(30, 30 + 10 * SPACING_Y, COLOR_WHITE, "Holding:         %08X", actor->child);
 
-        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "Press START to bring actor to Link");
+        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 30, COLOR_TITLE, "Press START to bring this actor to Link");
+        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "Press SELECT to bring Link to this actor");
 
         Draw_FlushFramebuffer();
         Draw_Unlock();
@@ -84,6 +87,57 @@ static void DebugActors_ShowMoreInfo(Actor* actor) {
         {
             actor->world.pos = PLAYER->actor.world.pos;
             actor->world.rot = PLAYER->actor.world.rot;
+        }
+        else if(pressed & BUTTON_SELECT)
+        {
+            PLAYER->actor.world.pos = actor->world.pos;
+            PLAYER->actor.world.rot = actor->world.rot;
+            PLAYER->actor.home.pos = actor->world.pos;
+            PLAYER->actor.home.rot = actor->world.rot;
+        }
+
+    } while(menuOpen);
+}
+
+static void DebugActors_SpawnActor(void) {
+    s16 newId = 0x0010;
+    s16 newParams = 0x0000;
+    u8  storedPosRotIndex = 0;
+    PosRot selectedPosRot = storedPosRot[storedPosRotIndex];
+
+    do
+    {
+        Draw_Lock();
+        Draw_DrawString(10, 10, COLOR_TITLE, "Spawn new Actor");
+        Draw_DrawFormattedString(30, 70, COLOR_WHITE, "ID: %04X", (u16)newId);
+        Draw_DrawFormattedString(100, 70, COLOR_WHITE, "Params: %04X", (u16)newParams);
+        Draw_DrawFormattedString(200, 70, COLOR_WHITE, "Stored Position: %01d", storedPosRotIndex);
+
+        Draw_DrawFormattedString(30, 100, COLOR_WHITE, "Pos:      X:%05.2f  Y:%05.2f  Z:%05.2f", selectedPosRot.pos.x, selectedPosRot.pos.y, selectedPosRot.pos.z);
+        Draw_DrawFormattedString(30, 120, COLOR_WHITE, "Rot:      X:%04X  Y:%04X  Z:%04X", (u16)selectedPosRot.rot.x, (u16)selectedPosRot.rot.y, (u16)selectedPosRot.rot.z);
+
+        Draw_DrawString(30, 160, COLOR_TITLE, "A: Edit      X: Fetch Position from Link\n"
+                                              "B: Cancel    Y: Confirm and Spawn");
+
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
+
+        u32 pressed = Input_WaitWithTimeout(1000);
+
+        if (pressed & BUTTON_B){
+            break;
+        }
+        if (pressed & BUTTON_A){
+            Debug_NewActorValuesMenuShow(&newId, &newParams, &storedPosRotIndex);
+            selectedPosRot = storedPosRot[storedPosRotIndex];
+        }
+        else if ((pressed & BUTTON_X)){
+            selectedPosRot = PLAYER->actor.world;
+        }
+        else if (pressed & BUTTON_Y){
+            PosRot p = selectedPosRot;
+            Actor_Spawn(&(gGlobalContext->actorCtx), gGlobalContext, newId, p.pos.x, p.pos.y, p.pos.z, p.rot.x, p.rot.y, p.rot.z, newParams);
+            break;
         }
 
     } while(menuOpen);
@@ -118,11 +172,13 @@ static void DebugActors_ShowActors(void) {
         for (s32 i = 0; i < ACTOR_LIST_MAX_SHOW && page * ACTOR_LIST_MAX_SHOW + i < listSize; ++i)
         {
             s32 j = page * ACTOR_LIST_MAX_SHOW + i;
-            Draw_DrawFormattedString(30, 30 + (1 + i) * SPACING_Y, COLOR_WHITE, "Addr: %08X  ID: %04X", actorList[j].instance, actorList[j].id & 0xFFFF);
+            Actor* act = actorList[j].instance;
+            u32 curColor = ((act->flags & 0x1) || act->draw != NULL || act->update != NULL) ? COLOR_WHITE : COLOR_GRAY;
+            Draw_DrawFormattedString(30, 30 + (1 + i) * SPACING_Y, curColor, "Addr: %08X  ID: %04X", actorList[j].instance, actorList[j].id & 0xFFFF);
             Draw_DrawCharacter(10, 30 + (1 + i) * SPACING_Y, COLOR_TITLE, j == selected ? '>' : ' ');
         }
 
-        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "Select with A to show more details, X to delete");
+        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "A: Details    X: Delete    Y: Spawn new Actor");
 
         Draw_FlushFramebuffer();
         Draw_Unlock();
@@ -133,6 +189,20 @@ static void DebugActors_ShowActors(void) {
         if(pressed & BUTTON_A)
         {
             DebugActors_ShowMoreInfo(actorList[selected].instance);
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
+        }
+        else if(pressed & BUTTON_Y)
+        {
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
+
+            DebugActors_SpawnActor();
+
             Draw_Lock();
             Draw_ClearFramebuffer();
             Draw_FlushFramebuffer();
@@ -200,6 +270,34 @@ static void DebugActors_ShowActors(void) {
         page = selected / ACTOR_LIST_MAX_SHOW;
 
     } while(menuOpen);
+}
+
+AmountMenu NewActorValuesMenu = {
+    "New Actor Values",
+    .nbItems = 3,
+    {
+        {0, 1, 0, "ID", .method = NULL},
+        {0, 1, 0, "Params", .method = NULL},
+        {0, 0, 8, "Stored Position Index", .method = NULL},
+    }
+};
+
+void NewActorValuesMenuInit(s16* newId, s16* newParams, u8* storedPosRotIndex) {
+    NewActorValuesMenu.items[0].amount = *newId;
+    NewActorValuesMenu.items[1].amount = *newParams;
+    NewActorValuesMenu.items[2].amount = *storedPosRotIndex;
+}
+
+void Debug_NewActorValuesMenuShow(s16* newId, s16* newParams, u8* storedPosRotIndex) {
+    NewActorValuesMenuInit(newId, newParams, storedPosRotIndex);
+    AmountMenuShow(&NewActorValuesMenu);
+    *newId = NewActorValuesMenu.items[0].amount;
+    *newParams = NewActorValuesMenu.items[1].amount;
+    *storedPosRotIndex = NewActorValuesMenu.items[2].amount;
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_Unlock();
 }
 
 Menu DebugMenu = {

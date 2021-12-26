@@ -295,6 +295,14 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         {
             menu->items[selected].amount -= (menu->items[selected].hex ? 16 : 10);
         }
+        else if(pressed & BUTTON_X && chosen)
+        {
+            menu->items[selected].amount += (menu->items[selected].hex ? 256 : 100);
+        }
+        else if(pressed & BUTTON_Y && chosen)
+        {
+            menu->items[selected].amount -= (menu->items[selected].hex ? 256 : 100);
+        }
 
         while(chosen && (menu->items[selected].max != 0) && (menu->items[selected].amount > menu->items[selected].max)) {
             u16 overDiff = menu->items[selected].amount - menu->items[selected].max;

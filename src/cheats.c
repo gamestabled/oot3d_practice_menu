@@ -63,14 +63,13 @@ ToggleMenu CheatsMenu = {
         {0, "Infinite Keys", .method = Cheats_Toggle},
         {0, "Infinite Rupees", .method = Cheats_Toggle},
         {0, "Infinite Nayru's Love", .method = Cheats_Toggle},
+        {0, "Freeze time of day", .method = Cheats_Toggle},
         #ifdef Version_JP
-        {0, "Freeze time of day (TODO)", .method = NULL},
         {0, "No music (TODO)", .method = NULL},
         {0, "Usable Items (TODO)", .method = NULL},
         {0, "ISG", .method = Cheats_Toggle},
         {0, "Turbo Text (TODO)", .method = NULL},
         #else
-        {0, "Freeze time of day", .method = Cheats_Toggle},
         {0, "No music", .method = Cheats_Toggle},
         {0, "Unrestricted Items - Forced mode OFF", .method = Cheats_Toggle},
         {0, "ISG", .method = Cheats_Toggle},
@@ -133,12 +132,15 @@ void applyCheats() {
     if(cheats[CHEATS_FREEZE_TIME]) {
         gSaveContext.dayTime = frozenTime;
     }
-    if(cheats[CHEATS_ISG]) {
-        if (isInGame()) { //loading a new area with the cheat active could crash
-            PLAYER->isg = 1;
-        }
+    //Loading a new area with these cheats active could crash. Checking isInGame() prevents that.
+    //Note that calling isInGame() while the game is loading (triforce icon) crashes.
+    //So don't enable the ISG cheat or forcedUsableItems there.
+    if(cheats[CHEATS_ISG] && isInGame()) {
+        PLAYER->isg = 1;
     };
-    Cheats_UsableItems();
+    if(forcedUsableItems && isInGame()) {
+        Cheats_UsableItems();
+    }
 }
 
 u32 Cheats_RemoveBGM(u32 original) {

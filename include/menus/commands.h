@@ -1,6 +1,7 @@
 #pragma once
 
 #include "menu.h"
+#include "z3D/z3D.h"
 
 #define COMMAND_COMBO_MAX 4
 #define COMMAND_COMBO_TIMEOUT 3
@@ -57,3 +58,4 @@ void Commands_ComboToString(char* buf, u32 commandIdx);
 
 extern u32 pauseUnpause;
 extern u32 frameAdvance;
+extern PosRot storedPosRot[STORED_POS_COUNT];

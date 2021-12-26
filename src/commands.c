@@ -13,7 +13,7 @@ u32 pauseUnpause = 0; //tells main to pause/unpause
 u32 frameAdvance = 0; //tells main to frame advance
 bool menuOpen = 0;    //tells main to open menu
 
-static PosRot storedPosRot[STORED_POS_COUNT];
+PosRot storedPosRot[STORED_POS_COUNT];
 static u8 storedPosIndex = 0;
 
 static void Command_OpenMenu(void){

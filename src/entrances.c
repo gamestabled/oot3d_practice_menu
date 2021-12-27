@@ -590,7 +590,7 @@ const EntrancesByScene Entrances_GerudoValley = {
     {
         {0x0117, "From Hyrule Field"},
         {0x01A5, "From Captured Without Hookshot"},
-        {0x0229, "From Gerudo's Fortress [Early]"},
+        {0x0229, "[Unused] From Gerudo's Fortress"},
         {0x022D, "From Gerudo's Fortress"},
         {0x03D0, "From Carpenters' Tent"},
     }
@@ -759,7 +759,7 @@ const EntrancesByScene Entrances_HauntedWasteland = {
     "Haunted Wasteland",
     .nbItems = 3,
     {
-        {0x0130, "Gerudo's Fortress & Void Respawn"},
+        {0x0130, "From Gerudo's Fortress"},
         {0x0365, "From Desert Colossus"},
         {0x0369, "Unused: OoB spawn without Link"},
     }
@@ -786,7 +786,7 @@ const EntrancesByScene Entrances_HyruleCastleGanonsCastleExterior = {
     .nbItems = 5,
     {
         {0x0138, "From Market"},
-        {0x023D, "From Castle Hedge Maze / Ganon's Castle Interior"},
+        {0x023D, "From Castle Hedge Maze / Ganon's Castle"},
         {0x0340, "From Great Fairy's Fountain"},
         {0x047E, "From Caught By Castle Guard"},
         {0x04FA, "From Caught By Hedge Maze Guard"},
@@ -805,15 +805,15 @@ const EntrancesByScene Entrances_HyruleField = {
         {0x018D, "From Gerudo Valley"},
         {0x01F9, "From Lon Lon Ranch (Main Entrance)"},
         {0x01FD, "From Market Entrance"},
-        {0x027A, "Near Lake Hylia"},
+        {0x027A, "[Unused] Near Lake Hylia"},
         {0x027E, "From Lake Hylia Owl Ride"},
-        {0x0282, "[Unused]"},
-        {0x028A, "From Lon Lon Ranch (South Fence)"},
-        {0x028E, "From Lon Lon Ranch (West Fence)"},
-        {0x0292, "From Lon Lon Ranch (East Fence)"},
+        {0x0282, "[Unused] Near River"},
+        {0x028A, "From Lon Lon Ranch (South Fence Jump)"},
+        {0x028E, "From Lon Lon Ranch (West Fence Jump)"},
+        {0x0292, "From Lon Lon Ranch (East Fence Jump)"},
         {0x0311, "From Zora's River (Water)"},
-        {0x0476, "[?]"},
-        {0x050F, "[?]"},
+        {0x0476, "From Lon Lon Ranch (Front Gate Jump)"},
+        {0x050F, "From Song of Time Cutscene"},
         {0x0594, "From Impa's Cutscene"},
     }
 };
@@ -823,7 +823,7 @@ const EntrancesByScene Entrances_IceCavern = {
     .nbItems = 2,
     {
         {0x0088, "From Zora's Fountain"},
-        {0x05D8, "[?]"},
+        {0x05D8, "[Unused] Near Block Puzzle Room"},
     }
 };
 
@@ -993,17 +993,17 @@ const EntrancesByScene Entrances_LonLonRanch = {
     "Lon Lon Ranch",
     .nbItems = 11,
     {
-        {0x0157, "From Hyrule Field (Main Entrance)"},
+        {0x0157, "From Hyrule Field"},
         {0x02AE, "From Epona's Song Cutscene"},
-        {0x0378, "From Ranch House"},
+        {0x0378, "From Talon's House"},
         {0x042F, "From Stable"},
-        {0x05D4, "From Silo"},
-        {0x04CA, "[?]"},
-        {0x04CE, "[?]"},
-        {0x0558, "[?]"},
-        {0x055C, "[?]"},
-        {0x02E2, "From Hyrule Field (South Fence)"},
-        {0x02E6, "From Hyrule Field (West Fence)"},
+        {0x05D4, "From Tower"},
+        {0x04CA, "Horse Riding"},
+        {0x04CE, "From winning race"},
+        {0x0558, "From losing race"},
+        {0x055C, "Unused: Near Ingo/Malon"},
+        {0x02E2, "Unused: From South Fence"},
+        {0x02E6, "Unused: From West Fence"},
     }
 };
 
@@ -1019,8 +1019,8 @@ const EntrancesByScene Entrances_LostWoods = {
         {0x04DE, "From Hyrule Field"},
         {0x05E0, "From Kokiri Forest (Forest Bridge)"},
         {0x04D2, "Unused: Boulder and Grass Square"},
-        {0x01B1, "[?]"},
-        {0x04C6, "[?]"},
+        {0x01B1, "Unused: Entrance Square from opposite side"},
+        {0x04C6, "Unused: Entrance Square from ocarina game"},
     }
 };
 
@@ -1085,12 +1085,12 @@ const EntrancesByScene Entrances_PhantomGanonsLair = {
 };
 
 const EntrancesByScene Entrances_RanchHouse = {
-    "Ranch House",
-    .nbItems = 2,
+    "Ranch Buildings",
+    .nbItems = 3,
     {
-        {0x004F, "From Lon Lon Ranch (Ranch House)"},
-        {0x05D0, "From Lon Lon Ranch (Silo)"},
-        {0x05E4, "After Cuccos game"},
+        {0x004F, "Talon's House from Lon Lon Ranch"},
+        {0x05D0, "Tower from Lon Lon Ranch"},
+        {0x05E4, "Talon's House from Cucco game"},
 
     }
 };
@@ -1131,7 +1131,7 @@ const EntrancesByScene Entrances_ShadowTemple = {
         {0x0037, "From Graveyard"},
         {0x02B2, "Unused: Outside Boss Door"},
         {0x02B6, "From Bongo Bongo's Lair"},
-        {0x04EA, "[?] crashes"},
+        {0x04EA, "[Unused] (crashes)"},
     }
 };
 

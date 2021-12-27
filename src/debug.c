@@ -11,6 +11,11 @@
 
 #define ACTOR_LIST_MAX_SHOW 15
 
+//new actor values
+static s16 newId = 0x0010;
+static s16 newParams = 0x0000;
+static u8  storedPosRotIndex = 0;
+
 typedef struct {
     Actor* instance;
     s16    id;
@@ -100,9 +105,6 @@ static void DebugActors_ShowMoreInfo(Actor* actor) {
 }
 
 static void DebugActors_SpawnActor(void) {
-    s16 newId = 0x0010;
-    s16 newParams = 0x0000;
-    u8  storedPosRotIndex = 0;
     PosRot selectedPosRot = storedPosRot[storedPosRotIndex];
 
     do
@@ -128,7 +130,7 @@ static void DebugActors_SpawnActor(void) {
             break;
         }
         if (pressed & BUTTON_A){
-            Debug_NewActorValuesMenuShow(&newId, &newParams, &storedPosRotIndex);
+            Debug_NewActorValuesMenuShow();
             selectedPosRot = storedPosRot[storedPosRotIndex];
         }
         else if ((pressed & BUTTON_X)){
@@ -210,7 +212,10 @@ static void DebugActors_ShowActors(void) {
         }
         else if(pressed & BUTTON_X)
         {
-            Actor_Kill(actorList[selected].instance);
+            // prevent accidentally deleting the player actor
+            if(actorList[selected].instance->id != 0 || ADDITIONAL_FLAG_BUTTON) {
+                Actor_Kill(actorList[selected].instance);
+            }
         }
         else if(pressed & BUTTON_DOWN)
         {
@@ -282,18 +287,18 @@ AmountMenu NewActorValuesMenu = {
     }
 };
 
-void NewActorValuesMenuInit(s16* newId, s16* newParams, u8* storedPosRotIndex) {
-    NewActorValuesMenu.items[0].amount = *newId;
-    NewActorValuesMenu.items[1].amount = *newParams;
-    NewActorValuesMenu.items[2].amount = *storedPosRotIndex;
+void NewActorValuesMenuInit() {
+    NewActorValuesMenu.items[0].amount = newId;
+    NewActorValuesMenu.items[1].amount = newParams;
+    NewActorValuesMenu.items[2].amount = storedPosRotIndex;
 }
 
-void Debug_NewActorValuesMenuShow(s16* newId, s16* newParams, u8* storedPosRotIndex) {
-    NewActorValuesMenuInit(newId, newParams, storedPosRotIndex);
+void Debug_NewActorValuesMenuShow() {
+    NewActorValuesMenuInit();
     AmountMenuShow(&NewActorValuesMenu);
-    *newId = NewActorValuesMenu.items[0].amount;
-    *newParams = NewActorValuesMenu.items[1].amount;
-    *storedPosRotIndex = NewActorValuesMenu.items[2].amount;
+    newId = NewActorValuesMenu.items[0].amount;
+    newParams = NewActorValuesMenu.items[1].amount;
+    storedPosRotIndex = NewActorValuesMenu.items[2].amount;
     Draw_Lock();
     Draw_ClearFramebuffer();
     Draw_FlushFramebuffer();

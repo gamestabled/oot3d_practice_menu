@@ -173,6 +173,9 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSe
                 else if(selected == Entrance_Select_Menu_Time){
                     chosenTime++;
                     chosenTime %= 5;
+                    if (ADDITIONAL_FLAG_BUTTON && chosenTime != 0){
+                        gSaveContext.dayTime = EntranceTimes[chosenTime];
+                    }
                 }
                 else if(selected >= Entrance_Select_Menu_Etcs){
                     s32 age;

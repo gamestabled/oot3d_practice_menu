@@ -15,6 +15,9 @@
 
 #include "z3D/z3D.h"
 
+#define NOCLIP_SLOW_SPEED 4
+#define NOCLIP_FAST_SPEED 20
+
 advance_ctx_t advance_ctx = {};
 uint8_t framebuffers_init = 0;
 static bool isAsleep = false;
@@ -207,7 +210,7 @@ void advance_main(void) {
 
     if(noClip) { // TODO manage camera, redirect inputs accordingly or change the camera angle.
         u32 in = rInputCtx.cur.val;
-        f32 amount = (in & BUTTON_R1) ? 10 : 2;
+        f32 amount = (in & BUTTON_R1) ? NOCLIP_FAST_SPEED : NOCLIP_SLOW_SPEED;
         if(in & BUTTON_L1) {
             if(in & (BUTTON_DOWN)) {
                 PLAYER->actor.world.pos.y -= amount;

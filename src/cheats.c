@@ -18,7 +18,6 @@ u16 frozenTime = 0;
 
 void Cheats_ShowCheatsMenu(){
     //Cheats_CheatsMenuInit();
-    CheatsMenu.items[CHEATS_MQ].on = gSaveContext.masterQuestFlag;
     ToggleMenuShow(&CheatsMenu);
 }
 
@@ -27,9 +26,6 @@ void Cheats_Toggle(s32 selected){
     CheatsMenu.items[selected].on = !CheatsMenu.items[selected].on;
 
     switch (selected) {
-        case (CHEATS_MQ):
-            gSaveContext.masterQuestFlag = cheats[CHEATS_MQ]; // done here once instead of in applyCheats
-            break;
         case (CHEATS_USABLE_ITEMS):
             if (ADDITIONAL_FLAG_BUTTON) {
                 forcedUsableItems = 1;
@@ -49,7 +45,7 @@ void Cheats_Toggle(s32 selected){
 
 ToggleMenu CheatsMenu = {
     "Cheats",
-    .nbItems = 18,
+    .nbItems = 17,
     {
         {0, "Infinite Health", .method = Cheats_Toggle},
         {0, "Infinite Magic", .method = Cheats_Toggle},
@@ -75,7 +71,6 @@ ToggleMenu CheatsMenu = {
         {0, "ISG", .method = Cheats_Toggle},
         {0, "Turbo Text", .method = Cheats_Toggle},
         #endif
-        {0, "Master Quest", .method = Cheats_Toggle},
     }
 };
 

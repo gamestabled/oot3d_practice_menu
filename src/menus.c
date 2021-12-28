@@ -43,14 +43,14 @@
 
 Menu gz3DMenu = {
     "Practice Menu",
-    .nbItems = 8,
+    .nbItems = 9,
     {
         { "Warps", MENU, .menu = &WarpsMenu },
         { "Scene", MENU, .menu = &SceneMenu },
         { "Cheats", METHOD, .method = Cheats_ShowCheatsMenu },
         { "Inventory", MENU, .menu = &InventoryMenu },
         { "Equips", METHOD, .method = Equips_ShowEquipsMenu },
-        // { "File", MENU, .menu = &FileMenu },
+        { "File", METHOD, .method = File_ShowFileMenu },
         { "Watches", METHOD, .method = &WatchesMenuFunc },
         { "Debug", MENU, .menu = &DebugMenu },
         { "Commands", METHOD, .method = Commands_ShowCommands },

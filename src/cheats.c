@@ -38,6 +38,10 @@ void Cheats_Toggle(s32 selected){
         case (CHEATS_FREEZE_TIME):
             frozenTime = gSaveContext.dayTime;
             break;
+        case (CHEATS_NAYRUS_LOVE):
+            if (!CheatsMenu.items[selected].on)
+                gSaveContext.nayrusLoveTimer = 0x6E0;
+            break;
     }
 
     applyCheats();
@@ -122,7 +126,7 @@ void applyCheats() {
         }
     };
     if(cheats[CHEATS_NAYRUS_LOVE]) {
-        gSaveContext.nayrusLoveTimer = 0x700;
+        gSaveContext.nayrusLoveTimer = 1;
     };
     if(cheats[CHEATS_FREEZE_TIME]) {
         gSaveContext.dayTime = frozenTime;

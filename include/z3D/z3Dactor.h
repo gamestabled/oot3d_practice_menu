@@ -209,7 +209,9 @@ typedef struct {
 
 typedef struct {
     /* 0x0000 */ Actor  actor;
-    /* 0x01A4 */ char   unk_148[0x00A8];
+    /* 0x01A4 */ char   unk_148[0x0006];
+    /* 0x01AA */ u8     heldItemId;
+    /* 0x01AB */ char   unk_1AB[0x00A1];
     /* 0x024C */ void*  giDrawSpace;
     /* 0x0250 */ char   unk_250[0x0004];
     /* 0x0254 */ struct SkelAnime skelAnime;

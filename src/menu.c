@@ -265,7 +265,10 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         }
         else if(pressed & BUTTON_DOWN && chosen)
         {
-            menu->items[selected].amount--;
+            if (pressed & BUTTON_X)
+                menu->items[selected].amount-= (menu->items[selected].hex ? 0x100 : 100);
+            else
+                menu->items[selected].amount--;
         }
         else if(pressed & BUTTON_UP && !chosen)
         {
@@ -273,7 +276,10 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         }
         else if(pressed & BUTTON_UP && chosen)
         {
-            menu->items[selected].amount++;
+            if (pressed & BUTTON_X)
+                menu->items[selected].amount+= (menu->items[selected].hex ? 0x100 : 100);
+            else
+                menu->items[selected].amount++;
         }
         else if(pressed & BUTTON_LEFT && !chosen)
         {
@@ -281,7 +287,10 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         }
         else if(pressed & BUTTON_RIGHT && chosen)
         {
-            menu->items[selected].amount += (menu->items[selected].hex ? 16 : 10);
+            if (pressed & BUTTON_X)
+                menu->items[selected].amount+= (menu->items[selected].hex ? 0x1000 : 1000);
+            else
+                menu->items[selected].amount += (menu->items[selected].hex ? 0x10 : 10);
         }
         else if(pressed & BUTTON_RIGHT && !chosen)
         {
@@ -293,15 +302,10 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
         }
         else if(pressed & BUTTON_LEFT && chosen)
         {
-            menu->items[selected].amount -= (menu->items[selected].hex ? 16 : 10);
-        }
-        else if(pressed & BUTTON_X && chosen)
-        {
-            menu->items[selected].amount += (menu->items[selected].hex ? 256 : 100);
-        }
-        else if(pressed & BUTTON_Y && chosen)
-        {
-            menu->items[selected].amount -= (menu->items[selected].hex ? 256 : 100);
+            if (pressed & BUTTON_X)
+                menu->items[selected].amount-= (menu->items[selected].hex ? 0x1000 : 1000);
+            else
+                menu->items[selected].amount -= (menu->items[selected].hex ? 0x10 : 10);
         }
 
         while(chosen && (menu->items[selected].max != 0) && (menu->items[selected].amount > menu->items[selected].max)) {

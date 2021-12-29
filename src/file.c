@@ -4,9 +4,10 @@
 
 ToggleMenu FileMenu = {
     "File",
-    .nbItems = 7,
+    .nbItems = 8,
     {
         {0, "Gold Skulltulas defeated", .method = File_ToggleSkulltulaFlags },
+        {0, "Seeds and Magic drops obtained", .method = File_ToggleItemDropsFlags },
         {0, "Call Navi", .method = File_CallNavi },
         {0, "Epona Freed", .method = File_ToggleEponaFreed },
         {0, "Carpenters Freed", .method = File_ToggleCarpentersFreed },
@@ -19,6 +20,7 @@ ToggleMenu FileMenu = {
 
 void File_FileMenuInit(void) {
     FileMenu.items[FILE_GOLD_SKULLTULAS].on = (gSaveContext.gsFlags[0] == 0xFF);
+    FileMenu.items[FILE_ITEM_DROPS].on = (gSaveContext.infTable[0x19] & 0x0100) && (gSaveContext.itemGetInf[1] & 0x0008);
     FileMenu.items[FILE_CALL_NAVI].on = (gSaveContext.naviTimer >= 2000);
     FileMenu.items[FILE_EPONA_FREED].on = (gSaveContext.eventChkInf[0x1] & 0x0100) == 0x0100;
     FileMenu.items[FILE_CARPENTERS_FREED].on = ((gSaveContext.eventChkInf[0x9] & 0x000F) == 0x000F);
@@ -48,6 +50,19 @@ void File_ToggleSkulltulaFlags(s32 selected) {
         for (u32 i = 0; i < 22; i++) {
             gSaveContext.gsFlags[i] = 0xFF;
         }
+        FileMenu.items[selected].on = 1;
+    }
+}
+
+void File_ToggleItemDropsFlags(s32 selected) {
+    if (FileMenu.items[selected].on) {
+        gSaveContext.infTable[0x19] &= ~0x0100; //magic
+        gSaveContext.itemGetInf[1] &= ~0x0008; //deku seeds
+        FileMenu.items[selected].on = 0;
+    }
+    else {
+        gSaveContext.infTable[0x19] |= 0x0100;
+        gSaveContext.itemGetInf[0x1] |= 0x0008;
         FileMenu.items[selected].on = 1;
     }
 }

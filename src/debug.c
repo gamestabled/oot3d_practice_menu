@@ -305,11 +305,46 @@ void Debug_NewActorValuesMenuShow() {
     Draw_Unlock();
 }
 
+AmountMenu PlayerStatesMenu = {
+    "Player States",
+    .nbItems = 5,
+    {
+        {0, 1,   0, "Lock=2000, DownA=0020, ReturnA=0010,...", .method = NULL},
+        {0, 1,   0, "LedgeCancel=4000, GID=0400, GJ=0800,...", .method = NULL},
+        {0, 1,   0, "Invisible=2000, BlankA=0004,...", .method = NULL},
+        {0, 1,   0, "Underwater=0400,...", .method = NULL},
+        {0, 0, 255, "Held Item ID (simulate QuickDraw)", .method = NULL},
+    }
+};
+
+void PlayerStatesMenuInit() {
+    PlayerStatesMenu.items[PLAYERSTATES_PART1].amount = (PLAYER->stateFlags1 >> 0x10) & 0xFFFF;
+    PlayerStatesMenu.items[PLAYERSTATES_PART2].amount = PLAYER->stateFlags1 & 0xFFFF;
+    PlayerStatesMenu.items[PLAYERSTATES_PART3].amount = (PLAYER->stateFlags2 >> 0x10) & 0xFFFF;
+    PlayerStatesMenu.items[PLAYERSTATES_PART4].amount = PLAYER->stateFlags2 & 0xFFFF;
+    PlayerStatesMenu.items[PLAYERSTATES_HELD_ITEM].amount = PLAYER->heldItemId;
+}
+
+void Debug_PlayerStatesMenuShow() {
+    if (isInGame()) {
+        PlayerStatesMenuInit();
+        AmountMenuShow(&PlayerStatesMenu);
+        PLAYER->stateFlags1 = (PlayerStatesMenu.items[PLAYERSTATES_PART1].amount << 0x10) | PlayerStatesMenu.items[PLAYERSTATES_PART2].amount;
+        PLAYER->stateFlags2 = (PlayerStatesMenu.items[PLAYERSTATES_PART3].amount << 0x10) | PlayerStatesMenu.items[PLAYERSTATES_PART4].amount;
+        PLAYER->heldItemId = PlayerStatesMenu.items[PLAYERSTATES_HELD_ITEM].amount;
+        Draw_Lock();
+        Draw_ClearFramebuffer();
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
+    }
+}
+
 Menu DebugMenu = {
     "Debug",
-    .nbItems = 2,
+    .nbItems = 3,
     {
         {"Actors", METHOD, .method = DebugActors_ShowActors},
         {"Flags (TODO)", METHOD, .method = NULL}, //TODO
+        {"Player States", METHOD, .method = Debug_PlayerStatesMenuShow},
     }
 };

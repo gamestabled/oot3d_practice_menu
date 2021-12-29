@@ -130,18 +130,14 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSe
                     gGlobalContext->nextEntranceIndex = chosenEntranceIndex;
                 }
             }
-            else if (pressed & (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT | BUTTON_X | BUTTON_Y)) // change selected value
+            else if (pressed & (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT)) // change selected value
             {
-                s16 increment = 0;
-                switch (pressed & (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT | BUTTON_X | BUTTON_Y))
-                {
-                    case (BUTTON_UP): increment = 1; break;
-                    case (BUTTON_DOWN): increment = -1; break;
-                    case (BUTTON_RIGHT): increment = 16; break;
-                    case (BUTTON_LEFT): increment = -16; break;
-                    case (BUTTON_X): increment = 256; break;
-                    case (BUTTON_Y): increment = -256; break;
-                }
+                s32 increment = 0;
+                if (pressed & BUTTON_UP) increment = (pressed & BUTTON_X) ? 0x100 : 0x1;
+                if (pressed & BUTTON_DOWN) increment = (pressed & BUTTON_X) ? -0x100 : -0x1;
+                if (pressed & BUTTON_RIGHT) increment = (pressed & BUTTON_X) ? 0x1000 : 0x10;
+                if (pressed & BUTTON_LEFT) increment = (pressed & BUTTON_X) ? -0x1000 : -0x10;
+
                 if (selected == Entrance_Select_Menu_Etcs)
                     chosenEntranceIndex += increment;
                 else if (selected == Entrance_Select_Menu_CsIdx) {

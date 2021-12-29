@@ -7,6 +7,7 @@ extern ToggleMenu FileMenu;
 void File_ShowFileMenu(void);
 
 extern void File_ToggleSkulltulaFlags(s32 selected);
+extern void File_ToggleItemDropsFlags(s32 selected);
 extern void File_CallNavi(s32 selected);
 extern void File_ToggleEponaFreed(s32 selected);
 extern void File_ToggleCarpentersFreed(s32 selected);
@@ -16,6 +17,7 @@ extern void File_ToggleMasterQuest(s32 selected);
 
 typedef enum {
     FILE_GOLD_SKULLTULAS,
+    FILE_ITEM_DROPS,
     FILE_CALL_NAVI,
     FILE_EPONA_FREED,
     FILE_CARPENTERS_FREED,

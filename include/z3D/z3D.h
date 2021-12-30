@@ -539,7 +539,13 @@ typedef Actor* (*Actor_Spawn_proc)(ActorContext *actorCtx,GlobalContext *globalC
 #define Actor_Spawn ((Actor_Spawn_proc)Actor_Spawn_addr)
 
 typedef void (*Player_SetEquipmentData_proc)(GlobalContext* globalCtx, Player* player);
-#define Player_SetEquipmentData_addr 0x34913C                                               //works on EUR, confirm for JP
+
+#ifdef Version_JP
+    #define Player_SetEquipmentData_addr 0x348C54
+#else //USA & EUR
+    #define Player_SetEquipmentData_addr 0x34913C
+#endif
+
 #define Player_SetEquipmentData ((Player_SetEquipmentData_proc)Player_SetEquipmentData_addr)
 
 /*

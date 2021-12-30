@@ -49,7 +49,11 @@ hook_PlaySound:
     bl Cheats_RemoveBGM
     pop {r1-r12, lr}
     push {r3-r7, lr}
+.if _JP_==1
+    b 0x35C044
+.else
     b 0x35C52C
+.endif
 
 .global hook_SetBGMEntrance
 hook_SetBGMEntrance:
@@ -57,7 +61,11 @@ hook_SetBGMEntrance:
     bl Cheats_RemoveBGM
     pop {r1-r12, lr}
     push {r4-r6, lr}
+.if _JP_==1
+    b 0x330B64
+.else
     b 0x33104C
+.endif
 
 .global hook_SetBGMDayNight
 hook_SetBGMDayNight:
@@ -71,6 +79,9 @@ hook_SetBGMDayNight:
 .if _EUR_==1
     b 0x483CAC
 .endif
+.if _JP_==1
+    b 0x483C64
+.endif
 
 .global hook_SetBGMEvent
 hook_SetBGMEvent:
@@ -80,7 +91,11 @@ hook_SetBGMEvent:
     cpy r1,r0
     pop {r0, r2-r12, lr}
     push {r4-r11, lr}
+.if _JP_==1
+    b 0x36E75C
+.else
     b 0x36EC44
+.endif
 
 .global hook_InstantTextFirstLine
 hook_InstantTextFirstLine:
@@ -108,7 +123,11 @@ hook_InstantTextBoxBreak:
     bl Cheats_IsInstantText
     cmp r0,#0x1
     pop {r0-r12, lr}
+.if _JP_==1
+    bne 0x2E09F8
+.else
     bne 0x2E0EE0
+.endif
     push {r0-r12, lr}
     ldr r0,[r5,#0x0]
     ldr r1,[r0,#0x20]
@@ -116,7 +135,11 @@ hook_InstantTextBoxBreak:
     blx r1
     strb r11,[r4,#0x24]
     pop {r0-r12, lr}
-    b 0x2E0EE0
+.if _JP_==1
+    bne 0x2E09F8
+.else
+    bne 0x2E0EE0
+.endif
 
 .global hook_InstantTextRemoveOff
 hook_InstantTextRemoveOff:
@@ -124,9 +147,15 @@ hook_InstantTextRemoveOff:
     bl Cheats_IsInstantText
     cmp r0,#0x1
     pop {r0-r12, lr}
+.if _JP_==1
+    beq 0x2E09EC
+    ldr r0,[r5,#0x0]
+    b 0x2E01E4
+.else
     beq 0x2E0ED4
     ldr r0,[r5,#0x0]
     b 0x2E06CC
+.endif
 
 .global hook_TurboTextAdvance
 hook_TurboTextAdvance:
@@ -179,6 +208,11 @@ hook_ItemUsability_Shield:
     bne 0x42E400
     cmp r0,#0x0
     b 0x42E2E8
+.endif
+.if _JP_==1
+    bne 0x42E3B4
+    cmp r0,#0x0
+    b 0x42E2D4
 .endif
 
 .global hook_Gfx_SleepQueryCallback

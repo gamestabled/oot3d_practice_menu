@@ -9,11 +9,8 @@ u32 GetCurrentPadState(void) {
     u32 hid_shared_mem = *(u32*)(0x005AEC5C);
     return *(volatile u32*)(hid_shared_mem + 0x1C);
 }
-#ifdef Version_JP
-    #define HID_PAD (REG32(0x10146000) ^ 0xFFF) //doesn't work on Citra
-#else
-    #define HID_PAD (GetCurrentPadState())
-#endif
+
+#define HID_PAD (GetCurrentPadState())
 
 #define dpadButtons  (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT)
 

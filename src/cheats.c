@@ -64,17 +64,10 @@ ToggleMenu CheatsMenu = {
         {0, "Infinite Rupees", .method = Cheats_Toggle},
         {0, "Infinite Nayru's Love", .method = Cheats_Toggle},
         {0, "Freeze time of day", .method = Cheats_Toggle},
-        #ifdef Version_JP
-        {0, "No music (TODO)", .method = NULL},
-        {0, "Usable Items (TODO)", .method = NULL},
-        {0, "ISG", .method = Cheats_Toggle},
-        {0, "Turbo Text (TODO)", .method = NULL},
-        #else
         {0, "No music", .method = Cheats_Toggle},
         {0, "Unrestricted Items - Forced mode OFF", .method = Cheats_Toggle},
         {0, "ISG", .method = Cheats_Toggle},
         {0, "Turbo Text", .method = Cheats_Toggle},
-        #endif
     }
 };
 

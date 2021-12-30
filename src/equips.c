@@ -22,12 +22,6 @@ void Equips_EquipsMenuInit(void){
     } else {
         EquipsMenu.items[EQUIP_SWORD].title = "Sword (0-3) - Swordless Flag OFF";
     }
-
-    #ifdef Version_JP
-    EquipsMenu.items[EQUIP_SHIELD].title = "Shield (0-3, applies on reload)";
-    EquipsMenu.items[EQUIP_TUNIC].title = "Tunic (0-3, applies on reload)";
-    EquipsMenu.items[EQUIP_BOOTS].title = "Boots (0-3, applies on reload)";
-    #endif
 }
 
 void Equips_ShowEquipsMenu(void){
@@ -73,9 +67,9 @@ void Equips_ModifyGear(s32 selected){
             EquipsMenu.items[EQUIP_SWORD].title = "Sword (0-3) - Swordless Flag OFF";
         }
     }
-    #ifndef Version_JP
+
     Player_SetEquipmentData(gGlobalContext, PLAYER);
-    #endif
+
 }
 
 AmountMenu EquipsMenu = {

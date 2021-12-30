@@ -8,9 +8,9 @@ SECTIONS
 		*(.patch_loader)
 	}
 
-	.patch_load 0x2E32A8 : {
+	/*.patch_load 0x2E32A8 : {
 		*(.patch_load)
-	}
+	}*/
 
 	.patch_Gfx_Update 0x30FD6C : {
 		*(.patch_Gfx_Update)

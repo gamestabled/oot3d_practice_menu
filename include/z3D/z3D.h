@@ -527,6 +527,22 @@ typedef enum {
 #define Z3D_BOTTOM_SCREEN_1 0x143A02B0
 #define Z3D_BOTTOM_SCREEN_2 0x143D86C0
 
+typedef Actor* (*Actor_Spawn_proc)(ActorContext *actorCtx,GlobalContext *globalCtx,s16 actorId,float posX,float posY,float posZ,s16 rotX,s16 rotY,s16 rotZ,s16 params)
+    __attribute__((pcs("aapcs-vfp")));;
+
+#ifdef Version_JP
+    #define Actor_Spawn_addr 0x3733E8
+#else //USA & EUR
+    #define Actor_Spawn_addr 0x3738D0
+#endif
+
+#define Actor_Spawn ((Actor_Spawn_proc)Actor_Spawn_addr)
+
+typedef void (*Player_SetEquipmentData_proc)(GlobalContext* globalCtx, Player* player);
+#define Player_SetEquipmentData_addr 0x34913C                                               //works on EUR, confirm for JP
+#define Player_SetEquipmentData ((Player_SetEquipmentData_proc)Player_SetEquipmentData_addr)
+
+/*
 typedef void (*Item_Give_proc)(GlobalContext* globalCtx, u8 item);
 #define Item_Give_addr 0x376A78
 #define Item_Give ((Item_Give_proc)Item_Give_addr)
@@ -559,11 +575,6 @@ typedef void (*PlaySound_proc)(u32);
 #define PlaySound_addr 0x35C528
 #define PlaySound ((PlaySound_proc)PlaySound_addr) //this function plays sound effects and music tracks, overlaid on top of the current BGM
 
-typedef Actor* (*Actor_Spawn_proc)(ActorContext *actorCtx,GlobalContext *globalCtx,s16 actorId,float posX,float posY,float posZ,s16 rotX,s16 rotY,s16 rotZ,s16 params)
-    __attribute__((pcs("aapcs-vfp")));;
-#define Actor_Spawn_addr 0x3738D0
-#define Actor_Spawn ((Actor_Spawn_proc)Actor_Spawn_addr)
-
 typedef void (*FireDamage_proc)(Actor* player, GlobalContext* globalCtx, int flamesColor);
 #define FireDamage_addr 0x35D8D8
 #define FireDamage ((FireDamage_proc)FireDamage_addr)
@@ -576,9 +587,6 @@ typedef void (*GiveItem_proc)(Actor* actor, GlobalContext* globalCtx, s32 getIte
     __attribute__((pcs("aapcs-vfp")));
 #define GiveItem_addr 0x3724DC
 #define GiveItem ((GiveItem_proc)0x3724DC)
-
-typedef void (*Player_SetEquipmentData_proc)(GlobalContext* globalCtx, Player* player);
-#define Player_SetEquipmentData_addr 0x34913C
-#define Player_SetEquipmentData ((Player_SetEquipmentData_proc)Player_SetEquipmentData_addr)
+*/
 
 #endif //_Z3D_H_

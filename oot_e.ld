@@ -20,10 +20,6 @@ SECTIONS
 		*(.patch_InstantTextRemoveOff)
 	}
 
-	/*.patch_load 0x2E3790 : {
-		*(.patch_load)
-	}*/
-
 	.patch_Gfx_Update 0x310254 : {
 		*(.patch_Gfx_Update)
 	}
@@ -48,35 +44,31 @@ SECTIONS
 		*(.patch_SleepQueryCallback)
 	}
 
-	.patch_ItemUsability_Shield 0x42E2F0 : {
+	.patch_ItemUsability_Shield 0x42E2E4 : {
 		*(.patch_ItemUsability_Shield)
 	}
 
-	.patch_OverrideSceneSetup 0x4487B8 : {
+	.patch_OverrideSceneSetup 0x4487D8 : {
 		*(.patch_OverrideSceneSetup)
 	}
 
-	.patch_before_GlobalContext_Update 0x452390 : {
-		*(.patch_before_GlobalContext_Update)
-	}
-
-	.patch_after_GlobalContext_Update 0x452434 : {
+	.patch_after_GlobalContext_Update 0x452454 : {
 		*(.patch_after_GlobalContext_Update)
 	}
 
-	.patch_ItemUsability 0x476D1C : {
+	.patch_ItemUsability 0x476D3C : {
 		*(.patch_ItemUsability)
 	}
 
-	.patch_TurboTextAdvance 0x480928 : {
+	.patch_TurboTextAdvance 0x480948 : {
 		*(.patch_TurboTextAdvance)
 	}
 
-	.patch_SetBGMDayNight 0x483C88 : {
+	.patch_SetBGMDayNight 0x483CA8 : {
 		*(.patch_SetBGMDayNight)
 	}
 
-	.patch_TurboTextClose 0x488214 : {
+	.patch_TurboTextClose 0x488234 : {
 		*(.patch_TurboTextClose)
 	}
 

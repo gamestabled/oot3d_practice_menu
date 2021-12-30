@@ -9,29 +9,29 @@ hook_into_Gfx_Update:
     pop {r4-r8, pc}
 
 
-.global hook_into_area_load
-hook_into_area_load:
-    push {r0-r12, lr}
-    bl area_load_main
-    pop {r0-r12, lr}
-.if _USA_==1
-    b 0x2E37D4
-.endif
-.if _JP_==1
-    b 0x2E32EC
-.endif
+#.global hook_into_area_load
+#hook_into_area_load:
+#    push {r0-r12, lr}
+#    bl area_load_main
+#    pop {r0-r12, lr}
+#.if _USA_==1
+#    b 0x2E37D4
+#.endif
+#.if _JP_==1
+#    b 0x2E32EC
+#.endif
 
 .global gGlobalContext
-.global hook_into_global_context_update
-hook_into_global_context_update:
+.global hook_after_GlobalContext_Update
+hook_after_GlobalContext_Update:
     push {r0-r12, lr}
     bl setGlobalContext
     pop {r0-r12, lr}
-.if _USA_==1
-    b 0x2E25F0
-.endif
 .if _JP_==1
     b 0x2E2108
+.else
+# both USA and EUR
+    b 0x2E25F0
 .endif
 
 .section .loader
@@ -65,7 +65,12 @@ hook_SetBGMDayNight:
     bl Cheats_RemoveBGM
     pop {r1-r12, lr}
     push {r4-r6, lr}
+.if _USA_==1
     b 0x483C8C
+.endif
+.if _EUR_==1
+    b 0x483CAC
+.endif
 
 .global hook_SetBGMEvent
 hook_SetBGMEvent:
@@ -165,9 +170,16 @@ hook_ItemUsability_Shield:
     bl Cheats_areItemsForcedUsable
     cmp r0,#0x0
     pop {r0-r12, lr}
+.if _USA_==1
     bne 0x42E3DC
     cmp r0,#0x0
     b 0x42E2F4
+.endif
+.if _EUR_==1
+    bne 0x42E400
+    cmp r0,#0x0
+    b 0x42E2E8
+.endif
 
 .global hook_Gfx_SleepQueryCallback
 hook_Gfx_SleepQueryCallback:

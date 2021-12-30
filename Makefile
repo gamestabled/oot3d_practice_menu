@@ -38,21 +38,25 @@ INCLUDES    +=  assets
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-OOT3D	 	:= OOT3D
+OOT3DU 		:= OOT3DU
 OOT3DJ 		:= OOT3DJ
-Z3D			:= OOT3D
+OOT3DE 		:= OOT3DE
+Z3D			:= OOT3DU
 
-ifeq ($(OOT3D), $(Z3D))
+ifeq ($(OOT3DU), $(Z3D))
   LINK_SCRIPT 	:= oot.ld
-  ASFLAGS += -D _USA_=1 -D _JP_=0
-else
+  ASFLAGS += -D _USA_=1 -D _JP_=0 -D _EUR_=0
+endif
 ifeq ($(OOT3DJ), $(Z3D))
   LINK_SCRIPT 	:= oot_j.ld
-  ASFLAGS += -D _USA_=0 -D _JP_=1
+  ASFLAGS += -D _USA_=0 -D _JP_=1 -D _EUR_=0
 endif
+ifeq ($(OOT3DE), $(Z3D))
+  LINK_SCRIPT 	:= oot_e.ld
+  ASFLAGS += -D _USA_=0 -D _JP_=0 -D _EUR_=1
 endif
 
-VERFLAGS := -D OOT3D=$(OOT3D) -D OOT3DJ=$(OOT3DJ) -D Z3D=$(Z3D)
+VERFLAGS := -D OOT3DU=$(OOT3DU) -D OOT3DJ=$(OOT3DJ) -D OOT3DE=$(OOT3DE) -D Z3D=$(Z3D)
 
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=softfp -mtp=soft -mfpu=vfpv2
 
@@ -70,8 +74,14 @@ LDFLAGS	=	-g $(ARCH) -Wl,-Map,$(notdir $*.map) -T $(TOPDIR)/$(LINK_SCRIPT) -nost
 LIBS	:=	-lgcc
 
 # Define version for the C code
+ifeq ($(Z3D), $(OOT3DU))
+	CFLAGS += -g -DVersion_USA
+endif
 ifeq ($(Z3D), $(OOT3DJ))
 	CFLAGS += -g -DVersion_JP
+endif
+ifeq ($(Z3D), $(OOT3DE))
+	CFLAGS += -g -DVersion_EUR
 endif
 
 citra ?= 0

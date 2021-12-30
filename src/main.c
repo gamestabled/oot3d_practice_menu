@@ -226,10 +226,10 @@ void advance_main(void) {
             if(in & (BUTTON_UP)) {
                 PLAYER->actor.world.pos.z -= amount;
             }
-            if(in & (BUTTON_LEFT)) {
+            if(in & (gSaveContext.masterQuestFlag ? BUTTON_RIGHT : BUTTON_LEFT)) {
                 PLAYER->actor.world.pos.x -= amount;
             }
-            if(in & (BUTTON_RIGHT)) {
+            if(in & (gSaveContext.masterQuestFlag ? BUTTON_LEFT : BUTTON_RIGHT)) {
                 PLAYER->actor.world.pos.x += amount;
             }
         }

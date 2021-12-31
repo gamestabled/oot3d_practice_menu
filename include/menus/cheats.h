@@ -4,6 +4,8 @@
 
 extern ToggleMenu CheatsMenu;
 
+extern u16 frozenTime;
+
 void Cheats_ShowCheatsMenu();
 void applyCheats();
 void Cheats_UsableItems();

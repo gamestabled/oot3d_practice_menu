@@ -251,6 +251,9 @@ void ClearCutscenePointer(void){
 
 void Warps_OverridesMenuInit(void){
     WarpsOverridesMenu.items[WARPS_GAME_MODE].amount = gSaveContext.gameMode;
+    if(!sceneSetupOverrideActive) {
+        WarpsOverridesMenu.items[WARPS_SCENE_SETUP_INDEX].amount = gSaveContext.sceneSetupIndex;
+    }
 }
 
 void WarpsOverridesMenuShow(void){
@@ -263,6 +266,7 @@ void Warps_OverrideGameMode(s32 selected){
 }
 
 void Warps_OverrideSceneSetupIndex(s32 selected) {
+    gSaveContext.sceneSetupIndex = WarpsOverridesMenu.items[WARPS_SCENE_SETUP_INDEX].amount;
     if (ADDITIONAL_FLAG_BUTTON) {
         sceneSetupOverrideActive = 1;
         WarpsOverridesMenu.items[WARPS_SCENE_SETUP_INDEX].title = "Scene Setup Index - Override ON ";

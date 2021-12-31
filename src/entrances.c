@@ -5,6 +5,7 @@
 #include "common.h"
 #include "menus/commands.h"
 #include "menus/scene.h"
+#include "menus/cheats.h"
 #include "z3D/z3D.h"
 #include "utils.h"
 #include <stdio.h>
@@ -36,7 +37,7 @@ static const char* AgeNames[] = {
 
 void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex, u32 chosenTimeIndex){
     if (chosenTimeIndex != 0){
-        gSaveContext.dayTime = EntranceTimes[chosenTimeIndex];
+        gSaveContext.dayTime = frozenTime = EntranceTimes[chosenTimeIndex];
     }
     gGlobalContext->nextEntranceIndex = EntranceIndex;
     gGlobalContext->fadeOutTransition = 2;
@@ -170,7 +171,7 @@ void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSe
                     chosenTime++;
                     chosenTime %= 5;
                     if (ADDITIONAL_FLAG_BUTTON && chosenTime != 0){
-                        gSaveContext.dayTime = EntranceTimes[chosenTime];
+                        gSaveContext.dayTime = frozenTime = EntranceTimes[chosenTime];
                     }
                 }
                 else if(selected >= Entrance_Select_Menu_Etcs){

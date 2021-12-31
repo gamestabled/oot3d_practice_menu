@@ -107,7 +107,7 @@ ToggleMenu InventoryAdultTradeMenu = {
         {0, "Odd Mushroom", .method = Inventory_AdultTradeSelect},
         {0, "Odd Poultice", .method = Inventory_AdultTradeSelect},
         {0, "Poacher's Saw", .method = Inventory_AdultTradeSelect},
-        {0, "Goron's Sword (Broken)", .method = Inventory_AdultTradeSelect},
+        {0, "Broken Goron Sword", .method = Inventory_AdultTradeSelect},
         {0, "Prescription", .method = Inventory_AdultTradeSelect},
         {0, "Eye Ball Frog", .method = Inventory_AdultTradeSelect},
         {0, "Eye Drops", .method = Inventory_AdultTradeSelect},
@@ -147,7 +147,7 @@ ToggleMenu InventoryRightGearMenu = {
         {0, "Golden Scale", .method = Inventory_RightGearToggle},
         {0, "Adult's Wallet", .method = Inventory_RightGearToggle},
         {0, "Giant's Wallet", .method = Inventory_RightGearToggle},
-        {0, "No Wallet (No Rupees Shown)", .method = Inventory_RightGearToggle},
+        {0, "Unused Wallet (holds 500)", .method = Inventory_RightGearToggle},
     }
 };
 
@@ -260,8 +260,8 @@ static void Inventory_ItemsMenuInit(void){
     InventoryItemsMenu.items[ITEM_BOTTLE + 1].on = (gSaveContext.items[SLOT_BOTTLE_2] != ITEM_NONE);
     InventoryItemsMenu.items[ITEM_BOTTLE + 2].on = (gSaveContext.items[SLOT_BOTTLE_3] != ITEM_NONE);
     InventoryItemsMenu.items[ITEM_BOTTLE + 3].on = (gSaveContext.items[SLOT_BOTTLE_4] != ITEM_NONE);
-    InventoryItemsMenu.items[ITEM_BOTTLE + 4].on = (gSaveContext.items[SLOT_TRADE_ADULT] != ITEM_NONE); //TODO: index on left
-    InventoryItemsMenu.items[ITEM_BOTTLE + 5].on = (gSaveContext.items[SLOT_TRADE_CHILD] != ITEM_NONE); //TODO: index on left
+    InventoryItemsMenu.items[ITEM_BOTTLE + 4].on = (gSaveContext.items[SLOT_TRADE_CHILD] != ITEM_NONE); //TODO: index on left
+    InventoryItemsMenu.items[ITEM_BOTTLE + 5].on = (gSaveContext.items[SLOT_TRADE_ADULT] != ITEM_NONE); //TODO: index on left
     InventoryItemsMenu.items[ITEM_BOTTLE + 6].on = (gSaveContext.items[SLOT_IRON_BOOTS] == ITEM_BOOTS_IRON); //TODO
     InventoryItemsMenu.items[ITEM_BOTTLE + 7].on = (gSaveContext.items[SLOT_HOVER_BOOTS] == ITEM_BOOTS_HOVER); //TODO
 }
@@ -478,7 +478,8 @@ static void Inventory_RightGearMenu_Init(void){
     InventoryRightGearMenu.items[Gear_Menu_Golden_Scale].on = (((gSaveContext.upgrades >> 9) & 7) == GOLDEN_SCALE);
     InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = (((gSaveContext.upgrades >> 12) & 3) == ADULTS_WALLET);
     InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = (((gSaveContext.upgrades >> 12) & 3) == GIANTS_WALLET);
-    InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = (((gSaveContext.upgrades >> 12) & 3) == NO_RUPEES_SHOWN);
+    InventoryRightGearMenu.items[Gear_Menu_Unused_Wallet].on = (((gSaveContext.upgrades >> 12) & 3) == UNUSED_WALLET);
+
 }
 
 void Inventory_RightGearMenuFunc(void){
@@ -793,14 +794,14 @@ void Inventory_RightGearToggle(s32 selected){
                 gSaveContext.upgrades |= (ADULTS_WALLET << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 1;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 0;
-                InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Unused_Wallet].on = 0;
             }
             else {
                 gSaveContext.upgrades &= ~(0x7 << 12);
                 gSaveContext.upgrades |= (DEFAULT_WALLET << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 0;
-                InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Unused_Wallet].on = 0;
             }
             break;
         case(Gear_Menu_Giants_Wallet):
@@ -809,30 +810,30 @@ void Inventory_RightGearToggle(s32 selected){
                 gSaveContext.upgrades |= (GIANTS_WALLET << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 1;
-                InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Unused_Wallet].on = 0;
             }
             else {
                 gSaveContext.upgrades &= ~(0x7 << 12);
                 gSaveContext.upgrades |= (DEFAULT_WALLET << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 0;
-                InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Unused_Wallet].on = 0;
             }
             break;
-        case(Gear_Menu_No_Wallet):
-            if (((gSaveContext.upgrades >> 12) & 0x3) != NO_RUPEES_SHOWN){
+        case(Gear_Menu_Unused_Wallet):
+            if (((gSaveContext.upgrades >> 12) & 0x3) != UNUSED_WALLET){
                 gSaveContext.upgrades &= ~(0x7 << 12);
-                gSaveContext.upgrades |= (NO_RUPEES_SHOWN << 12);
+                gSaveContext.upgrades |= (UNUSED_WALLET << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 0;
-                InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 1;
+                InventoryRightGearMenu.items[Gear_Menu_Unused_Wallet].on = 1;
             }
             else {
                 gSaveContext.upgrades &= ~(0x7 << 12);
                 gSaveContext.upgrades |= (DEFAULT_WALLET << 12);
                 InventoryRightGearMenu.items[Gear_Menu_Adults_Wallet].on = 0;
                 InventoryRightGearMenu.items[Gear_Menu_Giants_Wallet].on = 0;
-                InventoryRightGearMenu.items[Gear_Menu_No_Wallet].on = 0;
+                InventoryRightGearMenu.items[Gear_Menu_Unused_Wallet].on = 0;
             }
             break;
     }
@@ -845,9 +846,9 @@ static void Inventory_LeftGearMenuInit(void){
     InventoryLeftGearMenu.items[Gear_Menu_Spirit_Medallion].on = gSaveContext.questItems & (1 << 3);
     InventoryLeftGearMenu.items[Gear_Menu_Shadow_Medallion].on = gSaveContext.questItems & (1 << 4);
     InventoryLeftGearMenu.items[Gear_Menu_Light_Medallion].on = gSaveContext.questItems & (1 << 5);
-    InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = gSaveContext.questItems & (1 << 18);
-    InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = gSaveContext.questItems & (1 << 19);
-    InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = gSaveContext.questItems & (1 << 20);
+    InventoryLeftGearMenu.items[Gear_Menu_Kokiri_Emerald].on = ((gSaveContext.questItems & (1 << 18)) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Gorons_Ruby].on = ((gSaveContext.questItems & (1 << 19)) != 0);
+    InventoryLeftGearMenu.items[Gear_Menu_Zoras_Sapphire].on = ((gSaveContext.questItems & (1 << 20)) != 0);
     InventoryLeftGearMenu.items[Gear_Menu_Pieces_of_Heart].on = ((gSaveContext.questItems >> 24) >> 4 != 0);
     InventoryLeftGearMenu.items[Gear_Menu_Shard_of_Agony].on = ((gSaveContext.questItems & (1 << 21)) != 0);
     InventoryLeftGearMenu.items[Gear_Menu_Gerudo_Token].on = ((gSaveContext.questItems & (1 << 22)) != 0);
@@ -956,6 +957,7 @@ void Inventory_HeartPiecesAmount(s32 selected){
 
     gSaveContext.questItems &= 0xFFFFFF;
     gSaveContext.questItems |= (curHearts << 28);
+    InventoryLeftGearMenu.items[Gear_Menu_Pieces_of_Heart].on = ((gSaveContext.questItems >> 24) >> 4 != 0);
 }
 
 void Inventory_GoldSkulltulaAmount(s32 selected){
@@ -996,8 +998,9 @@ void Inventory_GoldSkulltulaAmount(s32 selected){
 
     } while(menuOpen);
 
-    gSaveContext.questItems &= ~(1 << 22);
-    gSaveContext.questItems |= ((gSaveContext.gsTokens != 0) << 22);
+    gSaveContext.questItems &= ~(1 << 23);
+    gSaveContext.questItems |= ((gSaveContext.gsTokens != 0) << 23);
+    InventoryLeftGearMenu.items[Gear_Menu_Gold_Skulltulas].on = (gSaveContext.gsTokens != 0);
 }
 
 static void Inventory_SongsMenuInit(void){ //TODO

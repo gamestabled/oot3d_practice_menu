@@ -80,18 +80,23 @@ void applyCheats() {
     };
     if(cheats[CHEATS_STICKS]) {
         gSaveContext.ammo[SLOT_STICK] = 10 * ((gSaveContext.upgrades >> 17) & 0x7);
+        if (gSaveContext.ammo[SLOT_STICK] == 0) gSaveContext.ammo[SLOT_STICK] = 1;
     };
     if(cheats[CHEATS_NUTS]) {
         gSaveContext.ammo[SLOT_NUT] = 10 + 10 * ((gSaveContext.upgrades >> 20) & 0x7);
+        if (gSaveContext.ammo[SLOT_NUT] == 10) gSaveContext.ammo[SLOT_NUT] = 1;
     };
     if(cheats[CHEATS_BOMBS]) {
         gSaveContext.ammo[SLOT_BOMB] = 10 + 10 * ((gSaveContext.upgrades >> 3) & 0x7);
+        if (gSaveContext.ammo[SLOT_BOMB] == 10) gSaveContext.ammo[SLOT_BOMB] = 1;
     };
     if(cheats[CHEATS_ARROWS]) {
         gSaveContext.ammo[SLOT_BOW] = 20 + 10 * (gSaveContext.upgrades & 0x7);
+        if (gSaveContext.ammo[SLOT_BOW] == 20) gSaveContext.ammo[SLOT_BOW] = 1;
     };
     if(cheats[CHEATS_SEEDS]) {
         gSaveContext.ammo[SLOT_SLINGSHOT] = 20 + 10 * ((gSaveContext.upgrades >> 14) & 0x7);
+        if (gSaveContext.ammo[SLOT_SLINGSHOT] == 20) gSaveContext.ammo[SLOT_SLINGSHOT] = 1;
     };
     if(cheats[CHEATS_BOMBCHUS]) {
         gSaveContext.ammo[SLOT_BOMBCHU] = 50;
@@ -99,10 +104,8 @@ void applyCheats() {
     if(cheats[CHEATS_BEANS]) {
         gSaveContext.ammo[SLOT_BEAN] = 10;
     };
-    if(cheats[CHEATS_KEYS]) {
-        for (int i = 0; i < 19; i++) {
-            gSaveContext.dungeonKeys[i] = 1;
-        }
+    if(cheats[CHEATS_KEYS] && gGlobalContext->sceneNum >= 0x0000 && gGlobalContext->sceneNum <= 0x0010) {
+        gSaveContext.dungeonKeys[gGlobalContext->sceneNum] = 1;
     }
     if(cheats[CHEATS_RUPEES]) {
         u8 walletUpgrade = (gSaveContext.upgrades >> 12) & 0x3;

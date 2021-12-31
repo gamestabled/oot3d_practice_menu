@@ -39,7 +39,7 @@ enum {
     DEFAULT_WALLET = 0,
     ADULTS_WALLET = 1,
     GIANTS_WALLET = 2,
-    NO_RUPEES_SHOWN = 3,
+    UNUSED_WALLET = 3,
 } Wallet;
 
 #endif

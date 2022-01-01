@@ -2,6 +2,7 @@
 *   This file is a modified part of Luma3DS
 *   Copyright (C) 2016-2019 Aurora Wright, TuxSH
 *   Modified 2020 Gamestabled
+*   Modified 2021 HylianFreddy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -28,26 +29,10 @@
 #pragma once
 
 #include <stdbool.h>
-#include "MyThread.h"
 #include "utils.h"
 
 #define MIN(x,y) (x < y ? x : y)
 #define MAX(x,y) (x > y ? x : y)
-
-#define HID_PAD           (REG32(0x10146000) ^ 0xFFF)
-
-#define BUTTON_A          (1 << 0)
-#define BUTTON_B          (1 << 1)
-#define BUTTON_SELECT     (1 << 2)
-#define BUTTON_START      (1 << 3)
-#define BUTTON_RIGHT      (1 << 4)
-#define BUTTON_LEFT       (1 << 5)
-#define BUTTON_UP         (1 << 6)
-#define BUTTON_DOWN       (1 << 7)
-#define BUTTON_R1         (1 << 8)
-#define BUTTON_L1         (1 << 9)
-#define BUTTON_X          (1 << 10)
-#define BUTTON_Y          (1 << 11)
 
 #define CORE_APPLICATION  0
 #define CORE_SYSTEM       1
@@ -77,7 +62,7 @@ typedef struct Menu {
 
 typedef struct ToggleMenuItem {
     u8 on;
-    const char *title;
+    char *title;
     void (*method)(s32);
 } ToggleMenuItem;
 
@@ -91,7 +76,8 @@ typedef struct ToggleMenu {
 typedef struct AmountMenuItem {
     u16 amount; //current amount
     u16 hex;    //display in hex or decimal
-    const char *title;
+    u16 max;    //max amount, 0 = no limit
+    char *title;
     void (*method)(s32);
 } AmountMenuItem;
 
@@ -105,15 +91,10 @@ typedef struct AmountMenu {
 #define TOGGLE_MENU_MAX_SHOW 18
 #define AMOUNT_MENU_MAX_SHOW 18
 
-u32 waitInputWithTimeout(u32 msec);
-u32 waitInput(void);
-
-MyThread *menuCreateThread(void);
-void menuEnter(void);
-void menuThreadMain(void);
-
-void menuShow(Menu *root);
+void menuShow();
 void ToggleMenuShow(ToggleMenu *menu);
 void AmountMenuShow(AmountMenu *menu);
 
 u32 KeyboardFill(char* buf, u32 len);
+
+extern bool menuOpen;

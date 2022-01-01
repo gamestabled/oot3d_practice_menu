@@ -31,12 +31,13 @@ typedef struct WarpsPlacesMenuEntry {
     const WarpsSceneMenu* menu;
 } WarpsPlacesMenuEntry;
 
-void EntranceSelectMenuShow(const EntrancesByScene* entrances);
+void EntranceSelectMenuShow(const EntrancesByScene* entrances, const u8 manualSelection);
 void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex, u32 chosenTimeIndex);
 void WarpsSceneMenuShow(const WarpsSceneMenu* menu);
 
 void ManuallyEnterEntranceIndex(void);
 
+extern const EntrancesByScene Entrances_Empty;
 extern const EntrancesByScene Entrances_BackAlley;
 extern const EntrancesByScene Entrances_BackAlleyHouseDogLady;
 extern const EntrancesByScene Entrances_BackAlleyHouseManInGreen;
@@ -136,4 +137,5 @@ enum {
     Entrance_Select_Menu_Time,
     Entrance_Select_Menu_CsIdx,
     Entrance_Select_Menu_Etcs,
+    Entrance_Select_Menu_Go, // Optional
 };

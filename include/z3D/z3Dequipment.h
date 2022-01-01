@@ -1,3 +1,6 @@
+#ifndef _Z3DEQUIPMENT_H_
+#define _Z3DEQUIPMENT_H_
+
 enum {
     NO_BULLET_BAG = 0,
     BULLET_BAG_30 = 1,
@@ -36,5 +39,7 @@ enum {
     DEFAULT_WALLET = 0,
     ADULTS_WALLET = 1,
     GIANTS_WALLET = 2,
-    NO_RUPEES_SHOWN = 3,
+    UNUSED_WALLET = 3,
 } Wallet;
+
+#endif

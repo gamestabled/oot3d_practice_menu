@@ -32,30 +32,35 @@ BUILD		:=	build
 SOURCES		:=	src
 DATA		:=	data
 INCLUDES	:=	include
+INCLUDES    +=  assets
 #ROMFS		:=	romfs
 
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-OOT3D	 	:= OOT3D
+OOT3DU 		:= OOT3DU
 OOT3DJ 		:= OOT3DJ
-Z3D			:= OOT3D
+OOT3DE 		:= OOT3DE
+Z3D			:= OOT3DU
 
-ifeq ($(OOT3D), $(Z3D))
+ifeq ($(OOT3DU), $(Z3D))
   LINK_SCRIPT 	:= oot.ld
-  ASFLAGS += -D _USA_=1 -D _JP_=0
-else
+  ASFLAGS += -D _USA_=1 -D _JP_=0 -D _EUR_=0
+endif
 ifeq ($(OOT3DJ), $(Z3D))
   LINK_SCRIPT 	:= oot_j.ld
-  ASFLAGS += -D _USA_=0 -D _JP_=1
+  ASFLAGS += -D _USA_=0 -D _JP_=1 -D _EUR_=0
 endif
+ifeq ($(OOT3DE), $(Z3D))
+  LINK_SCRIPT 	:= oot_e.ld
+  ASFLAGS += -D _USA_=0 -D _JP_=0 -D _EUR_=1
 endif
 
-VERFLAGS := -D OOT3D=$(OOT3D) -D OOT3DJ=$(OOT3DJ) -D Z3D=$(Z3D)
+VERFLAGS := -D OOT3DU=$(OOT3DU) -D OOT3DJ=$(OOT3DJ) -D OOT3DE=$(OOT3DE) -D Z3D=$(Z3D)
 
-ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=softfp -mtp=soft
+ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=softfp -mtp=soft -mfpu=vfpv2
 
-CFLAGS	:=	-g -Wall -O2 -mword-relocations -D DEBUG \
+CFLAGS	:=	-g -Wall -mword-relocations -D DEBUG \
 			-fomit-frame-pointer -ffunction-sections \
 			$(ARCH)
 
@@ -66,7 +71,23 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS	+=	-g $(ARCH) $(VERFLAGS)
 LDFLAGS	=	-g $(ARCH) -Wl,-Map,$(notdir $*.map) -T $(TOPDIR)/$(LINK_SCRIPT) -nostdlib $(VERFLAGS) -lgcc
 
-LIBS	:= 
+LIBS	:=	-lgcc
+
+# Define version for the C code
+ifeq ($(Z3D), $(OOT3DU))
+	CFLAGS += -g -DVersion_USA
+endif
+ifeq ($(Z3D), $(OOT3DJ))
+	CFLAGS += -g -DVersion_JP
+endif
+ifeq ($(Z3D), $(OOT3DE))
+	CFLAGS += -g -DVersion_EUR
+endif
+
+citra ?= 0
+ifneq ($(citra), 0)
+	CFLAGS += -g -DCITRA
+endif
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -143,7 +164,12 @@ all: $(BUILD)
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-	@python3 patch.py $(OUTPUT).elf
+	@if python3 patch.py $(OUTPUT).elf; then \
+		echo "created basecode.ips" ; \
+	else \
+		python patch.py $(OUTPUT).elf; \
+		echo "created basecode.ips" ; \
+	fi
 
 #---------------------------------------------------------------------------------
 clean:

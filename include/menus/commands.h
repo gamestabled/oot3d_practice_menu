@@ -1,17 +1,44 @@
 #pragma once
 
 #include "menu.h"
+#include "z3D/z3D.h"
 
 #define COMMAND_COMBO_MAX 4
 #define COMMAND_COMBO_TIMEOUT 3
 #define COMMAND_MENU_MAX_SHOW 18
-#define COMMAND_NUM_COMMANDS 14
+#define COMMAND_NUM_COMMANDS 17
+#define STORED_POS_COUNT 9
 
 typedef enum {
     COMMAND_HOLD_TYPE, //command works as long as combo is held
     COMMAND_PRESS_TYPE, //command can be repeated with only the final input
     COMMAND_PRESS_ONCE_TYPE, //command is only repeated after redoing full combo
 } commandType;
+
+typedef enum {
+    COMMAND_OPEN_MENU,
+    COMMAND_LEVITATE,
+    COMMAND_FALL,
+    COMMAND_RUN_FAST,
+    COMMAND_RESET,
+    COMMAND_RELOAD_SCENE,
+    COMMAND_VOID_OUT,
+    COMMAND_TOGGLE_AGE,
+    COMMAND_STORE_POS,
+    COMMAND_LOAD_POS,
+    COMMAND_PREVIOUS_POS,
+    COMMAND_NEXT_POS,
+    COMMAND_TOGGLE_PAUSE,
+    COMMAND_FRAME_ADVANCE,
+    COMMAND_HITBOX_VIEW,
+    COMMAND_TOGGLE_WATCHES,
+    COMMAND_BREAK,
+} commandNames;
+
+typedef enum {
+    COMMAND_EDIT_COMBO,
+    COMMAND_EDIT_STRICT,
+} commandOptionsNames;
 
 typedef struct Command {
     const char* title;
@@ -27,7 +54,8 @@ typedef struct Command {
 
 void Commands_ShowCommands(void);
 void Command_UpdateCommands(u32 inputs);
+void Commands_ComboToString(char* buf, u32 commandIdx);
 
-u32 pauseUnpause;
-u32 frameAdvance;
-u32 menuExitFlag;
+extern u32 pauseUnpause;
+extern u32 frameAdvance;
+extern PosRot storedPosRot[STORED_POS_COUNT];

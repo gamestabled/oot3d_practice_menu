@@ -1,221 +1,175 @@
 #include "menu.h"
+#include "input.h"
+#include "common.h"
 #include "menus/cheats.h"
 #include "z3D/z3D.h"
 
-static void Cheats_Health(void){
-    gSaveContext.health = gSaveContext.healthCapacity;
+#define SEQ_AUDIO_BLANK 0x1000142
+
+u8 cheats[0x12] = {0};
+u8 forcedUsableItems = 0;
+u16 frozenTime = 0;
+
+/*void Cheats_CheatsMenuInit() {
+    for (int i = 0; i < 12; i++) {
+        CheatsMenu.items[i].on = cheats[i];
+    }
+};*/
+
+void Cheats_ShowCheatsMenu(){
+    //Cheats_CheatsMenuInit();
+    ToggleMenuShow(&CheatsMenu);
 }
 
-static void Cheats_Magic(void){
-    gSaveContext.magic = 0x30 * gSaveContext.magicLevel;
-}
+void Cheats_Toggle(s32 selected){
+    cheats[selected] = !cheats[selected];
+    CheatsMenu.items[selected].on = !CheatsMenu.items[selected].on;
 
-static void Cheats_Sticks(void){
-    gSaveContext.ammo[ITEM_DEKU_STICK] = 10 * ((gSaveContext.upgrades >> 17) & 0x7);
-}
-
-static void Cheats_Nuts(void){
-    gSaveContext.ammo[ITEM_DEKU_NUT] = 10 + 10 * ((gSaveContext.upgrades >> 20) & 0x7);
-}
-
-static void Cheats_Bombs(void){
-    gSaveContext.ammo[ITEM_BOMB] = 10 + 10 * ((gSaveContext.upgrades >> 3) & 0x7);
-}
-
-static void Cheats_Arrows(void){
-    gSaveContext.ammo[ITEM_FAIRY_BOW] = 20 + 10 * (gSaveContext.upgrades & 0x7);
-}
-
-static void Cheats_Slingshot(void){
-    gSaveContext.ammo[ITEM_FAIRY_SLINGSHOT] = 20 + 10 * ((gSaveContext.upgrades >> 14) & 0x7);
-}
-
-static void Cheats_Bombchus(void){
-    gSaveContext.ammo[ItemSlots[ITEM_BOMBCHU]] = 50;
-}
-
-static void Cheats_Beans(void){
-    gSaveContext.ammo[ItemSlots[ITEM_MAGIC_BEANS]] = 10;
-}
-
-static void Cheats_Rupees(void){
-    u8 walletUpgrade = (gSaveContext.upgrades >> 12) & 0x3;
-    switch(walletUpgrade){
-        case 0:
-            gSaveContext.rupees = 99;
+    switch (selected) {
+        case (CHEATS_USABLE_ITEMS):
+            if (ADDITIONAL_FLAG_BUTTON) {
+                forcedUsableItems = 1;
+                CheatsMenu.items[CHEATS_USABLE_ITEMS].title = "Unrestricted Items - Forced mode ON";
+            } else {
+                forcedUsableItems = 0;
+                CheatsMenu.items[CHEATS_USABLE_ITEMS].title = "Unrestricted Items - Forced mode OFF";
+            }
             break;
-        case 1:
-            gSaveContext.rupees = 200;
+        case (CHEATS_FREEZE_TIME):
+            frozenTime = gSaveContext.dayTime;
             break;
-        case 2:
-            gSaveContext.rupees = 500;
-            break;
-        default:
+        case (CHEATS_NAYRUS_LOVE):
+            if (!CheatsMenu.items[selected].on)
+                gSaveContext.nayrusLoveTimer = 0x6E0;
             break;
     }
+
+    applyCheats();
 }
 
-static void Cheats_QuestMode(void){
-    gSaveContext.masterQuestFlag = !gSaveContext.masterQuestFlag;
-}
-
-static void Cheats_Nayrus(void){
-    gSaveContext.nayrusLoveTimer = -1; //TODO: this isnt forever, and doesnt turn it on.
-}
-
-static void Cheats_FreezeTime(void){ //TODO
-
-}
-
-static void Cheats_Music(void){ //TODO
-
-}
-
-static void Cheats_Usability(void){ //TODO
-
-}
-
-static void Cheats_ISG(void){
-    // PLAYER->isg = 1;
-    ((Player*)gGlobalContext->actorCtx.actorList[ACTORTYPE_PLAYER].first)->isg = 1;
-}
-
-static void Give_Deku_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_DEKU_TREE]++;
-}
-
-static void Give_Dodongo_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_DODONGOS_CAVERN]++;
-}
-
-static void Give_Jabu_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_JABUJABUS_BELLY]++;
-}
-
-static void Give_Forest_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_FOREST_TEMPLE]++;
-}
-
-static void Give_Fire_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_FIRE_TEMPLE]++;
-}
-
-static void Give_Water_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_WATER_TEMPLE]++;
-}
-
-static void Give_Spirit_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_SPIRIT_TEMPLE]++;
-}
-
-static void Give_Shadow_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_SHADOW_TEMPLE]++;
-}
-
-static void Give_Well_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_BOTTOM_OF_THE_WELL]++;
-}
-
-static void Give_Ice_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_ICE_CAVERN]++;
-}
-
-// static void Give_GanonSecond_Key(void){
-//    gSaveContext.dungeonKeys[DUNGEON_GANONS_CASTLE_SECOND_PART]++;
-// }
-
-static void Give_Grounds_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_GERUDO_TRAINING_GROUNDS]++;
-}
-
-static void Give_Gerudo_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_GERUDO_FORTRESS]++;
-}
-
-// static void Give_GanonFirst_Key(void){
-//    gSaveContext.dungeonKeys[DUNGEON_GANONS_CASTLE_FIRST_PART]++;
-// }
-
-// static void Give_GanonBoss_Key(void){
-//    gSaveContext.dungeonKeys[DUNGEON_GANONS_CASTLE_FLOOR_BENEATH_BOSS_CHAMBER]++;
-// }
-
-// static void Give_GanonCrumbling_Key(void){
-//    gSaveContext.dungeonKeys[DUNGEON_GANONS_CASTLE_CRUMBLING]++;
-// }
-
-static void Give_Treasure_Key(void){
-    gSaveContext.dungeonKeys[DUNGEON_TREASURE_CHEST_SHOP]++;
-}
-
-// static void Give_DekuBoss_Key(void){
-//    gSaveContext.dungeonKeys[DUNGEON_DEKU_TREE_BOSS_ROOM]++;
-// }
-
-// static void Give_DodongoBoss_Key(void){
-//    gSaveContext.dungeonKeys[DUNGEON_DODONGOS_CAVERN_BOSS_ROOM]++;
-// }
-
-// static void Give_JabuBoss_Key(void){ commenting to remove a warning
-//     gSaveContext.dungeonKeys[DUNGEON_JABUJABUS_BELLY_BOSS_ROOM]++;
-// }
-
-
-Menu CheatsMenu = {
+ToggleMenu CheatsMenu = {
     "Cheats",
-    .nbItems = 11,
+    .nbItems = 17,
     {
-        {"Refill Health", METHOD, .method = Cheats_Health},
-        {"Refill Magic", METHOD, .method = Cheats_Magic},
-        {"Refill Items", MENU, .menu = &CheatsItemsMenu},
-        {"Refill Keys", MENU, .menu = &CheatsKeysMenu},
-        {"Refill Rupees", METHOD, .method = Cheats_Rupees},
-        {"Change Quest Mode", METHOD, .method = Cheats_QuestMode},
-        {"Infinite Nayru's Love (TODO)", METHOD, .method = Cheats_Nayrus},
-        {"Freeze time of day (TODO)", METHOD, .method = Cheats_FreezeTime},
-        {"No music (TODO)", METHOD, .method = Cheats_Music},
-        {"Usable Items (TODO)", METHOD, .method = Cheats_Usability},
-        {"ISG", METHOD, .method = Cheats_ISG},
+        {0, "Infinite Health", .method = Cheats_Toggle},
+        {0, "Infinite Magic", .method = Cheats_Toggle},
+        {0, "Infinite Deku Sticks", .method = Cheats_Toggle},
+        {0, "Infinite Deku Nuts", .method = Cheats_Toggle},
+        {0, "Infinite Bombs", .method = Cheats_Toggle},
+        {0, "Infinite Arrows", .method = Cheats_Toggle},
+        {0, "Infinite Deku Seeds", .method = Cheats_Toggle},
+        {0, "Infinite Bombchus", .method = Cheats_Toggle},
+        {0, "Infinite Beans", .method = Cheats_Toggle},
+        {0, "Infinite Keys", .method = Cheats_Toggle},
+        {0, "Infinite Rupees", .method = Cheats_Toggle},
+        {0, "Infinite Nayru's Love", .method = Cheats_Toggle},
+        {0, "Freeze time of day", .method = Cheats_Toggle},
+        {0, "No music", .method = Cheats_Toggle},
+        {0, "Unrestricted Items - Forced mode OFF", .method = Cheats_Toggle},
+        {0, "ISG", .method = Cheats_Toggle},
+        {0, "Turbo Text", .method = Cheats_Toggle},
     }
 };
 
-Menu CheatsItemsMenu = {
-    "Items",
-    .nbItems = 7,
-    {
-        {"Refill Deku Sticks", METHOD, .method = Cheats_Sticks},
-        {"Refill Deku Nuts", METHOD, .method = Cheats_Nuts},
-        {"Refill Bombs", METHOD, .method = Cheats_Bombs},
-        {"Refill Arrows", METHOD, .method = Cheats_Arrows},
-        {"Refill Slingshot", METHOD, .method = Cheats_Slingshot},
-        {"Refill Bombchus", METHOD, .method = Cheats_Bombchus},
-        {"Refill Beans", METHOD, .method = Cheats_Beans},
+void applyCheats() {
+    if(cheats[CHEATS_HEALTH]) {
+        gSaveContext.health = gSaveContext.healthCapacity;
+    };
+    if(cheats[CHEATS_MAGIC]) {
+        gSaveContext.magic = 0x30 * gSaveContext.magicLevel;
+    };
+    if(cheats[CHEATS_STICKS]) {
+        gSaveContext.ammo[SLOT_STICK] = 10 * ((gSaveContext.upgrades >> 17) & 0x7);
+        if (gSaveContext.ammo[SLOT_STICK] == 0) gSaveContext.ammo[SLOT_STICK] = 1;
+    };
+    if(cheats[CHEATS_NUTS]) {
+        gSaveContext.ammo[SLOT_NUT] = 10 + 10 * ((gSaveContext.upgrades >> 20) & 0x7);
+        if (gSaveContext.ammo[SLOT_NUT] == 10) gSaveContext.ammo[SLOT_NUT] = 1;
+    };
+    if(cheats[CHEATS_BOMBS]) {
+        gSaveContext.ammo[SLOT_BOMB] = 10 + 10 * ((gSaveContext.upgrades >> 3) & 0x7);
+        if (gSaveContext.ammo[SLOT_BOMB] == 10) gSaveContext.ammo[SLOT_BOMB] = 1;
+    };
+    if(cheats[CHEATS_ARROWS]) {
+        gSaveContext.ammo[SLOT_BOW] = 20 + 10 * (gSaveContext.upgrades & 0x7);
+        if (gSaveContext.ammo[SLOT_BOW] == 20) gSaveContext.ammo[SLOT_BOW] = 1;
+    };
+    if(cheats[CHEATS_SEEDS]) {
+        gSaveContext.ammo[SLOT_SLINGSHOT] = 20 + 10 * ((gSaveContext.upgrades >> 14) & 0x7);
+        if (gSaveContext.ammo[SLOT_SLINGSHOT] == 20) gSaveContext.ammo[SLOT_SLINGSHOT] = 1;
+    };
+    if(cheats[CHEATS_BOMBCHUS]) {
+        gSaveContext.ammo[SLOT_BOMBCHU] = 50;
+    };
+    if(cheats[CHEATS_BEANS]) {
+        gSaveContext.ammo[SLOT_BEAN] = 10;
+    };
+    if(cheats[CHEATS_KEYS] && gGlobalContext->sceneNum >= 0x0000 && gGlobalContext->sceneNum <= 0x0010) {
+        gSaveContext.dungeonKeys[gGlobalContext->sceneNum] = 1;
     }
-};
+    if(cheats[CHEATS_RUPEES]) {
+        u8 walletUpgrade = (gSaveContext.upgrades >> 12) & 0x3;
+        switch(walletUpgrade){
+            case 0:
+                gSaveContext.rupees = 99;
+                break;
+            case 1:
+                gSaveContext.rupees = 200;
+                break;
+            default:
+                gSaveContext.rupees = 500;
+                break;
+        }
+    };
+    if(cheats[CHEATS_NAYRUS_LOVE]) {
+        gSaveContext.nayrusLoveTimer = 1;
+    };
+    if(cheats[CHEATS_FREEZE_TIME]) {
+        gSaveContext.dayTime = frozenTime;
+    }
+    //Loading a new area with these cheats active could crash. Checking isInGame() prevents that.
+    //Note that calling isInGame() while the game is loading (triforce icon) crashes.
+    //So don't enable the ISG cheat or forcedUsableItems there.
+    if(cheats[CHEATS_ISG] && isInGame()) {
+        PLAYER->isg = 1;
+    };
+    if(forcedUsableItems && isInGame()) {
+        Cheats_UsableItems();
+    }
+}
 
-Menu CheatsKeysMenu = {
-    "Keys",
-    .nbItems = 13,
-    {
-        {"Deku Tree", METHOD, .method = Give_Deku_Key},
-        {"Dodongo's Cavern", METHOD, .method = Give_Dodongo_Key},
-        {"Jabu-Jabu's Belly", METHOD, .method = Give_Jabu_Key},
-        {"Forest Temple", METHOD, .method = Give_Forest_Key},
-        {"Fire Temple", METHOD, .method = Give_Fire_Key},
-        {"Water Temple", METHOD, .method = Give_Water_Key},
-        {"Spirit Temple", METHOD, .method = Give_Spirit_Key},
-        {"Shadow Temple", METHOD, .method = Give_Shadow_Key},
-        {"Bottom of the Well", METHOD, .method = Give_Well_Key},
-        {"Ice Cavern", METHOD, .method = Give_Ice_Key},
-        // {"Ganon's Castle (Second Part)", METHOD, .method = Give_GanonSecond_Key},
-        {"Gerudo Training Grounds", METHOD, .method = Give_Grounds_Key},
-        {"Gerudo Fortress", METHOD, .method = Give_Gerudo_Key},
-        // {"Ganon's Castle (First Part)", METHOD, .method = Give_GanonFirst_Key},
-        // {"Ganon's Castle (Floor Beneath Boss Chamber", METHOD, .method = Give_GanonBoss_Key},
-        // {"Ganon's Castle (Crumbling)", METHOD, .method = Give_GanonCrumbling_Key},
-        {"Treasure Chest Shop", METHOD, .method = Give_Treasure_Key},
-        // {"Deku Tree Boss Room", METHOD, .method = Give_DekuBoss_Key},
-        // {"Dodongo's Cavern Boss Room", METHOD, .method = Give_DodongoBoss_Key},
-        // {"Jabu-Jabu's Belly Boss Room", METHOD, .method = Give_JabuBoss_Key},
+u32 Cheats_RemoveBGM(u32 original) {
+    if (cheats[CHEATS_NO_MUSIC]) {
+        return SEQ_AUDIO_BLANK;
     }
-};
+    return original;
+}
+
+u32 Cheats_IsInstantText() {
+    return cheats[CHEATS_QUICK_TEXT];
+}
+
+u32 Cheats_IsTurboText() {
+    return (cheats[CHEATS_QUICK_TEXT] && rInputCtx.cur.b);
+}
+
+void Cheats_UsableItems() {
+    // Leave restriction for states that disable buttons.
+    if (!cheats[CHEATS_USABLE_ITEMS] || (!forcedUsableItems &&
+        (gSaveContext.unk_1586[4] & 0x1 ||  // Ingo's Minigame state
+        PLAYER->stateFlags1 & 0x08A02000 || // Swimming, riding horse, Down A, hanging from a ledge
+        PLAYER->stateFlags2 & 0x00040000))  // Blank A
+        // Shielding, spinning and getting skull tokens still disable buttons automatically
+        ) {
+        return;
+    }
+
+    for (int i = 1; i < 5; i++) {
+        gSaveContext.buttonStatus[i] = BTN_ENABLED;
+    }
+    gSaveContext.ocarinaButtonStatus = BTN_ENABLED;
+}
+
+u32 Cheats_areItemsForcedUsable() {
+    return cheats[CHEATS_USABLE_ITEMS] && forcedUsableItems;
+}

@@ -15,11 +15,11 @@ extern WarpsSceneMenu WarpsPlacesOverworldMenu;
 
 void WarpsPlacesMenuShow(void);
 void ClearCutscenePointer(void);
+void WarpsOverridesMenuShow(void);
+void Warps_OverrideGameMode(s32 selected);
+void Warps_OverrideSceneSetupIndex(s32 selected);
 
-enum {
-    Manual_Entrance_Menu_Age,
-    Manual_Entrance_Menu_Time,
-    Manual_Entrance_Menu_CsIdx,
-    Manual_Entrance_Menu_EtcIdx,
-    Manual_Entrance_Menu_Go,
-};
+typedef enum {
+    WARPS_GAME_MODE,
+    WARPS_SCENE_SETUP_INDEX,
+} WarpsOverrides;

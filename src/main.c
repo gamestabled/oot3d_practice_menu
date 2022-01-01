@@ -3,27 +3,28 @@
  */
 
 #include "menu.h"
-#include "MyThread.h"
 #include "advance.h"
 #include "draw.h"
+#include "input.h"
+#include "common.h"
+#include "menus/cheats.h"
 #include "menus/watches.h"
 #include "menus/commands.h"
+#include "menus/scene.h"
 #include <string.h>
 
 #include "z3D/z3D.h"
 
+#define NOCLIP_SLOW_SPEED 4
+#define NOCLIP_FAST_SPEED 20
+
 advance_ctx_t advance_ctx = {};
-advance_input_t inputs = {};
 uint8_t framebuffers_init = 0;
+static bool isAsleep = false;
+u32 alertFrames = 0;
+char* alertMessage = "";
 
 GlobalContext* gGlobalContext;
-
-static void scan_inputs(void) {
-    inputs.cur.val = real_hid.pad.pads[real_hid.pad.index].curr.val;
-    inputs.pressed.val = (inputs.cur.val) & (~inputs.old.val);
-    inputs.up.val = (~inputs.cur.val) & (inputs.old.val);
-    inputs.old.val = inputs.cur.val;
-}
 
 static void toggle_advance(void) {
     if(pauseUnpause && advance_ctx.advance_state == NORMAL && !advance_ctx.latched){
@@ -39,17 +40,6 @@ static void toggle_advance(void) {
     }
 }
 
-static MemInfo query_memory_permissions(u32 address) {
-    MemInfo memory_info = {};
-    PageInfo page_info = {};
-    svcQueryMemory(&memory_info, &page_info, address);
-    return memory_info;
-}
-
-static bool is_valid_memory_read(const MemInfo* info) {
-    return (info->perm & MEMPERM_READ) != 0;
-}
-
 static void drawWatches(void) {
     for(u32 i = 0; i < WATCHES_MAX; ++i) {
         if (!watches[i].display) {
@@ -58,7 +48,7 @@ static void drawWatches(void) {
 
         // Skip attempting to draw the address if it would otherwise be an invalid read.
         // Attempting to read these locations would crash the game.
-        const MemInfo address_info = query_memory_permissions(watches[i].addr);
+        const MemInfo address_info = query_memory_permissions((int)watches[i].addr);
         if (!is_valid_memory_read(&address_info)) {
             Draw_DrawFormattedString(70, 40 + i * SPACING_Y, COLOR_WHITE, "%s: Invalid address", watches[i].name);
             continue;
@@ -131,8 +121,26 @@ static void drawWatches(void) {
     Draw_FlushFramebuffer();
 }
 
+void drawAlert() {
+    if (alertFrames > 0) {
+        Draw_DrawFormattedStringTop(280, 220, COLOR_WHITE, alertMessage);
+        Draw_FlushFramebufferTop();
+        alertFrames--;
+    }
+}
+
 static void titleScreenDisplay(void){
     Draw_DrawFormattedStringTop(150, 20, COLOR_WHITE, "OoT3D Practice Patch");
+    Draw_FlushFramebufferTop();
+
+    char menuComboString[COMMAND_COMBO_MAX + 1] = {0};
+    Commands_ComboToString(menuComboString, 0);
+    Draw_DrawFormattedString(150, 0, COLOR_WHITE, menuComboString);
+    Draw_FlushFramebuffer();
+}
+
+void pauseDisplay(void) {
+    Draw_DrawFormattedStringTop(20, 20, COLOR_WHITE, "Paused");
     Draw_FlushFramebufferTop();
 }
 
@@ -142,13 +150,25 @@ void advance_main(void) {
         framebuffers_init = 1;
     }
 
-    if(gSaveContext.entranceIndex == 0x0629 && gSaveContext.cutsceneIndex == 0xFFF3){
+    if(gSaveContext.entranceIndex == 0x0629 && gSaveContext.cutsceneIndex == 0xFFF3 && gSaveContext.gameMode != 2){
         titleScreenDisplay();
     }
 
     drawWatches();
-    scan_inputs();
-    Command_UpdateCommands(inputs.cur.val);
+    drawAlert();
+    Input_Update();
+    Command_UpdateCommands(rInputCtx.cur.val);
+
+    if(menuOpen) {
+        menuShow();
+
+        Draw_Lock();
+        Draw_ClearFramebuffer();
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
+        rInputCtx.cur.val = 0;
+    }
+    applyCheats();
 
     toggle_advance();
 
@@ -162,9 +182,19 @@ void advance_main(void) {
     pauseUnpause = 0;
     frameAdvance = 0;
 
-    while(advance_ctx.advance_state == PAUSED || advance_ctx.advance_state == LATCHED) {
-        scan_inputs();
-        Command_UpdateCommands(inputs.cur.val);
+    while(!isAsleep &&(advance_ctx.advance_state == PAUSED || advance_ctx.advance_state == LATCHED)) {
+        pauseDisplay();
+        drawAlert();
+        Input_Update();
+        Command_UpdateCommands(rInputCtx.cur.val);
+        if(menuOpen) {
+            menuShow();
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
+        }
+        applyCheats();
         toggle_advance();
         if(advance_ctx.advance_state == LATCHED && !frameAdvance) {
             advance_ctx.advance_state = PAUSED;
@@ -176,11 +206,59 @@ void advance_main(void) {
         frameAdvance = 0;
         svcSleepThread(16E6);
     }
+    isAsleep = false;
 
+    if(noClip) { // TODO manage camera, redirect inputs accordingly or change the camera angle.
+        u32 in = rInputCtx.cur.val;
+        f32 amount = (in & BUTTON_R1) ? NOCLIP_FAST_SPEED : NOCLIP_SLOW_SPEED;
+        if(in & BUTTON_L1) {
+            if(in & (BUTTON_DOWN)) {
+                PLAYER->actor.world.pos.y -= amount;
+            }
+            if(in & (BUTTON_UP)) {
+                PLAYER->actor.world.pos.y += amount;
+            }
+        }
+        else {
+            if(in & (BUTTON_DOWN)) {
+                PLAYER->actor.world.pos.z += amount;
+            }
+            if(in & (BUTTON_UP)) {
+                PLAYER->actor.world.pos.z -= amount;
+            }
+            if(in & (gSaveContext.masterQuestFlag ? BUTTON_RIGHT : BUTTON_LEFT)) {
+                PLAYER->actor.world.pos.x -= amount;
+            }
+            if(in & (gSaveContext.masterQuestFlag ? BUTTON_LEFT : BUTTON_RIGHT)) {
+                PLAYER->actor.world.pos.x += amount;
+            }
+        }
+
+        if(in & BUTTON_X) {
+            PLAYER->stateFlags2 |= 0x08000000; //freeze actors (ocarina state)
+        }
+        else if(in & BUTTON_Y) {
+            PLAYER->stateFlags2 &= ~0x08000000; //unfreeze actors
+        }
+
+        if(in & BUTTON_A) { //confirm new position
+            PLAYER->actor.home.pos = PLAYER->actor.world.pos;
+            Scene_NoClipToggle();
+        }
+        else if(in & BUTTON_B) { //cancel movement
+            PLAYER->actor.world.pos = PLAYER->actor.home.pos;
+            Scene_NoClipToggle();
+        }
+    }
 }
 
 void setGlobalContext(GlobalContext* globalContext){
     gGlobalContext = globalContext;
+}
+
+void Gfx_SleepQueryCallback(void) {
+    menuOpen = false;
+    isAsleep = true;
 }
 
 void area_load_main(void){}

@@ -212,7 +212,7 @@ hook_ItemUsability_Shield:
 .if _JP_==1
     bne 0x42E3B4
     cmp r0,#0x0
-    b 0x42E2D4
+    b 0x42E2CC
 .endif
 
 .global hook_Gfx_SleepQueryCallback

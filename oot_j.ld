@@ -48,7 +48,7 @@ SECTIONS
 		*(.patch_SleepQueryCallback)
 	}
 
-	.patch_ItemUsability_Shield 0x42E2D0 : {
+	.patch_ItemUsability_Shield 0x42E2C8 : {
 		*(.patch_ItemUsability_Shield)
 	}
 

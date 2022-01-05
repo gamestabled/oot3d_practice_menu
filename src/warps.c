@@ -16,16 +16,17 @@ Menu WarpsMenu = {
         {"Places", METHOD, .method = WarpsPlacesMenuShow},
         {"Manually Enter Entrance Index", METHOD, .method = ManuallyEnterEntranceIndex},
         {"Clear CS Pointer", METHOD, .method = ClearCutscenePointer},
-        {"Override Game Mode & Scene Setup", METHOD, .method = WarpsOverridesMenuShow},
+        {"Override Other Values", METHOD, .method = WarpsOverridesMenuShow},
     }
 };
 
 AmountMenu WarpsOverridesMenu = {
     "Warps Overrides",
-    .nbItems = 2,
+    .nbItems = 3,
     {
         {0, 0,  6, "Game Mode", .method = Warps_OverrideGameMode},
         {0, 0, 14, "Scene Setup Index - Override OFF", .method = Warps_OverrideSceneSetupIndex},
+        {0, 0,  3, "ZoneoutType/RespawnFlag - POSITIVE", .method = Warps_SetRespawnFlag},
     }
 };
 
@@ -251,8 +252,14 @@ void ClearCutscenePointer(void){
 
 void Warps_OverridesMenuInit(void){
     WarpsOverridesMenu.items[WARPS_GAME_MODE].amount = gSaveContext.gameMode;
-    if(!sceneSetupOverrideActive) {
-        WarpsOverridesMenu.items[WARPS_SCENE_SETUP_INDEX].amount = gSaveContext.sceneSetupIndex;
+    WarpsOverridesMenu.items[WARPS_SCENE_SETUP_INDEX].amount = gSaveContext.sceneSetupIndex;
+    if (gSaveContext.respawnFlag >= 0) {
+        WarpsOverridesMenu.items[WARPS_RESPAWN_FLAG].amount = gSaveContext.respawnFlag;
+        WarpsOverridesMenu.items[WARPS_RESPAWN_FLAG].title = "ZoneoutType/RespawnFlag - POSITIVE";
+    }
+    else {
+        WarpsOverridesMenu.items[WARPS_RESPAWN_FLAG].amount = -(gSaveContext.respawnFlag);
+        WarpsOverridesMenu.items[WARPS_RESPAWN_FLAG].title = "ZoneoutType/RespawnFlag - NEGATIVE";
     }
 }
 
@@ -279,5 +286,16 @@ void Warps_OverrideSceneSetupIndex(s32 selected) {
 void Warps_OverrideSceneSetup(void){
     if(sceneSetupOverrideActive) {
         gSaveContext.sceneSetupIndex = WarpsOverridesMenu.items[WARPS_SCENE_SETUP_INDEX].amount;
+    }
+}
+
+void Warps_SetRespawnFlag(s32 selected) {
+    if (ADDITIONAL_FLAG_BUTTON) {
+        gSaveContext.respawnFlag = -(WarpsOverridesMenu.items[WARPS_RESPAWN_FLAG].amount);
+        WarpsOverridesMenu.items[WARPS_RESPAWN_FLAG].title = "ZoneoutType/RespawnFlag - NEGATIVE";
+    }
+    else {
+        gSaveContext.respawnFlag = WarpsOverridesMenu.items[WARPS_RESPAWN_FLAG].amount;
+        WarpsOverridesMenu.items[WARPS_RESPAWN_FLAG].title = "ZoneoutType/RespawnFlag - POSITIVE";
     }
 }

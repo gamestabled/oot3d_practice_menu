@@ -323,6 +323,10 @@ void AmountMenuShow(AmountMenu* menu){ //displays an amount menu TODO: seems mes
             selected = menu->nbItems - 1;
         else if(selected >= menu->nbItems) selected = 0;
 
+        if(chosen && menu->items[selected].method != NULL) {
+            menu->items[selected].method(selected);
+        }
+
         pagePrev = page;
         page = selected / AMOUNT_MENU_MAX_SHOW;
     } while(menuOpen);

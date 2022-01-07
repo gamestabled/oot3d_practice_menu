@@ -2,9 +2,43 @@
 #include "menus/file.h"
 #include "z3D/z3D.h"
 
+static char* Timer1States[] = {
+    "Timer 1 State: inactive      ",
+    "Timer 1 State: heat starting ",
+    "Timer 1 State: heat initial  ",
+    "Timer 1 State: heat moving   ",
+    "Timer 1 State: heat active   ",
+    "Timer 1 State: race starting ",
+    "Timer 1 State: race initial  ",
+    "Timer 1 State: race moving   ",
+    "Timer 1 State: race active   ",
+    "Timer 1 State: race stopped  ",
+    "Timer 1 State: race ending   ",
+    "Timer 1 State: timer starting",
+    "Timer 1 State: timer initial ",
+    "Timer 1 State: timer moving  ",
+    "Timer 1 State: timer active  ",
+    "Timer 1 State: timer stopped ",
+};
+
+static char* Timer2States[] = {
+    "Timer 2 State: inactive      ",
+    "Timer 2 State: starting      ",
+    "Timer 2 State: initial       ",
+    "Timer 2 State: moving        ",
+    "Timer 2 State: active        ",
+    "Timer 2 State: stopped       ",
+    "Timer 2 State: ending        ",
+    "Timer 2 State: timer starting",
+    "Timer 2 State: timer initial ",
+    "Timer 2 State: timer moving  ",
+    "Timer 2 State: timer active  ",
+    "Timer 2 State: timer stopped ",
+};
+
 ToggleMenu FileMenu = {
     "File",
-    .nbItems = 8,
+    .nbItems = 9,
     {
         {0, "Gold Skulltulas defeated", .method = File_ToggleSkulltulaFlags },
         {0, "Seeds and Magic drops obtained", .method = File_ToggleItemDropsFlags },
@@ -13,10 +47,21 @@ ToggleMenu FileMenu = {
         {0, "Carpenters Freed", .method = File_ToggleCarpentersFreed },
         {0, "Intro Cutscenes", .method = File_ToggleIntroCutscenes },
         {0, "Blue Warps Cleared", .method = File_ToggleBlueWarps },
+        {0, "Timers", .method = File_ShowTimersMenu },
         {0, "Master Quest", .method = File_ToggleMasterQuest },
     }
 };
 
+AmountMenu TimersMenu = {
+    "Timers",
+    .nbItems = 4,
+    {
+        {0, 0, 15, "Timer 1 State", .method = File_SetTimerStateAndValue },
+        {0, 0,  0, "Timer 1 Value", .method = File_SetTimerStateAndValue },
+        {0, 0, 11, "Timer 2 State", .method = File_SetTimerStateAndValue },
+        {0, 0,  0, "Timer 2 Value", .method = File_SetTimerStateAndValue },
+    }
+};
 
 void File_FileMenuInit(void) {
     FileMenu.items[FILE_GOLD_SKULLTULAS].on = (gSaveContext.gsFlags[0] == 0xFF);
@@ -31,6 +76,7 @@ void File_FileMenuInit(void) {
                                                  (gSaveContext.eventChkInf[0x2] & 0x0020) +
                                                  (gSaveContext.eventChkInf[0x3] & 0x0080) +
                                                  (gSaveContext.eventChkInf[0x4] & 0x0700) == 0x0080 + 0x0020 + 0x0080 + 0x0700);
+    FileMenu.items[FILE_TIMERS].on = (gSaveContext.timer1State != 0) || (gSaveContext.timer2State != 0);
     FileMenu.items[FILE_MASTER_QUEST].on = gSaveContext.masterQuestFlag;
 }
 
@@ -141,4 +187,28 @@ void File_ToggleMasterQuest(s32 selected) {
         gSaveContext.masterQuestFlag = 1;
         FileMenu.items[selected].on = 1;
     }
+}
+
+void File_TimersMenuInit(void) {
+    TimersMenu.items[FILE_TIMER1STATE].amount = gSaveContext.timer1State;
+    TimersMenu.items[FILE_TIMER1VALUE].amount = gSaveContext.timer1Value;
+    TimersMenu.items[FILE_TIMER2STATE].amount = gSaveContext.timer2State;
+    TimersMenu.items[FILE_TIMER2VALUE].amount = gSaveContext.timer2Value;
+    TimersMenu.items[FILE_TIMER1STATE].title = Timer1States[gSaveContext.timer1State];
+    TimersMenu.items[FILE_TIMER2STATE].title = Timer2States[gSaveContext.timer2State];
+}
+
+void File_ShowTimersMenu(s32 selected) {
+    File_TimersMenuInit();
+    AmountMenuShow(&TimersMenu);
+}
+
+void File_SetTimerStateAndValue(s32 selected) {
+    //set variable in save context
+    *(&gSaveContext.timer1State + selected) = TimersMenu.items[selected].amount;
+    //reset toggle in menu
+    FileMenu.items[FILE_TIMERS].on = (gSaveContext.timer1State != 0) || (gSaveContext.timer2State != 0);
+    //set option titles to display state names
+    TimersMenu.items[FILE_TIMER1STATE].title = Timer1States[gSaveContext.timer1State];
+    TimersMenu.items[FILE_TIMER2STATE].title = Timer2States[gSaveContext.timer2State];
 }

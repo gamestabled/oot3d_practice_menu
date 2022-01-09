@@ -205,6 +205,7 @@ void advance_main(void) {
         pauseUnpause = 0;
         frameAdvance = 0;
         svcSleepThread(16E6);
+        rInputCtx.cur.val = 0;
     }
     isAsleep = false;
 

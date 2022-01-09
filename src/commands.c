@@ -43,6 +43,9 @@ static void Command_Break(void){
 
         PLAYER->stateFlags1 = 0x0;
         PLAYER->stateFlags2 = 0x0;
+        if (gGlobalContext->nextEntranceIndex != 0xFFFF && gGlobalContext->sceneLoadFlag == 0x14) {
+            gGlobalContext->sceneLoadFlag = 0xEC; //hacky solution to avoid softlocks when warping during fade-in
+        }
         alertMessage = "Break";
         alertFrames = 20;
     }

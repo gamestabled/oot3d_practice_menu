@@ -40,7 +40,7 @@ void EntranceWarp(u16 EntranceIndex, s32 chosenAge, s32 cutsceneIndex, u32 chose
         gSaveContext.dayTime = frozenTime = EntranceTimes[chosenTimeIndex];
     }
     gGlobalContext->nextEntranceIndex = EntranceIndex;
-    gGlobalContext->fadeOutTransition = 2;
+    gGlobalContext->fadeOutTransition = 11;
     gGlobalContext->linkAgeOnLoad = chosenAge;
     if (cutsceneIndex == -1){ //this prevents crashes because warping with CS 0xFFEF ("None") would keep the previous CS number
         gSaveContext.cutsceneIndex = 0;

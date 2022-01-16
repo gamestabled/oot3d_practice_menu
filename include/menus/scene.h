@@ -5,6 +5,7 @@
 extern Menu SceneMenu;
 
 extern u8 noClip;
+extern u8 releasedABbuttons; //in case the NoClip command uses A or B
 extern void* storedPlayerUpdateFunction;
 
 extern void Scene_RoomNumberMenuShow(void);

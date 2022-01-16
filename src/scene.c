@@ -6,6 +6,7 @@
 #include "input.h"
 
 u8 noClip = 0;
+u8 releasedABbuttons = 0;
 void dummyActorFunction(Actor* thisx, GlobalContext* globalCtx) {}
 void* storedPlayerUpdateFunction = &dummyActorFunction;
 
@@ -108,7 +109,7 @@ void Scene_ClearFlags(void) {
 
 void Scene_NoClipToggle(void) {
     if (isInGame()) {
-            if (!noClip) {
+        if (!noClip) {
             storedPlayerUpdateFunction = PLAYER->actor.update;
             PLAYER->actor.update = dummyActorFunction;
             PLAYER->stateFlags2 |= 0x08000000; //freeze actors (ocarina state)
@@ -120,6 +121,7 @@ void Scene_NoClipToggle(void) {
             noClip = 0;
         }
         menuOpen = 0;
+        releasedABbuttons = 0;
     }
 }
 

@@ -5,8 +5,7 @@
 
 #define COMMAND_COMBO_MAX 4
 #define COMMAND_COMBO_TIMEOUT 3
-#define COMMAND_MENU_MAX_SHOW 18
-#define COMMAND_NUM_COMMANDS 17
+#define COMMAND_MENU_MAX_SHOW 17
 #define STORED_POS_COUNT 9
 
 typedef enum {
@@ -33,6 +32,7 @@ typedef enum {
     COMMAND_HITBOX_VIEW,
     COMMAND_TOGGLE_WATCHES,
     COMMAND_BREAK,
+    COMMAND_NOCLIP,
     NUMBER_OF_COMMANDS,
 } commandNames;
 

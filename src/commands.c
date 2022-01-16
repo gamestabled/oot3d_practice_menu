@@ -181,6 +181,7 @@ Command commandList[NUMBER_OF_COMMANDS] = {
     {"Toggle Hitbox View", 0, 0, { 0 }, Command_HitboxView, COMMAND_PRESS_TYPE, 0, 0},
     {"Toggle Watches", 0, 0, { 0 }, Command_ToggleWatches, COMMAND_PRESS_TYPE, 0, 0},
     {"Break Free", 0, 0, { 0 }, Command_Break, COMMAND_HOLD_TYPE, 0, 0},
+    {"NoClip", 0, 0, { 0 }, Scene_NoClipToggle, COMMAND_PRESS_ONCE_TYPE, 0, 0},
 };
 
 static void Commands_ListInitDefaults(void){
@@ -246,7 +247,7 @@ static void Commands_ListInitDefaults(void){
     commandList[COMMAND_BREAK].strict = 0;
 
     // reset the other commands for when default settings are restored
-    for(u32 i = 0; i < COMMAND_NUM_COMMANDS; ++i){
+    for(u32 i = 0; i < NUMBER_OF_COMMANDS; ++i){
         if ((i > COMMAND_RUN_FAST) && i != COMMAND_VOID_OUT &&
             (i < COMMAND_STORE_POS || i > COMMAND_FRAME_ADVANCE) && i != COMMAND_BREAK){
             commandList[i].comboLen = 0;
@@ -270,7 +271,7 @@ void Command_UpdateCommands(u32 curInputs){ //curInputs should be all the held a
         commandList[COMMAND_OPEN_MENU].strict = 0;
     }
 
-    for (int i = 0; i < COMMAND_NUM_COMMANDS; i++){
+    for (int i = 0; i < NUMBER_OF_COMMANDS; i++){
         if (commandList[i].comboLen == 0) continue;
         if ((commandList[i].strict && curInputs == commandList[i].inputs[commandList[i].curIdx]) ||
             (!commandList[i].strict && (curInputs & commandList[i].inputs[commandList[i].curIdx]) == commandList[i].inputs[commandList[i].curIdx])){ //case where we hit the new button
@@ -489,7 +490,7 @@ void Commands_ShowCommandsMenu(void){
         }
         Draw_DrawFormattedString(10, 10, COLOR_TITLE, "Commands. Press START to restore defaults");
 
-        for (s32 i = 0; i < COMMAND_MENU_MAX_SHOW && page * COMMAND_MENU_MAX_SHOW + i < COMMAND_NUM_COMMANDS; ++i)
+        for (s32 i = 0; i < COMMAND_MENU_MAX_SHOW && page * COMMAND_MENU_MAX_SHOW + i < NUMBER_OF_COMMANDS; ++i)
         {
             char comboString[COMMAND_COMBO_MAX + 1];
             s32 j = page * COMMAND_MENU_MAX_SHOW + i;
@@ -543,11 +544,11 @@ void Commands_ShowCommandsMenu(void){
             selected -= COMMAND_MENU_MAX_SHOW;
         }
         else if(pressed & BUTTON_RIGHT){
-            if(selected + COMMAND_MENU_MAX_SHOW < COMMAND_NUM_COMMANDS)
+            if(selected + COMMAND_MENU_MAX_SHOW < NUMBER_OF_COMMANDS)
                 selected += COMMAND_MENU_MAX_SHOW;
-            else if((COMMAND_NUM_COMMANDS - 1) / COMMAND_MENU_MAX_SHOW == page)
+            else if((NUMBER_OF_COMMANDS - 1) / COMMAND_MENU_MAX_SHOW == page)
                 selected %= COMMAND_MENU_MAX_SHOW;
-            else selected = COMMAND_NUM_COMMANDS - 1;
+            else selected = NUMBER_OF_COMMANDS - 1;
         }
         else if(pressed & BUTTON_START)
         {
@@ -555,8 +556,8 @@ void Commands_ShowCommandsMenu(void){
         }
 
         if(selected < 0)
-            selected = COMMAND_NUM_COMMANDS - 1;
-        else if(selected >= COMMAND_NUM_COMMANDS) selected = 0;
+            selected = NUMBER_OF_COMMANDS - 1;
+        else if(selected >= NUMBER_OF_COMMANDS) selected = 0;
 
         pagePrev = page;
         page = selected / COMMAND_MENU_MAX_SHOW;

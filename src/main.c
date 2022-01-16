@@ -214,7 +214,7 @@ void advance_main(void) {
     }
     isAsleep = false;
 
-    if(noClip) { // TODO manage camera, redirect inputs accordingly or change the camera angle.
+    if(noClip && releasedABbuttons) { // TODO manage camera, redirect inputs accordingly or change the camera angle.
         u32 in = rInputCtx.cur.val;
         f32 amount = (in & BUTTON_R1) ? NOCLIP_FAST_SPEED : NOCLIP_SLOW_SPEED;
         if(in & BUTTON_L1) {
@@ -255,6 +255,9 @@ void advance_main(void) {
             PLAYER->actor.world.pos = PLAYER->actor.home.pos;
             Scene_NoClipToggle();
         }
+    }
+    else {
+        releasedABbuttons = !(rInputCtx.cur.val & (BUTTON_A | BUTTON_B));
     }
 }
 

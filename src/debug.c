@@ -150,11 +150,11 @@ static void DebugActors_ShowActors(void) {
         return;
     }
     static ShowActor_Info actorList[200];
+    static s32 type = 0xC;
     s32 selected = 0, page = 0, pagePrev = 0;
-    s32 type = 0xC;
     s32 listSize = 0;
 
-    listSize = PopulateActorList(actorList, 0xC);
+    listSize = PopulateActorList(actorList, type);
 
     Draw_Lock();
     Draw_ClearFramebuffer();

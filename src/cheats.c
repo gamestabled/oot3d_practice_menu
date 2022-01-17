@@ -6,18 +6,19 @@
 
 #define SEQ_AUDIO_BLANK 0x1000142
 
-u8 cheats[0x12] = {0};
+u8 cheats[NUMBER_OF_CHEATS] = {0};
 u8 forcedUsableItems = 0;
 u16 frozenTime = 0;
 
-/*void Cheats_CheatsMenuInit() {
-    for (int i = 0; i < 12; i++) {
+void Cheats_CheatsMenuInit() {
+    for (int i = 0; i < NUMBER_OF_CHEATS; i++) {
         CheatsMenu.items[i].on = cheats[i];
     }
-};*/
+    if (forcedUsableItems) CheatsMenu.items[CHEATS_USABLE_ITEMS].title = "Unrestricted Items - Forced mode ON";
+};
 
 void Cheats_ShowCheatsMenu(){
-    //Cheats_CheatsMenuInit();
+    Cheats_CheatsMenuInit();
     ToggleMenuShow(&CheatsMenu);
 }
 

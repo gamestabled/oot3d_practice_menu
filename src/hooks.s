@@ -230,3 +230,11 @@ hook_OverrideSceneSetup:
     pop {r0-r12, lr}
     mov r0,#0x2
     bx lr
+
+.global hook_LoadGame
+hook_LoadGame:
+    add r0, r5, r4
+    push {r0-r12, lr}
+    bl Settings_LoadGame
+    pop {r0-r12, lr}
+    bx lr

@@ -89,3 +89,8 @@ SleepQueryCallback_patch:
 .global OverrideSceneSetup_patch
 OverrideSceneSetup_patch:
     bl hook_OverrideSceneSetup
+
+.section .patch_LoadGame
+.global .LoadGame_patch
+LoadGame_patch:
+    bl hook_LoadGame

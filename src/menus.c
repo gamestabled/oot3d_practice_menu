@@ -40,10 +40,11 @@
 #include "menus/watches.h"
 #include "menus/debug.h"
 #include "menus/commands.h"
+#include "menus/settings.h"
 
 Menu gz3DMenu = {
     "Practice Menu",
-    .nbItems = 9,
+    .nbItems = 10,
     {
         { "Warps", MENU, .menu = &WarpsMenu },
         { "Scene", MENU, .menu = &SceneMenu },
@@ -53,6 +54,7 @@ Menu gz3DMenu = {
         { "File", METHOD, .method = File_ShowFileMenu },
         { "Watches", METHOD, .method = &WatchesMenuFunc },
         { "Debug", MENU, .menu = &DebugMenu },
-        { "Commands", METHOD, .method = Commands_ShowCommands },
+        { "Commands", METHOD, .method = Commands_ShowCommandsMenu },
+        { "Settings", MENU, .menu = &SettingsMenu },
     }
 };

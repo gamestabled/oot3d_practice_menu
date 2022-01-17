@@ -52,6 +52,10 @@ SECTIONS
 		*(.patch_ItemUsability_Shield)
 	}
 
+	.patch_LoadGame 0x447358 : {
+		*(.patch_LoadGame)
+	}
+
 	.patch_OverrideSceneSetup 0x448790 : {
 		*(.patch_OverrideSceneSetup)
 	}

@@ -44,7 +44,7 @@ typedef enum MenuItemAction {
 } MenuItemAction;
 
 typedef struct MenuItem {
-    const char *title;
+    char *title;
 
     MenuItemAction action_type;
     union {

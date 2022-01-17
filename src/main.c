@@ -11,6 +11,8 @@
 #include "menus/watches.h"
 #include "menus/commands.h"
 #include "menus/scene.h"
+#include "menus/settings.h"
+#include "3ds/extdata.h"
 #include <string.h>
 
 #include "z3D/z3D.h"
@@ -19,12 +21,13 @@
 #define NOCLIP_FAST_SPEED 20
 
 advance_ctx_t advance_ctx = {};
-uint8_t framebuffers_init = 0;
+uint8_t practice_menu_init = 0;
 static bool isAsleep = false;
 u32 alertFrames = 0;
 char* alertMessage = "";
 
 GlobalContext* gGlobalContext;
+u8 loadedGlobalContext = 0;
 
 static void toggle_advance(void) {
     if(pauseUnpause && advance_ctx.advance_state == NORMAL && !advance_ctx.latched){
@@ -145,9 +148,11 @@ void pauseDisplay(void) {
 }
 
 void advance_main(void) {
-    if(framebuffers_init == 0){
+    if(practice_menu_init == 0){
         Draw_SetupFramebuffer();
-        framebuffers_init = 1;
+        extDataInit();
+        Settings_LoadExtSaveData();
+        practice_menu_init = 1;
     }
 
     if(gSaveContext.entranceIndex == 0x0629 && gSaveContext.cutsceneIndex == 0xFFF3 && gSaveContext.gameMode != 2){
@@ -255,6 +260,7 @@ void advance_main(void) {
 
 void setGlobalContext(GlobalContext* globalContext){
     gGlobalContext = globalContext;
+    loadedGlobalContext = 1;
 }
 
 void Gfx_SleepQueryCallback(void) {

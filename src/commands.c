@@ -104,7 +104,7 @@ static void Command_StorePos(void){
         storedPosRot[storedPosIndex].rot = PLAYER->actor.world.rot;
 
         alertMessage = "Stored position X";
-        alertMessage[16] = storedPosIndex + 48; //ASCII digit
+        alertMessage[16] = storedPosIndex + '0';
         alertFrames = menuOpen ? 10 : 90;
     }
 }
@@ -118,14 +118,14 @@ static void Command_LoadPos(void){
         PLAYER->actor.shape.rot = storedPosRot[storedPosIndex].rot;
 
         alertMessage = "Loaded position X";
-        alertMessage[16] = storedPosIndex + 48; //ASCII digit
+        alertMessage[16] = storedPosIndex + '0';
         alertFrames = menuOpen ? 10 : 90;
     }
 }
 
 static void AlertPosIndex(void) {
     alertMessage = "Position X";
-    alertMessage[9] = storedPosIndex + 48; //ASCII digit
+    alertMessage[9] = storedPosIndex + '0';
     alertFrames = menuOpen ? 10 : 75;
 }
 
@@ -163,7 +163,7 @@ static void Command_ToggleWatches(void){
     Watches_ToggleWatches();
 }
 
-static Command commandList[] = {
+Command commandList[NUMBER_OF_COMMANDS] = {
     {"Open Menu", 0, 0, { 0 }, Command_OpenMenu, COMMAND_PRESS_ONCE_TYPE, 0, 0},
     {"Levitate", 0, 0, { 0 }, Command_Levitate, COMMAND_HOLD_TYPE, 0, 0},
     {"Fall", 0, 0, { 0 }, Command_Fall, COMMAND_HOLD_TYPE, 0, 0},
@@ -255,7 +255,7 @@ static void Commands_ListInitDefaults(void){
     }
 }
 
-static u32 commandInit = 0;
+u32 commandInit = 0;
 void Command_UpdateCommands(u32 curInputs){ //curInputs should be all the held and pressed buttons
     if (!commandInit){
         Commands_ListInitDefaults();
@@ -472,7 +472,7 @@ static void Commands_EditCommand(u32 commandIndex){
     Draw_ClearFramebuffer();
 }
 
-void Commands_ShowCommands(void){
+void Commands_ShowCommandsMenu(void){
     s32 selected = 0, page = 0, pagePrev = 0;
 
     Draw_Lock();

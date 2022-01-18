@@ -133,7 +133,7 @@ static void WatchesDeleteWatch(u32 selected){
     memset(watches[selected].name, 0, WATCHES_MAXNAME + 1);
 }
 
-void Watches_ToggleWatches(void){
+/*void Watches_ToggleWatches(void){
     u8 display = watches[0].display;
 
     for (u32 i = 0; i < WATCHES_MAX; ++i){
@@ -141,7 +141,7 @@ void Watches_ToggleWatches(void){
             watches[i].display = !display;
         }
     }
-}
+}*/
 
 void WatchesMenuFunc(void){
 
@@ -160,6 +160,10 @@ void WatchesMenuFunc(void){
         for (u32 i = 0; i < WATCHES_MAX; ++i){
             Draw_DrawString(30, 30 + i * SPACING_Y, COLOR_WHITE, watches[i].addr == NULL ? "." : watches[i].name);
             Draw_DrawCharacter(10, 30 + i * SPACING_Y, COLOR_TITLE, selected == i ? '>' : ' ');
+            if (watches[i].addr != NULL) {
+                Draw_DrawFormattedString(90, 30 + i * SPACING_Y, COLOR_WHITE, "%08X", watches[i].addr);
+                Draw_DrawFormattedString(150, 30 + i * SPACING_Y, COLOR_WHITE, watches[i].display ? "ON" : "OFF");
+            }
         }
 
         Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "A to edit. X to delete. Y to go to Memory Editor");

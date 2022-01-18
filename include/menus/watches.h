@@ -28,6 +28,7 @@ typedef struct Watch {
 } Watch;
 
 extern Watch watches[WATCHES_MAX];
+extern bool shouldDrawWatches;
 
 void WatchesMenuFunc(void);
-void Watches_ToggleWatches(void);
+//void Watches_ToggleWatches(void);

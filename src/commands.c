@@ -12,6 +12,7 @@
 u32 pauseUnpause = 0; //tells main to pause/unpause
 u32 frameAdvance = 0; //tells main to frame advance
 bool menuOpen = 0;    //tells main to open menu
+bool shouldDrawWatches = 1;
 
 PosRot storedPosRot[STORED_POS_COUNT];
 static u8 storedPosIndex = 0;
@@ -160,7 +161,7 @@ static void Command_HitboxView(void){
 }
 
 static void Command_ToggleWatches(void){
-    Watches_ToggleWatches();
+    shouldDrawWatches = !shouldDrawWatches;
 }
 
 Command commandList[NUMBER_OF_COMMANDS] = {

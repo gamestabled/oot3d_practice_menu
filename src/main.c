@@ -159,7 +159,9 @@ void advance_main(void) {
         titleScreenDisplay();
     }
 
-    drawWatches();
+    if(shouldDrawWatches){
+        drawWatches();
+    }
     drawAlert();
     Input_Update();
     Command_UpdateCommands(rInputCtx.cur.val);

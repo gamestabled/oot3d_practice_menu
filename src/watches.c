@@ -1,5 +1,6 @@
 #include "menu.h"
 #include "menus/watches.h"
+#include "menus/debug.h"
 #include "draw.h"
 #include "input.h"
 #include "z3D/z3D.h"
@@ -161,7 +162,7 @@ void WatchesMenuFunc(void){
             Draw_DrawCharacter(10, 30 + i * SPACING_Y, COLOR_TITLE, selected == i ? '>' : ' ');
         }
 
-        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "A to edit. X to delete.");
+        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "A to edit. X to delete. Y to go to Memory Editor");
         Draw_FlushFramebuffer();
         Draw_Unlock();
 
@@ -177,6 +178,14 @@ void WatchesMenuFunc(void){
         }
         else if(pressed & BUTTON_X){
             WatchesDeleteWatch(selected);
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
+        }
+        else if(pressed & BUTTON_Y){
+            memoryEditorAddress = (int)watches[selected].addr;
+            Debug_MemoryEditor();
             Draw_Lock();
             Draw_ClearFramebuffer();
             Draw_FlushFramebuffer();

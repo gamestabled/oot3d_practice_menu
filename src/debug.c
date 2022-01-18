@@ -7,6 +7,7 @@
 #include "common.h"
 #include "z3D/z3D.h"
 #include <stdio.h>
+#include <string.h>
 
 
 #define ACTOR_LIST_MAX_SHOW 15
@@ -15,6 +16,12 @@
 static s16 newId = 0x0010;
 static s16 newParams = 0x0000;
 static u8  storedPosRotIndex = 0;
+
+//Memory Editor values
+u32 memoryEditorAddress = (int)&gSaveContext;
+static s32 selectedRow = 0;
+static s32 selectedColumn = 0;
+static u8  isValidMemory = 0;
 
 typedef struct {
     Actor* instance;
@@ -36,6 +43,17 @@ static const char* const ActorTypeNames[] = {
     "DOOR",
     "CHEST",
     "ALL", //0xC
+};
+
+Menu DebugMenu = {
+    "Debug",
+    .nbItems = 4,
+    {
+        {"Actors", METHOD, .method = DebugActors_ShowActors},
+        {"Flags (TODO)", METHOD, .method = NULL}, //TODO
+        {"Player States", METHOD, .method = Debug_PlayerStatesMenuShow},
+        {"Memory Editor", METHOD, .method = Debug_MemoryEditor},
+    }
 };
 
 /* give type 0xC for "all" */
@@ -79,6 +97,7 @@ static void DebugActors_ShowMoreInfo(Actor* actor) {
         Draw_DrawFormattedString(30, 30 + 9 * SPACING_Y, COLOR_WHITE, "Held By:         %08X", actor->parent);
         Draw_DrawFormattedString(30, 30 + 10 * SPACING_Y, COLOR_WHITE, "Holding:         %08X", actor->child);
 
+        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 40, COLOR_TITLE, "Press Y to open Memory Editor");
         Draw_DrawString(10, SCREEN_BOT_HEIGHT - 30, COLOR_TITLE, "Press START to bring this actor to Link");
         Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "Press SELECT to bring Link to this actor");
 
@@ -99,6 +118,14 @@ static void DebugActors_ShowMoreInfo(Actor* actor) {
             PLAYER->actor.world.rot = actor->world.rot;
             PLAYER->actor.home.pos = actor->world.pos;
             PLAYER->actor.home.rot = actor->world.rot;
+        }
+        else if(pressed & BUTTON_Y){
+            memoryEditorAddress = (int)actor;
+            Debug_MemoryEditor();
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
         }
 
     } while(menuOpen);
@@ -145,7 +172,7 @@ static void DebugActors_SpawnActor(void) {
     } while(menuOpen);
 }
 
-static void DebugActors_ShowActors(void) {
+void DebugActors_ShowActors(void) {
     if(!isInGame()) {
         return;
     }
@@ -339,12 +366,184 @@ void Debug_PlayerStatesMenuShow() {
     }
 }
 
-Menu DebugMenu = {
-    "Debug",
-    .nbItems = 3,
+static void checkValidMemory() {
+    MemInfo address_start_info = query_memory_permissions((int)memoryEditorAddress);
+    MemInfo address_end_info = query_memory_permissions((int)memoryEditorAddress + 127);
+    isValidMemory = is_valid_memory_read(&address_start_info) && is_valid_memory_read(&address_end_info);
+}
+
+void Debug_MemoryEditor() {
+
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_Unlock();
+
+    checkValidMemory();
+
+    #define WHITE_OR_GREEN_AT(X,Y) ((selectedRow == X && selectedColumn == Y) ? COLOR_GREEN : COLOR_WHITE)
+
+    do
     {
-        {"Actors", METHOD, .method = DebugActors_ShowActors},
-        {"Flags (TODO)", METHOD, .method = NULL}, //TODO
-        {"Player States", METHOD, .method = Debug_PlayerStatesMenuShow},
-    }
-};
+        Draw_Lock();
+        // Title
+        Draw_DrawString(10, 10, COLOR_TITLE, "Memory Editor");
+        // Address selection
+        Draw_DrawFormattedString(30, 30, selectedRow == 0 ? COLOR_GREEN : COLOR_WHITE, "%08X", memoryEditorAddress);
+        // Scroll buttons
+        Draw_DrawString(40, 30 + SPACING_Y, WHITE_OR_GREEN_AT(1,0), "+8");
+        Draw_DrawString(60, 30 + SPACING_Y, WHITE_OR_GREEN_AT(1,1), "-8");
+        // Byte index markers
+        for (s32 j = 0; j < 8; j++) {
+            Draw_DrawFormattedString(90 + j * SPACING_X * 3, 30 + SPACING_Y, (selectedRow > 1 && selectedColumn == j) ? COLOR_GREEN : COLOR_GRAY, "%d", j);
+        }
+        // Memory addresses and values
+        for (s32 i = 0; i < 16; i++) {
+            u32 yPos = 30 + (i + 2) * SPACING_Y;
+            Draw_DrawFormattedString(30, yPos, selectedRow == (i+2) ? COLOR_GREEN : COLOR_GRAY, "%08X", memoryEditorAddress + i * 8);
+            if (isValidMemory) {
+                for (s32 j = 0; j < 8; j++) {
+                    u8 dst;
+                    memcpy(&dst, (void*)(memoryEditorAddress + i * 8 + j), sizeof(dst));
+                    Draw_DrawFormattedString(90 + j * SPACING_X * 3, yPos, WHITE_OR_GREEN_AT(i+2,j), "%02X", dst);
+                }
+            }
+            else {
+                Draw_DrawString(120, 30 + 10 * SPACING_Y, COLOR_RED, "Invalid Memory");
+            }
+        }
+
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
+
+        u32 pressed = Input_WaitWithTimeout(1000);
+
+        if (pressed & BUTTON_B){
+            break;
+        }
+        if (pressed & BUTTON_A){
+            if (selectedRow == 0) {
+                MemoryEditor_EditAddress();
+            }
+            else if (selectedRow == 1) {
+                memoryEditorAddress += (selectedColumn == 0 ? 8 : -8);
+                checkValidMemory();
+            }
+            else {
+                MemoryEditor_EditValue();
+            }
+        }
+        else if (pressed & BUTTON_UP){
+            selectedRow--;
+            if (selectedRow == 1) selectedColumn = 1;
+        }
+        else if (pressed & BUTTON_DOWN){
+            selectedRow++;
+            if (selectedRow == 2) selectedColumn = 0;
+        }
+        else if (pressed & BUTTON_RIGHT){
+            selectedColumn++;
+        }
+        else if (pressed & BUTTON_LEFT){
+            selectedColumn--;
+        }
+
+        if(selectedRow > 17 || (selectedRow > 1 && !isValidMemory))
+            selectedRow = 0;
+        else if(selectedRow < 0)
+            selectedRow = isValidMemory ? 17 : 1;
+
+        if(selectedColumn > 7 || selectedRow == 0 || (selectedRow == 1 && selectedColumn > 1))
+            selectedColumn = 0;
+        else if(selectedColumn < 0) {
+            switch (selectedRow) {
+                case 0: selectedColumn = 0; break;
+                case 1: selectedColumn = 1; break;
+                default: selectedColumn = 7; break;
+            }
+        }
+
+    } while(menuOpen);
+}
+
+void MemoryEditor_EditAddress() {
+    u32 posX = 30;
+    u32 posY = 30;
+    static s8 digitIndex = 0;
+
+    do
+    {
+        Draw_Lock();
+        Draw_DrawFormattedString(posX, posY, COLOR_GREEN, "%08X", memoryEditorAddress);
+        Draw_DrawFormattedString(posX + (7 - digitIndex) * SPACING_X, posY, COLOR_RED, "%X", (memoryEditorAddress >> (digitIndex*4)) & 0xF);
+        Draw_Unlock();
+
+        u32 pressed = Input_WaitWithTimeout(1000);
+
+        if (pressed & (BUTTON_B | BUTTON_A)){
+            break;
+        }
+        else if (pressed & BUTTON_UP){
+            memoryEditorAddress += (1 << digitIndex*4);
+        }
+        else if (pressed & BUTTON_DOWN){
+            memoryEditorAddress -= (1 << digitIndex*4);
+        }
+        else if (pressed & BUTTON_RIGHT){
+            digitIndex--;
+        }
+        else if (pressed & BUTTON_LEFT){
+            digitIndex++;
+        }
+
+        if(digitIndex > 7)
+            digitIndex = 0;
+        else if(digitIndex < 0)
+            digitIndex = 7;
+
+    } while(menuOpen);
+
+    checkValidMemory();
+
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_Unlock();
+}
+
+
+void MemoryEditor_EditValue() {
+    u32 posX = 90 + selectedColumn * SPACING_X * 3;
+    u32 posY = 30 + selectedRow * SPACING_Y;
+
+    u8 value;
+    memcpy(&value, (void*)(memoryEditorAddress + (selectedRow - 2) * 8 + selectedColumn), sizeof(value));
+
+    do
+    {
+        Draw_Lock();
+        Draw_DrawFormattedString(posX, posY, COLOR_RED, "%02X", value);
+        Draw_Unlock();
+
+        u32 pressed = Input_WaitWithTimeout(1000);
+
+        if (pressed & (BUTTON_B | BUTTON_A)){
+            break;
+        }
+        else if (pressed & BUTTON_UP){
+            value++;
+        }
+        else if (pressed & BUTTON_DOWN){
+            value--;
+        }
+        else if (pressed & BUTTON_RIGHT){
+            value+=0x10;
+        }
+        else if (pressed & BUTTON_LEFT){
+            value-=0x10;
+        }
+
+    } while(menuOpen);
+
+    memcpy((void*)(memoryEditorAddress + (selectedRow - 2) * 8 + selectedColumn), &value, sizeof(value));
+}

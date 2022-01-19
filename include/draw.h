@@ -60,6 +60,8 @@ void Draw_DrawCharacter(u32 posX, u32 posY, u32 color, char character);
 u32 Draw_DrawString(u32 posX, u32 posY, u32 color, const char *string);
 u32 Draw_DrawFormattedString(u32 posX, u32 posY, u32 color, const char *fmt, ...);
 
+void Draw_DrawOverlaidCharacter(u32 posX, u32 posY, u32 color, char character);
+
 void Draw_DrawCharacterTop(u32 posX, u32 posY, u32 color, char character);
 u32 Draw_DrawStringTop(u32 posX, u32 posY, u32 color, const char *string);
 u32 Draw_DrawFormattedStringTop(u32 posX, u32 posY, u32 color, const char *fmt, ...);

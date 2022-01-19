@@ -238,3 +238,26 @@ void Draw_FlushFramebufferTop(void)
     svcFlushProcessDataCache(CUR_PROCESS_HANDLE, FRAMEBUFFER[5], FB_TOP_SIZE);
     #endif
 }
+
+void Draw_DrawOverlaidCharacter(u32 posX, u32 posY, u32 color, char character)
+{
+    volatile u8 *const fb0 = (volatile u8 *const)FRAMEBUFFER[0];
+    volatile u8 *const fb1 = (volatile u8 *const)FRAMEBUFFER[1];
+
+    for(s32 y = 0; y < 10; y++)
+    {
+        const char charPos = ascii_font[character * 10 + y];
+
+        for(s32 x = 6; x >= 1; x--)
+        {
+            const u32 screenPos = (posX * SCREEN_BOT_HEIGHT + (SCREEN_BOT_HEIGHT - y - posY - 1)) + (5 - x) * SCREEN_BOT_HEIGHT;
+
+            if((charPos >> x) & 1) fb0[screenPos * 3] = (color) & 0xFF;
+            if((charPos >> x) & 1) fb0[screenPos * 3 + 1] = (color >> 8) & 0xFF;
+            if((charPos >> x) & 1) fb0[screenPos * 3 + 2] = (color >> 16) & 0xFF;
+            if((charPos >> x) & 1) fb1[screenPos * 3] = (color) & 0xFF;
+            if((charPos >> x) & 1) fb1[screenPos * 3 + 1] = (color >> 8) & 0xFF;
+            if((charPos >> x) & 1) fb1[screenPos * 3 + 2] = (color >> 16) & 0xFF;
+        }
+    }
+}

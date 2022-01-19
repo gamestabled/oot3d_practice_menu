@@ -45,12 +45,30 @@ static const char* const ActorTypeNames[] = {
     "ALL", //0xC
 };
 
+static const char* const FlagGroupNames[] = {
+    "switch", //0x0
+    "temp_switch",
+    "unknown_1",
+    "unknown_2",
+    "chest",
+    "clear",
+    "temp_clear",
+    "collect",
+    "temp_collect",
+    "gold_skulltulas",
+    "event_chk_inf",
+    "item_get_inf",
+    "inf_table (part 1/2)",
+    "inf_table (part 2/2)",
+    "event_inf", // 0xE
+};
+
 Menu DebugMenu = {
     "Debug",
     .nbItems = 4,
     {
         {"Actors", METHOD, .method = DebugActors_ShowActors},
-        {"Flags (TODO)", METHOD, .method = NULL}, //TODO
+        {"Flags", METHOD, .method = Debug_FlagsEditor},
         {"Player States", METHOD, .method = Debug_PlayerStatesMenuShow},
         {"Memory Editor", METHOD, .method = Debug_MemoryEditor},
     }
@@ -332,6 +350,117 @@ void Debug_NewActorValuesMenuShow() {
     Draw_Unlock();
 }
 
+void Debug_FlagsEditor() {
+    static s32 row = 0;
+    static s32 column = 0;
+    static s32 group = 10;
+    static u16* flags = (u16*)&gSaveContext.eventChkInf;
+
+    static const u8 RowAmounts[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 11, 14, 4, 16, 14, 4};
+
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_Unlock();
+
+    #define WHITE_OR_BLUE_AT(X,Y) ((row == X && column == Y) ? COLOR_TITLE : COLOR_WHITE)
+    #define FLAG_STATUS(X,Y)  (*(flags + X) >> Y & 1)
+    #define CURSOR_CHAR 176
+
+    do
+    {
+        Draw_Lock();
+        // Title
+        Draw_DrawString(10, 10, COLOR_TITLE, "Flags");
+        // Arrows to change group
+        Draw_DrawCharacter(70, 30, WHITE_OR_BLUE_AT(0,0), 17);
+        Draw_DrawCharacter(90, 30, WHITE_OR_BLUE_AT(0,1), 16);
+        // Group name
+        Draw_DrawString(120, 30, COLOR_WHITE, FlagGroupNames[group]);
+        // Flags column indices
+        for (s32 j = 0; j < 16; j++) {
+            Draw_DrawFormattedString(70 + j * 2 * SPACING_X, 50, (row > 1 && column == j) ? COLOR_TITLE : COLOR_GRAY, "%X", j);
+        }
+        // Flags row indices
+        for (s32 i = 0; i < RowAmounts[group]; i++) {
+            Draw_DrawFormattedString(30, 50 + (i + 1) * SPACING_Y, (row == i + 1) ? COLOR_TITLE : COLOR_GRAY, "%04X", i * 16 + (group == FLAGS_INF_TABLE_2 ? 0x100 : 0));
+        }
+        // Flags
+        for (s32 i = 0; i < RowAmounts[group]; i++) {
+            for (s32 j = 0; j < 16; j++) {
+                Draw_DrawCharacter(70 + j * 2 * SPACING_X, 50 + (i + 1) * SPACING_Y, FLAG_STATUS(i, j) ? COLOR_GREEN : COLOR_RED, FLAG_STATUS(i, j) ? '1' : '0');
+            }
+        }
+        // Cursor
+        if (row > 0) {
+            Draw_DrawOverlaidCharacter(70 + column * 2 * SPACING_X, 50 + (row) * SPACING_Y, COLOR_TITLE, CURSOR_CHAR);
+        }
+
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
+
+        u32 pressed = Input_WaitWithTimeout(1000);
+
+        if (pressed & BUTTON_B){
+            break;
+        }
+        else if (pressed & BUTTON_A){
+            if(row != 0) {
+                *(flags + row - 1) ^= 1 << column;
+            }
+            else {
+                group += (column == 0 ? -1 : 1);
+                if(group > 14) group = 0;
+                else if(group < 0) group = 14;
+
+                switch (group) {
+                    case FLAGS_GOLD_SKULLTULAS  : flags = (u16*)&gSaveContext.gsFlags; break;
+                    case FLAGS_EVENT_CHK_INF    : flags = (u16*)&gSaveContext.eventChkInf; break;
+                    case FLAGS_ITEM_GET_INF     : flags = (u16*)&gSaveContext.itemGetInf; break;
+                    case FLAGS_INF_TABLE_1      : flags = (u16*)&gSaveContext.infTable; break;
+                    case FLAGS_INF_TABLE_2      : flags = ((u16*)&gSaveContext.infTable) + 16; break;
+                    case FLAGS_EVENT_INF        : flags = (u16*)&gSaveContext.eventInf; break;
+                    default : flags = ((u16*)&(gGlobalContext->actorCtx.flags.swch)) + group * 2; break;
+                }
+
+                Draw_Lock();
+                Draw_ClearFramebuffer();
+                Draw_Unlock();
+            }
+        }
+        else{
+            if (pressed & BUTTON_UP){
+                row--;
+                if (row == 0 && column > 1) column = 1;
+            }
+            if (pressed & BUTTON_DOWN){
+                row++;
+                if (row > RowAmounts[group] && column > 1) column = 1;
+            }
+            if (pressed & BUTTON_RIGHT){
+                column++;
+            }
+            if (pressed & BUTTON_LEFT){
+                column--;
+            }
+        }
+
+        if(row > RowAmounts[group])
+            row = 0;
+        else if(row < 0)
+            row = RowAmounts[group];
+
+        if(column > 15 || (row == 0 && column > 1))
+            column = 0;
+        else if(column < 0) {
+            column = (row == 0 ? 1 : 15);
+        }
+
+    } while(menuOpen);
+
+    #undef WHITE_OR_BLUE_AT
+}
+
 AmountMenu PlayerStatesMenu = {
     "Player States",
     .nbItems = 5,
@@ -382,6 +511,7 @@ void Debug_MemoryEditor() {
     checkValidMemory();
 
     #define WHITE_OR_GREEN_AT(X,Y) ((selectedRow == X && selectedColumn == Y) ? COLOR_GREEN : COLOR_WHITE)
+    #define WHITE_OR_BLUE_AT(X,Y)  ((selectedRow == X && selectedColumn == Y) ? COLOR_TITLE : COLOR_WHITE)
 
     do
     {
@@ -391,16 +521,16 @@ void Debug_MemoryEditor() {
         // Address selection
         Draw_DrawFormattedString(30, 30, selectedRow == 0 ? COLOR_GREEN : COLOR_WHITE, "%08X", memoryEditorAddress);
         // Scroll buttons
-        Draw_DrawString(40, 30 + SPACING_Y, WHITE_OR_GREEN_AT(1,0), "+8");
-        Draw_DrawString(60, 30 + SPACING_Y, WHITE_OR_GREEN_AT(1,1), "-8");
+        Draw_DrawCharacter(40, 30 + SPACING_Y, WHITE_OR_BLUE_AT(1,0), 31);
+        Draw_DrawCharacter(60, 30 + SPACING_Y, WHITE_OR_BLUE_AT(1,1), 30);
         // Byte index markers
         for (s32 j = 0; j < 8; j++) {
-            Draw_DrawFormattedString(90 + j * SPACING_X * 3, 30 + SPACING_Y, (selectedRow > 1 && selectedColumn == j) ? COLOR_GREEN : COLOR_GRAY, "%d", j);
+            Draw_DrawFormattedString(90 + j * SPACING_X * 3, 30 + SPACING_Y, (selectedRow > 1 && selectedColumn == j) ? COLOR_TITLE : COLOR_GRAY, "%d", j);
         }
         // Memory addresses and values
         for (s32 i = 0; i < 16; i++) {
             u32 yPos = 30 + (i + 2) * SPACING_Y;
-            Draw_DrawFormattedString(30, yPos, selectedRow == (i+2) ? COLOR_GREEN : COLOR_GRAY, "%08X", memoryEditorAddress + i * 8);
+            Draw_DrawFormattedString(30, yPos, selectedRow == (i+2) ? COLOR_TITLE : COLOR_GRAY, "%08X", memoryEditorAddress + i * 8);
             if (isValidMemory) {
                 for (s32 j = 0; j < 8; j++) {
                     u8 dst;
@@ -421,31 +551,34 @@ void Debug_MemoryEditor() {
         if (pressed & BUTTON_B){
             break;
         }
-        if (pressed & BUTTON_A){
+        else if (pressed & BUTTON_A){
             if (selectedRow == 0) {
                 MemoryEditor_EditAddress();
             }
             else if (selectedRow == 1) {
-                memoryEditorAddress += (selectedColumn == 0 ? 8 : -8);
+                u8 amount = ADDITIONAL_FLAG_BUTTON ? 0x80 : 8;
+                memoryEditorAddress += (selectedColumn == 0 ? amount : -amount);
                 checkValidMemory();
             }
             else {
                 MemoryEditor_EditValue();
             }
         }
-        else if (pressed & BUTTON_UP){
-            selectedRow--;
-            if (selectedRow == 1) selectedColumn = 1;
-        }
-        else if (pressed & BUTTON_DOWN){
-            selectedRow++;
-            if (selectedRow == 2) selectedColumn = 0;
-        }
-        else if (pressed & BUTTON_RIGHT){
-            selectedColumn++;
-        }
-        else if (pressed & BUTTON_LEFT){
-            selectedColumn--;
+        else {
+            if (pressed & BUTTON_UP){
+                selectedRow--;
+                if (selectedRow == 1) selectedColumn = 1;
+            }
+            if (pressed & BUTTON_DOWN){
+                selectedRow++;
+                if (selectedRow == 2) selectedColumn = 0;
+            }
+            if (pressed & BUTTON_RIGHT){
+                selectedColumn++;
+            }
+            if (pressed & BUTTON_LEFT){
+                selectedColumn--;
+            }
         }
 
         if(selectedRow > 17 || (selectedRow > 1 && !isValidMemory))
@@ -510,7 +643,6 @@ void MemoryEditor_EditAddress() {
     Draw_FlushFramebuffer();
     Draw_Unlock();
 }
-
 
 void MemoryEditor_EditValue() {
     u32 posX = 90 + selectedColumn * SPACING_X * 3;

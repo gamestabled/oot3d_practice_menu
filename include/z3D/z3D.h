@@ -169,7 +169,8 @@ typedef struct {
     /* 0x1575 */ u8           ocarinaButtonStatus;
     /* 0x1576 */ char         unk_1576[0x000D];
     /* 0x1584 */ u16          magicMeterSize;
-    /* 0x1586 */ char         unk_1586[0x000C];
+    /* 0x1586 */ char         unk_1586[0x0004];
+    /* 0x158A */ u16          eventInf[4];
     /* 0x1592 */ u16          dungeonIndex;
     /* 0x1594 */ char         unk_1594[0x000C];
     /* 0x15A0 */ u16          nextCutsceneIndex;
@@ -178,59 +179,6 @@ typedef struct {
     /* 0x15AB */ u8           nextTransition;
     /* 0x15AC */ char         unk_15AC[0x006];
     /* 0x15B2 */ s16          healthAccumulator;
-
-//stuff below is from z64.h
-/* skipped over */
-    // /* 0x0022 */ s16          deaths;
-    // /* 0x002C */ s16          n64ddFlag;
-    // /* 0x0072 */ char         unk_72[0x0002];
-    // /* 0x00CF */ s8           defenseHearts;
-    // /* 0x0F3C */ char         unk_F3C[0x040C];
-    // /* 0x13BC */ char         unk_13BC[0x0008];
-    // /* 0x13C4 */ s16          dogParams;
-    // /* 0x13C6 */ char         unk_13C6[0x0001];
-    // /* 0x13C7 */ u8           unk_13C7;
-
-/* still to compare */
-    // /* 0x13CA */ char         unk_13CA[0x0002];
-
-    // /* 0x13DE */ char         unk_13DE[0x0002];
-    // /* 0x13E0 */ u8           seqIndex;
-    // /* 0x13E1 */ u8           nightSeqIndex;
-    // /* 0x13E2 */ u8           buttonStatus[5];
-    // /* 0x13E7 */ u8           unk_13E7;
-    // /* 0x13E8 */ u16          unk_13E8; // alpha type?
-    // /* 0x13EA */ u16          unk_13EA; // also alpha type?
-    // /* 0x13EC */ u16          unk_13EC; // alpha type counter?
-    // /* 0x13EE */ u16          unk_13EE; // previous alpha type?
-    // /* 0x13F0 */ s16          unk_13F0;
-    // /* 0x13F2 */ s16          unk_13F2;
-    // /* 0x13F4 */ s16          unk_13F4;
-    // /* 0x13F6 */ s16          unk_13F6;
-    // /* 0x13F8 */ s16          unk_13F8;
-    // /* 0x13FA */ u16          eventInf[4]; // "event_inf"
-    // /* 0x1404 */ u16          minigameState;
-    // /* 0x1406 */ u16          minigameScore; // "yabusame_total"
-    // /* 0x1408 */ char         unk_1408[0x0001];
-    // /* 0x1409 */ u8           language;
-    // /* 0x140A */ u8           audioSetting;
-    // /* 0x140B */ char         unk_140B[0x0001];
-    // /* 0x140C */ u8           zTargetingSetting; // 0: Switch; 1: Hold
-    // /* 0x140E */ u16          unk_140E; // bgm related
-    // /* 0x1410 */ u8           unk_1410;
-    // /* 0x1411 */ u8           unk_1411;
-    // /* 0x1412 */ u16          nextCutsceneIndex;
-    // /* 0x1414 */ u8           cutsceneTrigger;
-    // /* 0x1415 */ u8           chamberCutsceneNum;
-    // /* 0x1416 */ u16          nextDayTime; // "next_zelda_time"
-    // /* 0x1418 */ u8           fadeDuration;
-    // /* 0x1419 */ u8           unk_1419; // transition related
-    // /* 0x141A */ u16          environmentTime;
-    // /* 0x141C */ u8           dogIsLost;
-    // /* 0x141D */ u8           nextTransition;
-    // /* 0x141E */ char         unk_141E[0x0002];
-    // /* 0x1420 */ s16          worldMapArea;
-    // /* 0x1422 */ s16          unk_1422; // day time related
 } SaveContext; // size = 0x15C4
 
 typedef struct GraphicsContext GraphicsContext; //TODO

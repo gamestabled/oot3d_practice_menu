@@ -477,23 +477,27 @@ typedef enum {
 
 typedef Actor* (*Actor_Spawn_proc)(ActorContext *actorCtx,GlobalContext *globalCtx,s16 actorId,float posX,float posY,float posZ,s16 rotX,s16 rotY,s16 rotZ,s16 params)
     __attribute__((pcs("aapcs-vfp")));;
-
 #ifdef Version_JP
     #define Actor_Spawn_addr 0x3733E8
 #else //USA & EUR
     #define Actor_Spawn_addr 0x3738D0
 #endif
-
 #define Actor_Spawn ((Actor_Spawn_proc)Actor_Spawn_addr)
 
-typedef void (*Player_SetEquipmentData_proc)(GlobalContext* globalCtx, Player* player);
+typedef s32 (*Object_proc)(ObjectContext* objectCtx, s16 objectId);
+#ifdef Version_JP
+    #define Object_Spawn_addr 0x32DD34
+#else //USA & EUR
+    #define Object_Spawn_addr 0x32E21C
+#endif
+#define Object_Spawn ((Object_proc)Object_Spawn_addr)
 
+typedef void (*Player_SetEquipmentData_proc)(GlobalContext* globalCtx, Player* player);
 #ifdef Version_JP
     #define Player_SetEquipmentData_addr 0x348C54
 #else //USA & EUR
     #define Player_SetEquipmentData_addr 0x34913C
 #endif
-
 #define Player_SetEquipmentData ((Player_SetEquipmentData_proc)Player_SetEquipmentData_addr)
 
 /*

@@ -7,6 +7,7 @@ extern Menu DebugMenu;
 extern u32 memoryEditorAddress;
 
 extern void DebugActors_ShowActors();
+extern void Debug_ShowObjects();
 extern void Debug_FlagsEditor();
 extern void Debug_PlayerStatesMenuShow();
 extern void NewActorValuesMenuInit();

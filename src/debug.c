@@ -66,8 +66,9 @@ static const char* const FlagGroupNames[] = {
 
 Menu DebugMenu = {
     "Debug",
-    .nbItems = 4,
+    .nbItems = 5,
     {
+        {"Objects", METHOD, .method = Debug_ShowObjects},
         {"Actors", METHOD, .method = DebugActors_ShowActors},
         {"Flags", METHOD, .method = Debug_FlagsEditor},
         {"Player States", METHOD, .method = Debug_PlayerStatesMenuShow},
@@ -319,6 +320,63 @@ void DebugActors_ShowActors(void) {
 
         pagePrev = page;
         page = selected / ACTOR_LIST_MAX_SHOW;
+
+    } while(menuOpen);
+}
+
+void Debug_ShowObjects(void) {
+    static u16 objectId = 0;
+    static s8  digitIdx = 0;
+
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_Unlock();
+
+    do
+    {
+        Draw_Lock();
+        Draw_DrawFormattedString(10, 10, COLOR_TITLE, "Currently Loaded Objects: %02d/%02d", gGlobalContext->objectCtx.num, OBJECT_EXCHANGE_BANK_MAX);
+        Draw_DrawFormattedString(30, 50, COLOR_TITLE, "Object ID: %04X      (Y) Push    (X) Pop", objectId);
+        Draw_DrawFormattedString(30 + (14 - digitIdx) * SPACING_X, 50, COLOR_GREEN, "%01X", (objectId >> (digitIdx*4)) & 0xF);
+
+        for (int i = 0; i < gGlobalContext->objectCtx.num; i++) {
+            Draw_DrawFormattedString((i % 2 ? 171 : 51), 70 + (i / 2) * SPACING_Y, COLOR_WHITE, "%08X %04X",
+                                        &gGlobalContext->objectCtx.status[i], gGlobalContext->objectCtx.status[i].id);
+        }
+        Draw_FlushFramebuffer();
+        Draw_Unlock();
+
+        u32 pressed = Input_WaitWithTimeout(1000);
+        if(pressed & BUTTON_B)
+            break;
+        else if((pressed & BUTTON_Y) && objectId != 0 && gGlobalContext->objectCtx.num < OBJECT_EXCHANGE_BANK_MAX) {
+            Object_Spawn(&(gGlobalContext->objectCtx), (s16)objectId);
+        }
+        else if((pressed & BUTTON_X) && gGlobalContext->objectCtx.num > 0) {
+            gGlobalContext->objectCtx.status[--gGlobalContext->objectCtx.num].id = 0;
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
+        }
+        else if(pressed & BUTTON_UP) {
+            objectId += (1 << digitIdx*4);
+        }
+        else if(pressed & BUTTON_DOWN) {
+            objectId -= (1 << digitIdx*4);
+        }
+        else if(pressed & BUTTON_RIGHT) {
+            digitIdx--;
+        }
+        else if(pressed & BUTTON_LEFT) {
+            digitIdx++;
+        }
+
+        if(digitIdx > 3)
+            digitIdx = 0;
+        else if(digitIdx < 0)
+            digitIdx = 3;
 
     } while(menuOpen);
 }

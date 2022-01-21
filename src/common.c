@@ -14,6 +14,10 @@ bool is_valid_memory_read(const MemInfo* info) {
     return (info->perm & MEMPERM_READ) != 0;
 }
 
+bool is_valid_memory_write(const MemInfo* info) {
+    return (info->perm & MEMPERM_WRITE) != 0;
+}
+
 bool isInGame() {
     if (!loadedGlobalContext) return false;
     // this is to make sure the player actor exists

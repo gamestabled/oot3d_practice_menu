@@ -12,7 +12,7 @@ u32 GetCurrentPadState(void) {
 
 #define HID_PAD (GetCurrentPadState())
 
-#define dpadButtons  (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT)
+#define DPAD_BUTTONS  (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT)
 
 InputContext rInputCtx;
 u8 scrollDelay = 1;
@@ -37,11 +37,11 @@ u32 Input_WaitWithTimeout(u32 msec) {
     u32 key = 0;
     u32 n = 0;
 
-    const bool isDPadPressed = (HID_PAD & dpadButtons) != 0;
+    const bool isScrollButtonPressed = (HID_PAD & (DPAD_BUTTONS | BUTTON_A)) != 0;
 
-    // We special the D-Pad as we want to automatically scroll the cursor or
+    // We special some buttons as we want to automatically scroll the cursor or
     // allow amount editing at a reasonable pace as long as it's held down.
-    if (isDPadPressed && scrollDelay)
+    if (isScrollButtonPressed && scrollDelay)
     {
         // Wait 250 ms the first time, as long as the button isn't released
         for(u32 i = 0; HID_PAD && i < 250; i+=10) {
@@ -49,7 +49,7 @@ u32 Input_WaitWithTimeout(u32 msec) {
         }
         scrollDelay = 0;
     }
-    else if (isDPadPressed)
+    else if (isScrollButtonPressed)
     {
         // By default wait 50 milliseconds before moving the cursor so that
         // we don't scroll the menu too fast.

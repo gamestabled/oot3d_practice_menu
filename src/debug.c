@@ -5,6 +5,7 @@
 #include "draw.h"
 #include "input.h"
 #include "common.h"
+#include "loader.h"
 #include "z3D/z3D.h"
 #include <stdio.h>
 #include <string.h>
@@ -379,7 +380,7 @@ void Debug_FlagsEditor() {
         Draw_DrawString(120, 30, COLOR_WHITE, FlagGroupNames[group]);
         // Flags column indices
         for (s32 j = 0; j < 16; j++) {
-            Draw_DrawFormattedString(70 + j * 2 * SPACING_X, 50, (row > 1 && column == j) ? COLOR_TITLE : COLOR_GRAY, "%X", j);
+            Draw_DrawFormattedString(70 + j * 2 * SPACING_X, 50, (row > 0 && column == j) ? COLOR_TITLE : COLOR_GRAY, "%X", j);
         }
         // Flags row indices
         for (s32 i = 0; i < RowAmounts[group]; i++) {
@@ -509,6 +510,7 @@ void Debug_MemoryEditor() {
     Draw_Unlock();
 
     checkValidMemory();
+    if (!isValidMemory) selectedColumn = selectedRow = 0;
 
     #define WHITE_OR_GREEN_AT(X,Y) ((selectedRow == X && selectedColumn == Y) ? COLOR_GREEN : COLOR_WHITE)
     #define WHITE_OR_BLUE_AT(X,Y)  ((selectedRow == X && selectedColumn == Y) ? COLOR_TITLE : COLOR_WHITE)
@@ -600,15 +602,13 @@ void Debug_MemoryEditor() {
 }
 
 void MemoryEditor_EditAddress() {
-    u32 posX = 30;
-    u32 posY = 30;
     static s8 digitIndex = 0;
 
     do
     {
         Draw_Lock();
-        Draw_DrawFormattedString(posX, posY, COLOR_GREEN, "%08X", memoryEditorAddress);
-        Draw_DrawFormattedString(posX + (7 - digitIndex) * SPACING_X, posY, COLOR_RED, "%X", (memoryEditorAddress >> (digitIndex*4)) & 0xF);
+        Draw_DrawFormattedString(30, 30, COLOR_GREEN, "%08X", memoryEditorAddress);
+        Draw_DrawFormattedString(30 + (7 - digitIndex) * SPACING_X, 30, COLOR_RED, "%X", (memoryEditorAddress >> (digitIndex*4)) & 0xF);
         Draw_Unlock();
 
         u32 pressed = Input_WaitWithTimeout(1000);
@@ -647,9 +647,10 @@ void MemoryEditor_EditAddress() {
 void MemoryEditor_EditValue() {
     u32 posX = 90 + selectedColumn * SPACING_X * 3;
     u32 posY = 30 + selectedRow * SPACING_Y;
+    void* address = (void*)(memoryEditorAddress + (selectedRow - 2) * 8 + selectedColumn);
 
     u8 value;
-    memcpy(&value, (void*)(memoryEditorAddress + (selectedRow - 2) * 8 + selectedColumn), sizeof(value));
+    memcpy(&value, address, sizeof(value));
 
     do
     {
@@ -677,5 +678,46 @@ void MemoryEditor_EditValue() {
 
     } while(menuOpen);
 
-    memcpy((void*)(memoryEditorAddress + (selectedRow - 2) * 8 + selectedColumn), &value, sizeof(value));
+    MemInfo address_info = query_memory_permissions((int)address);
+    if (is_valid_memory_write(&address_info)) {
+        memcpy(address, &value, sizeof(value));
+    }
+    else if (MemoryEditor_ConfirmPermissionOverride()) {
+        // hack to allow writing to read-only memory, if the user chooses to do so after being asked
+        int truncated_address = (((int)address) & 0xFFFFF000);
+        svcControlProcessMemory(getCurrentProcessHandle(), truncated_address, truncated_address, 0x1000, MEMOP_PROT,
+                                    MEMPERM_READ | MEMPERM_WRITE | MEMPERM_EXECUTE);
+
+        memcpy(address, &value, sizeof(value));
+    }
+}
+
+bool MemoryEditor_ConfirmPermissionOverride() {
+    bool ret = false;
+
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_DrawString(52, 70, COLOR_RED, "NO WRITE PERMISSION ON THIS ADDRESS!");
+    Draw_DrawString(40, 90, COLOR_WHITE, "Do you want to overwrite the permission?");
+    Draw_DrawString(76, 120, COLOR_WHITE, "(X) Cancel       (Y) Confirm");
+    Draw_DrawString(40, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "This will give RWX perms to 0x1000 bytes");
+    Draw_Unlock();
+
+    do
+    {
+        u32 pressed = Input_WaitWithTimeout(1000);
+        if (pressed & BUTTON_X)
+            break;
+        else if (pressed & BUTTON_Y) {
+            ret = true;
+            break;
+        }
+    } while(menuOpen);
+
+    Draw_Lock();
+    Draw_ClearFramebuffer();
+    Draw_FlushFramebuffer();
+    Draw_Unlock();
+    return ret;
 }

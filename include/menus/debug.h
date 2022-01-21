@@ -14,6 +14,7 @@ extern void Debug_NewActorValuesMenuShow();
 extern void Debug_MemoryEditor();
 extern void MemoryEditor_EditAddress();
 extern void MemoryEditor_EditValue();
+extern bool MemoryEditor_ConfirmPermissionOverride();
 
 typedef enum {
     FLAGS_SWITCH,

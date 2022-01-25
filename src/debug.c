@@ -16,7 +16,7 @@
 //new actor values
 static s16 newId = 0x0010;
 static s16 newParams = 0x0000;
-static u8  storedPosRotIndex = 0;
+static s16 storedPosRotIndex = 0;
 
 //Memory Editor values
 u32 memoryEditorAddress = (int)&gSaveContext;
@@ -77,7 +77,7 @@ Menu DebugMenu = {
 };
 
 /* give type 0xC for "all" */
-static s32 PopulateActorList(ShowActor_Info* list, ActorType type){
+static s32 PopulateActorList(ShowActor_Info* list, ActorType type) {
     s32 i = 0;
     ActorHeapNode* cur = (ActorHeapNode*)((u32)PLAYER - sizeof(ActorHeapNode));
     while (cur){
@@ -151,19 +151,83 @@ static void DebugActors_ShowMoreInfo(Actor* actor) {
     } while(menuOpen);
 }
 
-static void DebugActors_SpawnActor(void) {
+static void DebugActors_EditNewActorValue(s16* value, u32 posX, u32 posY, s32 digitCount) {
+    static s32 digitIndex = 0;
+    static u16 newValue = 0;
+
+    if (newValue != *value || digitCount == 1) {
+        newValue = *value;
+        digitIndex = 0;
+    }
+
+    do
+    {
+        Draw_Lock();
+        // Draw value
+        if (digitCount == 4) {
+            Draw_DrawFormattedString(posX, posY, COLOR_GREEN, "%04X", newValue);
+        }
+        else if (digitCount == 1) {
+            Draw_DrawFormattedString(posX, posY, COLOR_GREEN, "%01X", newValue);
+        }
+        // Draw cursor
+        Draw_DrawFormattedString(posX + (digitCount - digitIndex - 1) * SPACING_X, posY, COLOR_RED, "%X", (newValue >> (digitIndex*4)) & 0xF);
+        Draw_Unlock();
+
+        u32 pressed = Input_WaitWithTimeout(1000);
+
+        if (pressed & (BUTTON_B | BUTTON_A)){
+            break;
+        }
+        else if (pressed & BUTTON_UP){
+            newValue += (1 << digitIndex*4);
+        }
+        else if (pressed & BUTTON_DOWN){
+            newValue -= (1 << digitIndex*4);
+        }
+        else if (pressed & BUTTON_RIGHT){
+            digitIndex--;
+        }
+        else if (pressed & BUTTON_LEFT){
+            digitIndex++;
+        }
+
+        if(digitIndex >= digitCount)
+            digitIndex = 0;
+        else if(digitIndex < 0)
+            digitIndex = digitCount - 1;
+
+        if (newValue > 0x8000 && digitCount == 1) // Stored Pos Index
+            newValue = 8;
+        else if (newValue > 8 && digitCount == 1)
+            newValue = 0;
+
+    } while(menuOpen);
+
+    *value = newValue;
+}
+
+static bool DebugActors_SpawnActor(void) {
     PosRot selectedPosRot = storedPosRot[storedPosRotIndex];
+    s32 selected = 0;
+    u32 xCoords[] = {30 + SPACING_X * 4, 100 + SPACING_X * 8, 200 + SPACING_X * 17};
+    s16* values[] = {&newId, &newParams, &storedPosRotIndex};
+    s32 digitCounts[] = {4, 4, 1};
 
     do
     {
         Draw_Lock();
         Draw_DrawString(10, 10, COLOR_TITLE, "Spawn new Actor");
-        Draw_DrawFormattedString(30, 70, COLOR_WHITE, "ID: %04X", (u16)newId);
-        Draw_DrawFormattedString(100, 70, COLOR_WHITE, "Params: %04X", (u16)newParams);
-        Draw_DrawFormattedString(200, 70, COLOR_WHITE, "Stored Position: %01d", storedPosRotIndex);
+        Draw_DrawFormattedString(30, 70, selected == 0 ? COLOR_GREEN : COLOR_WHITE, "ID: %04X", (u16)newId);
+        Draw_DrawFormattedString(100, 70, selected == 1 ? COLOR_GREEN : COLOR_WHITE, "Params: %04X", (u16)newParams);
+        Draw_DrawFormattedString(200, 70, selected == 2 ? COLOR_GREEN : COLOR_WHITE, "Stored Position: %01d", storedPosRotIndex);
 
-        Draw_DrawFormattedString(30, 100, COLOR_WHITE, "Pos:      X:%05.2f  Y:%05.2f  Z:%05.2f", selectedPosRot.pos.x, selectedPosRot.pos.y, selectedPosRot.pos.z);
-        Draw_DrawFormattedString(30, 120, COLOR_WHITE, "Rot:      X:%04X  Y:%04X  Z:%04X", (u16)selectedPosRot.rot.x, (u16)selectedPosRot.rot.y, (u16)selectedPosRot.rot.z);
+        Draw_DrawFormattedString(30, 100, COLOR_WHITE, "POS   X: %08.2f", selectedPosRot.pos.x);
+        Draw_DrawFormattedString(30 + SPACING_X * 19, 100, COLOR_WHITE, "Y: %08.2f", selectedPosRot.pos.y);
+        Draw_DrawFormattedString(30 + SPACING_X * 32, 100, COLOR_WHITE, "Z: %08.2f", selectedPosRot.pos.z);
+        Draw_DrawFormattedString(30, 120, COLOR_WHITE, "ROT   X: %04X", (u16)selectedPosRot.rot.x);
+        Draw_DrawFormattedString(30 + SPACING_X * 19, 120, COLOR_WHITE, "Y: %04X", (u16)selectedPosRot.rot.y);
+        Draw_DrawFormattedString(30 + SPACING_X * 32, 120, COLOR_WHITE, "Z: %04X", (u16)selectedPosRot.rot.z);
 
         Draw_DrawString(30, 160, COLOR_TITLE, "A: Edit      X: Fetch Position from Link\n"
                                               "B: Cancel    Y: Confirm and Spawn");
@@ -173,23 +237,38 @@ static void DebugActors_SpawnActor(void) {
 
         u32 pressed = Input_WaitWithTimeout(1000);
 
-        if (pressed & BUTTON_B){
+        if (pressed & BUTTON_B) {
             break;
         }
-        if (pressed & BUTTON_A){
-            Debug_NewActorValuesMenuShow();
-            selectedPosRot = storedPosRot[storedPosRotIndex];
+        if (pressed & BUTTON_A) {
+            DebugActors_EditNewActorValue(values[selected], xCoords[selected], 70, digitCounts[selected]);
+            if (selected == 2) {
+                selectedPosRot = storedPosRot[storedPosRotIndex];
+            }
         }
-        else if ((pressed & BUTTON_X)){
+        else if ((pressed & BUTTON_X)) {
             selectedPosRot = PLAYER->actor.world;
         }
-        else if (pressed & BUTTON_Y){
+        else if (pressed & BUTTON_Y) {
             PosRot p = selectedPosRot;
             Actor_Spawn(&(gGlobalContext->actorCtx), gGlobalContext, newId, p.pos.x, p.pos.y, p.pos.z, p.rot.x, p.rot.y, p.rot.z, newParams);
-            break;
+            return true;
+        }
+        else if (pressed & BUTTON_RIGHT) {
+            selected++;
+        }
+        else if (pressed & BUTTON_LEFT) {
+            selected--;
         }
 
+        if(selected > 2)
+            selected = 0;
+        else if(selected < 0)
+            selected = 2;
+
     } while(menuOpen);
+
+    return false;
 }
 
 void DebugActors_ShowActors(void) {
@@ -227,7 +306,7 @@ void DebugActors_ShowActors(void) {
             Draw_DrawCharacter(10, 30 + (1 + i) * SPACING_Y, COLOR_TITLE, j == selected ? '>' : ' ');
         }
 
-        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "A: Details    X: Delete    Y: Spawn new Actor");
+        Draw_DrawString(10, SCREEN_BOT_HEIGHT - 20, COLOR_TITLE, "A: Details    X: Delete    Start: Spawn new Actor");
 
         Draw_FlushFramebuffer();
         Draw_Unlock();
@@ -243,14 +322,15 @@ void DebugActors_ShowActors(void) {
             Draw_FlushFramebuffer();
             Draw_Unlock();
         }
-        else if(pressed & BUTTON_Y)
+        else if(pressed & BUTTON_START)
         {
             Draw_Lock();
             Draw_ClearFramebuffer();
             Draw_FlushFramebuffer();
             Draw_Unlock();
 
-            DebugActors_SpawnActor();
+            if (DebugActors_SpawnActor()) // true if a new actor has spawned
+                listSize = PopulateActorList(actorList, type);
 
             Draw_Lock();
             Draw_ClearFramebuffer();
@@ -263,6 +343,14 @@ void DebugActors_ShowActors(void) {
             if(actorList[selected].instance->id != 0 || ADDITIONAL_FLAG_BUTTON) {
                 Actor_Kill(actorList[selected].instance);
             }
+        }
+        else if(pressed & BUTTON_Y){
+            memoryEditorAddress = (int)actorList[selected].instance;
+            Debug_MemoryEditor();
+            Draw_Lock();
+            Draw_ClearFramebuffer();
+            Draw_FlushFramebuffer();
+            Draw_Unlock();
         }
         else if(pressed & BUTTON_DOWN)
         {
@@ -381,35 +469,7 @@ void Debug_ShowObjects(void) {
     } while(menuOpen);
 }
 
-AmountMenu NewActorValuesMenu = {
-    "New Actor Values",
-    .nbItems = 3,
-    {
-        {0, 1, 0, "ID", .method = NULL},
-        {0, 1, 0, "Params", .method = NULL},
-        {0, 0, 8, "Stored Position Index", .method = NULL},
-    }
-};
-
-void NewActorValuesMenuInit() {
-    NewActorValuesMenu.items[0].amount = newId;
-    NewActorValuesMenu.items[1].amount = newParams;
-    NewActorValuesMenu.items[2].amount = storedPosRotIndex;
-}
-
-void Debug_NewActorValuesMenuShow() {
-    NewActorValuesMenuInit();
-    AmountMenuShow(&NewActorValuesMenu);
-    newId = NewActorValuesMenu.items[0].amount;
-    newParams = NewActorValuesMenu.items[1].amount;
-    storedPosRotIndex = NewActorValuesMenu.items[2].amount;
-    Draw_Lock();
-    Draw_ClearFramebuffer();
-    Draw_FlushFramebuffer();
-    Draw_Unlock();
-}
-
-void Debug_FlagsEditor() {
+void Debug_FlagsEditor(void) {
     static s32 row = 0;
     static s32 column = 0;
     static s32 group = 10;
@@ -532,7 +592,7 @@ AmountMenu PlayerStatesMenu = {
     }
 };
 
-void PlayerStatesMenuInit() {
+void PlayerStatesMenuInit(void) {
     PlayerStatesMenu.items[PLAYERSTATES_PART1].amount = (PLAYER->stateFlags1 >> 0x10) & 0xFFFF;
     PlayerStatesMenu.items[PLAYERSTATES_PART2].amount = PLAYER->stateFlags1 & 0xFFFF;
     PlayerStatesMenu.items[PLAYERSTATES_PART3].amount = (PLAYER->stateFlags2 >> 0x10) & 0xFFFF;
@@ -540,7 +600,7 @@ void PlayerStatesMenuInit() {
     PlayerStatesMenu.items[PLAYERSTATES_HELD_ITEM].amount = PLAYER->heldItemId;
 }
 
-void Debug_PlayerStatesMenuShow() {
+void Debug_PlayerStatesMenuShow(void) {
     if (isInGame()) {
         PlayerStatesMenuInit();
         AmountMenuShow(&PlayerStatesMenu);
@@ -554,13 +614,13 @@ void Debug_PlayerStatesMenuShow() {
     }
 }
 
-static void checkValidMemory() {
+static void checkValidMemory(void) {
     MemInfo address_start_info = query_memory_permissions((int)memoryEditorAddress);
     MemInfo address_end_info = query_memory_permissions((int)memoryEditorAddress + 127);
     isValidMemory = is_valid_memory_read(&address_start_info) && is_valid_memory_read(&address_end_info);
 }
 
-void Debug_MemoryEditor() {
+void Debug_MemoryEditor(void) {
 
     Draw_Lock();
     Draw_ClearFramebuffer();
@@ -659,7 +719,7 @@ void Debug_MemoryEditor() {
     } while(menuOpen);
 }
 
-void MemoryEditor_EditAddress() {
+void MemoryEditor_EditAddress(void) {
     static s8 digitIndex = 0;
 
     do
@@ -702,7 +762,7 @@ void MemoryEditor_EditAddress() {
     Draw_Unlock();
 }
 
-void MemoryEditor_EditValue() {
+void MemoryEditor_EditValue(void) {
     u32 posX = 90 + selectedColumn * SPACING_X * 3;
     u32 posY = 30 + selectedRow * SPACING_Y;
     void* address = (void*)(memoryEditorAddress + (selectedRow - 2) * 8 + selectedColumn);
@@ -750,7 +810,7 @@ void MemoryEditor_EditValue() {
     }
 }
 
-bool MemoryEditor_ConfirmPermissionOverride() {
+bool MemoryEditor_ConfirmPermissionOverride(void) {
     bool ret = false;
 
     Draw_Lock();

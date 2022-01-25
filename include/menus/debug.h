@@ -10,8 +10,6 @@ extern void DebugActors_ShowActors();
 extern void Debug_ShowObjects();
 extern void Debug_FlagsEditor();
 extern void Debug_PlayerStatesMenuShow();
-extern void NewActorValuesMenuInit();
-extern void Debug_NewActorValuesMenuShow();
 extern void Debug_MemoryEditor();
 extern void MemoryEditor_EditAddress();
 extern void MemoryEditor_EditValue();

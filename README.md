@@ -57,7 +57,8 @@ Note: the patch files for Citra are almost the same as the ones for 3DS, so if y
     -   [2.7 Macro](#27-macro)
     -   [2.8 Watches](#28-watches)
     -   [2.9 Debug](#29-debug)
-    -   [2.10 Settings](#210-settings)
+    -   [2.10 Commands](#210-commands)
+    -   [2.11 Settings](#211-settings)
 
 ## 1 Introduction
 Below you may see the sorts of features which are already implemented, and an idea of some of the planned features to come.
@@ -73,51 +74,57 @@ The "Manually Enter Entrance Index" option is similar, but allows you to manuall
 
 The Clear CS Pointer option sets the cutscene pointer to point to a null cutscene. This option can be used to escape from many cutscenes.
 
-The Override menu lets you set 2 values (keep in mind it's easy to crash the game when messing with them):
+The Override menu lets you set 3 values (keep in mind it's easy to crash the game when messing with them):
 * Game Mode
     - 0 = Regular gameplay
     - 1 = Title Screen
     - 2 = File Select
     - 3 = Credits
     - 4 = Boss Challenge Menu
-    - 5 = ??? (resets game and opens Visions)
+    - 5 = ??? (resets game and opens Visions. Some of the cheats make this crash)
     - 6 = Unlock Master Quest
 * Scene Setup Index - This value is used when loading a scene to determine both the Entrance Offset and the Alternate Header Index. This means you can reach cutscene areas or age-specific areas as the wrong age by changing it.
-The value is overwritten on every scene load (but there are still some things unrelated to loads that use its value).
-If you want to force a value during loads, you must hold R when setting it to enable the override.
+It is overwritten on every scene load, so if you want to force a value during loads, you must hold R when setting it to enable the override. To disable the override, simply select the value again.
     - 0-1 = Child scene setups
     - 2-3 = Adult scene setups
     - 4-14 = Cutscene setups; these will cause Wrong Warps to happen on every load
 
-    To disable the override, simply select the value again.
+Note: the index is also used when loading rooms and to change some actors' behaviors, which will be affected if you select a different value even without the override.
+* Zoneout Type / Respawn Flag - This value affects how Link will spawn after the next scene load, and lets you simulate Void Warps. To set it to a negative value you must hold R while selecting the respective positive value.
+    - -3 = Warp Song: regular spawn position, entrance animation given by the last warp song or grotto used
+    - -2 = Special: regular spawn position, preserves Temp flags (used for Game Over, Sun's Song and some loading zones)
+    - -1 = Special Void: regular spawn position, preserves Temp flags, depletes 1 heart (DMT, Ice Cavern, Spirit block voids)
+    -  0 = Normal
+    -  1 = Regular Void: restores Entrance Point, preserves Temp flags, depletes 1 heart
+    -  2 = Grotto Exit: restores Grotto Return point (incl. Temp Flags), entrance animation given by the last warp song or grotto used
+    -  3 = Farore's Wind: restores FW point (incl. Temp Flags), FW entrance animation
 
 
 Note: Holding R while selecting an entrance prints some extra info and lets you set time of day/next entrance/next cutscene without having to trigger a warp
 
 ### 2.2 Scene
-NoClip / Move Link: this freezes Link and lets you move him freely in any cardinal direction ignoring collision.
+* NoClip / Move Link: this freezes Link and lets you move him freely in any cardinal direction ignoring collision.
 Note: if you load a scene without using the Warps menu while NoClip is active (for example by quitting the game) Link won't be frozen anymore, but the NoClip controls will stay active. Disable NoClip by pressing A or B if this happens.
 
-Set Entrance Point: Link's position is saved as the void out respawn point. Hold R when selecting the option to simulate EPG (walking forward after respawning)
+* Set Entrance Point: Link's position is saved as the void out respawn point. Hold R when selecting the option to simulate EPG (walking forward after respawning)
 
-Set Flags: All scene flags for the current scene will be set (switches, chests, cleared rooms and collected items, both perm and temp)
+* Set Flags: All scene flags for the current scene will be set (switches, chests, cleared rooms and collected items, both perm and temp)
 
-Clear Flags: All scene flags for the current scene will be cleared
+* Clear Flags: All scene flags for the current scene will be cleared
 
-Room Selector: Change the room number saved in the EP, so that voiding out will reload the scene with the selected room active.
+* Room Selector: Change the room number saved in the EP, so that voiding out will reload the scene with the selected room active.
 
-Collision: TODO
+* Collision: TODO
 
-Free Camera: TODO
+* Free Camera: TODO
 
-Hide Game Entities:
-    - Hide Rooms - Makes walls, floors and ceilings invisible.
-    - Hide Actors - TODO
+* Hide Game Entities:
+    - Hide Rooms: Makes walls, floors and ceilings invisible.
+    - Hide Actors: TODO
 
 ### 2.3 Cheats
 This menu provides a number of built in quick cheats. These cheats include:
 -   Infinite Health, Magic, Items, Keys, Rupees
--   Change Quest Mode (Regular/Master Quest). Note: this only toggles the mirroring and double damage effects of Master Quest until reloading the save file. Double Note: This option will eventually move to the **File** menu, when it exists.
 -   Infinite Nayru's Love: Prevents Nayru's Love from expiring, if active. If Nayru's Love is not currently active, entering a scene while this cheat is enabled will activate it. Disabling the cheat will immediately turn Nayru's Love off.
 -   Freeze time of day: Prevents the current time of day from advancing (currently this includes disabling the Sun's Song effect, but you can still change time of day from the warps menu)
 -   No music: Stops background music and fanfares from playing.
@@ -147,22 +154,45 @@ There is also an option to change the value of Temp B.
 ### 2.6 File
 This menu lets you toggle some flags for the current save file. If you need to disable some flags, you might need to set and unset the option.
 
-"Call Navi" only works if the Navi prompt can normally appear in the current area.
+- Gold Skulltulas defeated: set to make all Gold Skulltulas disappear, unset to make them all reappear
+- Seeds and Magic drops obtained: unset this to be able to trigger the Get Item for those drops multiple times. Note that to do the same for stick and nut drops you have to toggle those items off in the Inventory menu.
+- Call Navi: makes Navi want to talk to you. It only works if the Navi prompt can normally appear in the current area (currently this doesn't affect the 3D exclusive break message that appears after spending 30 minutes in an area).
+- Epona Freed
+- Carpenters Freed
+- Intro Cutscenes: clear or restore the area intro cutscenes that are tied to specific entrances.
+- Blue Warps Cleared
+- Timers: see below
+- Master Quest: this toggles the mirroring and double damage effects of Master Quest; note that to change dungeon layouts you have to save and reload the file.
 
-"Seeds and Magic drops obtained" lets you trigger the Get Item for those drops multiple times. Note that to do the same for stick and nut drops you have to toggle those items off in the Inventory menu.
+The timers options let you change the value and state of the in-game timers: Timer 1 is the white one used for heated rooms or being underwater, as well as most races and timed minigames; Timer 2 is the yellow one used for trade items, the Castle Collapse sequence and the race against the running man.
+Note: the "moving" states are used in OoT64 when the timer physically moves on the screen. Because it doesn't move at all in 3D, these states are the same as the respective "initial" states.
 
 ### 2.7 Macro
 TODO
 
 ### 2.8 Watches
-This menu allows you to set memory watches which will appear on the bottom screen. Watches can be named. Watches can be set to 8, 16, or 32 bit integers, displayed as signed decimal, unsigned decimal, or hexadecimal, or as 32 bit floats. A watch is considered to be "enabled" if its address is not 0x00000000, the null address. The **Draw** option can be used to toggle whether or not a watch is currently to be displayed.
+This menu allows you to set memory watches which will appear on the bottom screen. Watches can be named. Watches can be set to 8, 16, or 32 bit integers, displayed as signed decimal, unsigned decimal, or hexadecimal, or as 32 bit floats. A watch is considered to be "enabled" if its address is not 0x00000000, the null address. The **Draw** option can be used to toggle whether or not a watch is currently to be displayed. You can press Y on the watches list to open the Memory Editor at the selected watch location.
 
 ### 2.9 Debug
+The **Objects** menu displays a list of currently loaded objects, which contain graphical assets. Pressing Y will load a new object file of the given id and place it at the end of the list. Pressing X will unload the last object in the list.
+
 The **Actors** menu displays a list of all allocations currently on the "Actor Heap". (Note that in reality, this actor heap is part of a larger game arena, which contains other allocations besides actors, though this is by-and-large unimportant information to know.) By scrolling with L/R, the actor list can be filtered by actor type.
-By pressing A on an actor, more details about that actor will be shown. By pressing X on an actor, that actor will be deleted on the next frame of gameplay (as a fail-safe, the player actor can't be deleted unless you hold R; deleting the player actor crashes the game).
-Pressing Y brings up a menu to spawn a new actor: you can then press A to edit which actor ID and params you want, and which of the 9 stored positions you want the actor to spawn at; you can press X to fetch the position from Link, and Y again to confirm and spawn the actor. Keep in mind that an actor can't spawn if its object isn't loaded in the current room.
+By pressing A on an actor, more details about that actor will be shown. Pressing Y on either menu will open the Memory Editor at the selected actor's location. By pressing X on an actor, that actor will be deleted on the next frame of gameplay (as a fail-safe, the player actor can't be deleted unless you hold R; deleting the player actor crashes the game).
+Pressing Start brings up a menu to spawn a new actor: you can then press A to edit which actor ID and params you want, and which of the 9 stored positions you want the actor to spawn at; you can press X to fetch the position from Link, and Y again to confirm and spawn the actor. Keep in mind that an actor can't spawn if its object isn't loaded in the current room.
+
+The **Flags** menu lets you view and edit saved game flags. The flags are grouped by the records they are kept in. Use the arrows to cycle between flag records. Press a flag to toggle its state. A red flag is "off", and a green flag is "on".
 
 The **Player States** menu lets you view and edit Link's state flags and the Held Item ID (which simulates quick-drawing that item)
 
+The **Memory Editor** lets you view and change any memory location. Click on the address in the top left to edit it (up/down to change value, left/right to change digit). You can also click on the arrows to scroll up and down between addresses. Holding R while scrolling will scroll faster. After clicking on a byte, use up/down to change the right digit and left/right to change the left one.
+You can also reach this editor from the watches menu or the actors menu, if you want to take the address from there.
+
 ### 2.10 Commands
-This menu allows you to change the input combo for various commands. A command input combo may consist of up to 4 buttons. If a combo is "Relaxed", the command will execute whenever all of the buttons in its combo are held. If a combo is "Strict", the command will execute only if the buttons are held in the order that they are displayed, with no other simultaneous input. (NOTE: For the time being, please press buttons one at a time while editing menu combos, improving this feature is a TODO.) You can press X on the Edit Command page to clear/disable the command, and you can press Y to trigger the command from the menu without having to assign a button combination to it.
+This menu allows you to change the input combo for various commands. A command input combo may consist of up to 4 buttons. When setting a combo, you can press the last button twice to save the combo. If a combo is "Relaxed", the command will execute whenever all of the buttons in its combo are held. If a combo is "Strict", the command will execute only if the buttons are held in the order that they are displayed, with no other simultaneous input. (NOTE: For the time being, please press buttons one at a time while editing menu combos, improving this feature is a TODO.) You can press X on the Edit Command page to clear/disable the command, and you can press Y to trigger the command from the menu without having to assign a button combination to it.
+
+### 2.11 Settings
+Here you can save up to 3 profiles with your command combos, watches and active cheats. You can cycle through the profiles by clicking Profile, then save or load the settings with the respective options. If you save Profile 0, it will be loaded automatically whenever you launch the game.
+
+Note 1: the data are saved on the SD card as ExtData for the American version of OoT3D, so they will be shared among different versions. If you need to delete them, you can find them with the FBI application: select "Ext Save Data" on the main menu, then open the OoT3D folder and you will find the "gz3D_X.bin" files in it (X is the profile number). Alternatively you can also delete them from the stock System Settings application.
+
+Note 2: if the ExtData don't exist, they will be created when you load a save file. This will only happen once.

@@ -442,7 +442,7 @@ const EntrancesByScene Entrances_DeathMountainCrater = {
         {0x0246, "From Goron City"},
         {0x024A, "From Fire Temple"},
         {0x0482, "From Great Fairy's Fountain"},
-        {0x0476, "From Warp Song: Bolero of Fire"},
+        {0x04F6, "From Warp Song: Bolero of Fire"},
         {0x0564, "From Blue Warp"},
     }
 };
